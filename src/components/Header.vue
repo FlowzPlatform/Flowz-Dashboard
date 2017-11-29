@@ -21,7 +21,7 @@
                       <Submenu name="1">
                         <template slot="title">
                           <Icon type="person" :size="16"></Icon>
-                          Paul
+                          {{email}}
                         </template>
                         <Menu-item name="1-1">
                             <a @click="logout()">
@@ -40,8 +40,19 @@
 <script>
 /*eslint-disable*/
   export default {
+      data () {
+    return {
+     email : 'User'
+    }
+  },
     computed: {
+        
       
+    },
+    created() {
+        // if(this.$session.get('user')){
+        //     this.email = this.$session.get('user');
+        // };
     },
     methods:{
       logout () {

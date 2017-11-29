@@ -210,10 +210,10 @@ export default {
                 password: self.login.password.trim()
             })
             .then(function (response) {
-                console.log(response);
+               // console.log(response);
                 
                 self.$session.set('token', response.data.logintoken)
-                self.session.get
+                
                 self.$router.push('/dashboard');
             })
             .catch(function (error) {
