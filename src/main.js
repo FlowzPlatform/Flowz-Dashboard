@@ -13,9 +13,15 @@ import Icon from 'vue-awesome/components/Icon'
 
 Vue.component('icon', Icon)
 
+import psl from 'psl'
 import iView from 'iview'
 import locale from 'iview/dist/locale/en-US'
 import 'iview/dist/styles/iview.css' // CSS
+
+
+var VueCookie = require('vue-cookie')
+Vue.use(VueCookie)
+Vue.use(psl)
 
 Vue.use(iView, { locale })
 

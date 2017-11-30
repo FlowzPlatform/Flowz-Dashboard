@@ -39,6 +39,9 @@
 </template>
 <script>
 /*eslint-disable*/
+
+let location = psl.parse(window.location.hostname)
+location = location.domain === null ? location.input : location.domain
   export default {
       data () {
     return {
@@ -55,10 +58,18 @@
         // };
     },
     methods:{
-      logout () {
-            this.$session.destroy('auth_token');
+    //   logout () {
+    //         this.$session.destroy('auth_token');
+    //         this.$router.push('/login');
+    //    }
+
+     logout : function(){
+           //this.$session.destroy('auth_token');
+           
+           this.$cookie.delete('auth_token', {domain: location});
             this.$router.push('/login');
-       }
+
+      },
     }
   }
 </script>>

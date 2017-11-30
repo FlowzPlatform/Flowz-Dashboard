@@ -29,13 +29,17 @@
                         
                 </form>
 
+                <form id="form-google" name="form-google"
+                action = " http://ec2-54-88-11-110.compute-1.amazonaws.com/auth/Gplus" method="post">
+                </form>
+
 
 
                 <div class="lconpt">
                     
                     <div class="lconun">
                         <span class="lthlob">
-                            <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" class="google"><icon name="google"></icon></a> - <a href="#" class="linkdin"><icon name="linkedin"></icon></a>
+                            <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" class="google" @click="submitGoogle()"><icon name="google"></icon></a> - <a href="#" class="linkdin"><icon name="linkedin"></icon></a>
                         </span>
                     </div>
                    
@@ -128,12 +132,18 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
 import VueSession from 'vue-session'
+import config from '../../config/customConfig'
+var psl = require('psl');
+
 
 Vue.use(VueSession)
 
 Vue.use(ElementUI)
+Vue.use(psl)
 
-let baseUrl = 'http://localhost:3030';
+let baseUrl = config.feathersServiceBaseUrl;
+
+let location = psl.parse(window.location.hostname)
 
 export default {
   name: 'login',
@@ -155,7 +165,11 @@ export default {
 
   created(){
         
-        let token = this.$session.get('auth_token');
+        // let token = this.$session.get('auth_token');
+        // if(token){
+        //     this.$router.push('/');
+        // }
+        let token = this.$cookie.get('auth_token') ;
         if(token){
             this.$router.push('/');
         }
@@ -173,6 +187,10 @@ export default {
        submitFb : function(){
            $("#form-facebook").submit();
        },
+       submitGoogle : function(){
+           alert(3);
+           $("#form-google").submit();
+       },
        registerUser: async function(){
            let self = this;
            let emailValidator = await this.validateEmail(self.register.email);
@@ -188,7 +206,7 @@ export default {
                self.$message.warning("Email is not valid");
            }else{
                self.saveFileLoading = true;
-               axios.post(baseUrl+'/register', {
+               axios.post(config.registrationUrl, {
                 firstName: self.register.fname.trim(),
                 lastName: self.register.lname.trim(),
                 email: self.register.email.trim()
@@ -238,14 +256,19 @@ export default {
                self.$message.warning("Email is not valid");
            }else{
                self.saveFileLoadingLogin = true;
-               axios.post('http://ec2-54-88-11-110.compute-1.amazonaws.com/api/login', {
+               axios.post(config.loginUrl , {
                 email: self.login.email.trim(),
                 password: self.login.password.trim()
             })
             .then(function (response) {
                // console.log(response);
                 self.saveFileLoadingLogin = false;
-                self.$session.set('auth_token', response.data.logintoken)
+                //self.$session.set('auth_token', response.data.logintoken)
+
+                
+                location = location.domain === null ? location.input : location.domain ;
+                self.$cookie.set('auth_token', response.data.logintoken, {expires: 1, domain: location});
+
                 
                 self.$router.push('/');
             })
