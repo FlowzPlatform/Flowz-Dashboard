@@ -173,22 +173,25 @@ export default {
        submitFb : function(){
            $("#form-facebook").submit();
        },
-       registerUser: function(){
+       registerUser: async function(){
            let self = this;
-           
-        
+           let emailValidator = await this.validateEmail(self.register.email);
+           console.log(emailValidator)
+          
           if(self.register.fname == ""){
                self.$message.warning("First Name is required");
            }else if(self.register.lname == ""){
                self.$message.warning("Last Name is required");
            }else if(self.register.email == ""){
                self.$message.warning("Email is required");
+           }else if(emailValidator == false){
+               self.$message.warning("Email is not valid");
            }else{
                self.saveFileLoading = true;
                axios.post(baseUrl+'/register', {
-                firstName: self.register.fname,
-                lastName: self.register.lname,
-                email: self.register.email
+                firstName: self.register.fname.trim(),
+                lastName: self.register.lname.trim(),
+                email: self.register.email.trim()
             })
             .then(function (response) {
                 console.log(response);
@@ -220,12 +223,19 @@ export default {
 
            
        },
-       loginUser:function(){
+
+      
+       loginUser: async function(){
            let self = this;
+           let emailValidator = await this.validateEmail(self.login.email);
+           console.log(emailValidator);
+
            if(self.login.email == ""){
                self.$message.warning("email field is required");
            }else if(self.login.password == ""){
                self.$message.warning("password field is required");
+           }else if(emailValidator == false){
+               self.$message.warning("Email is not valid");
            }else{
                self.saveFileLoadingLogin = true;
                axios.post('http://ec2-54-88-11-110.compute-1.amazonaws.com/api/login', {
@@ -244,7 +254,11 @@ export default {
                  self.$message.error("email or password is incorrect");
             });
            }
-       }
+       },
+        validateEmail(email) {
+        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+        }
    }
 }
 </script>
