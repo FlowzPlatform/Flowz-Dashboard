@@ -1,34 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Layout from '@/components/Layout'
-import HelloWorld from '@/components/HelloWorld'
 import login from '@/components/login'
 import dashboard from '@/components/dashboard'
 import pricing from '@/components/pricing'
 
 
 Vue.use(Router)
-
-    // export default new Router({
-    //   routes: [
-    //     {
-    //       path: '/',
-    //       name: 'login',
-    //       component: login
-    //     },
-    //     {
-    //       path: '/dashboard',
-    //       name: 'dashboard',
-    //       component: dashboard
-    //     },
-    //     {
-    //       path: '/pricing/:id',
-    //       name: 'pricing',
-    //       component: pricing
-    //     }
-    //   ]
-    // })
-
 
     const routes = [{
       path: '/',

@@ -130,7 +130,7 @@ Vue.use(VueSession)
 
 Vue.use(ElementUI)
 
-let baseUrl = 'http://localhost:3030';
+let baseUrl = 'http://172.16.160.229:3030';
 
 export default {
   name: 'login',

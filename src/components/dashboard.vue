@@ -95,7 +95,7 @@
               <!--    <a href="#" class="menu-item blue"> <i class="fa fa-anchor"></i> </a>
                 <a href="#" class="menu-item green"> <i class="fa fa-coffee"></i> </a> -->
                 <a href="#" class="menu-item red" @click="goToPricing(1)" v-on:mouseover="hoverOnSubmenu('red', 'left')"> <icon name="check"  id="check"></icon> </a>
-                <a href="#" class="menu-item purple" @click="goToPricing(2)" v-on:mouseover="hoverOnSubmenu('purple', 'left')"> <icon name="microphone"></icon> </a>
+                <a href="#" class="menu-item purple" @click="goToMoM(2)" v-on:mouseover="hoverOnSubmenu('purple', 'left')"> <icon name="microphone"></icon> </a>
                 <a href="#" class="menu-item orange" @click="goToPricing(3)" v-on:mouseover="hoverOnSubmenu('orange', 'left')"> <icon name="star"></icon> </a>
                 <a href="#" class="menu-item lightblue" @click="goToPricing(4)" v-on:mouseover="hoverOnSubmenu('lightblue', 'left')"> <icon name="diamond"></icon> </a>
 
@@ -216,6 +216,11 @@ export default {
       },
       goToPricing : function(data){
           this.$router.push('pricing/'+data);
+      },
+      goToMoM : function(data){
+        console.log('Redirect to MOM')
+        // this.$router.go('http://localhost:3000');
+        window.location='http://162.242.223.167';
       },
       openNav : function(){
         document.getElementById("menu-open").checked = true;
