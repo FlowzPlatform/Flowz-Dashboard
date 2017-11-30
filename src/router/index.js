@@ -35,7 +35,7 @@ Vue.use(Router)
       name: 'Layout',
       component: Layout,
       children: [{
-        path: 'dashboard',
+        path: '/',
         //alias: '',
         component: dashboard,
         name: 'dashboard',

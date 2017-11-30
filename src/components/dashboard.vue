@@ -170,10 +170,10 @@ export default {
         console.log(token)
         if(token){
             this.$session.start()
-            this.$session.set('token', token);
+            this.$session.set('auth_token', token);
         }
 
-        let logintoken = this.$session.get('token');
+        let logintoken = this.$session.get('auth_token');
         if(logintoken == undefined || !logintoken){
             this.$router.push('login');
         }
@@ -210,7 +210,7 @@ export default {
           $(".menu2").toggleClass("active");
       },
       logout : function(){
-           this.$session.destroy('token');
+           this.$session.destroy('auth_token');
             this.$router.push('/');
 
       },

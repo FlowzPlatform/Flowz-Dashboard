@@ -22,7 +22,7 @@
             <div class="lrconpt">
 
                 <form id="form-facebook" name="form-facebook" action="http://ec2-54-88-11-110.compute-1.amazonaws.com/auth/facebook" method="post">
-                            <input type="hidden" name="success_url" value="http://localhost:8081/dashboard">
+                            <input type="hidden" name="success_url" value="http://localhost:8081">
                             <input type="hidden" name="key" value="108343389875876">
                             <input type="hidden" name="seceret" value="a121fc6c5188e589ef5b662866da47fe">
                             <input type="hidden" name="callbackUrl" value="http://ec2-54-88-11-110.compute-1.amazonaws.com/auth/facebook/callback">
@@ -150,9 +150,9 @@ export default {
 
   created(){
         
-        let token = this.$session.get('token');
+        let token = this.$session.get('auth_token');
         if(token){
-            this.$router.push('dashboard');
+            this.$router.push('/');
         }
   },
   
@@ -212,9 +212,9 @@ export default {
             .then(function (response) {
                // console.log(response);
                 
-                self.$session.set('token', response.data.logintoken)
+                self.$session.set('auth_token', response.data.logintoken)
                 
-                self.$router.push('/dashboard');
+                self.$router.push('/');
             })
             .catch(function (error) {
                  self.$message.error("email or password is incorrect");

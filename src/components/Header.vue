@@ -56,7 +56,7 @@
     },
     methods:{
       logout () {
-            this.$session.destroy('token');
+            this.$session.destroy('auth_token');
             this.$router.push('/login');
        }
     }

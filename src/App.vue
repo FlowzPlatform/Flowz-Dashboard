@@ -5,9 +5,20 @@
 </template>
 
 <script>
+import Vue from 'vue'
+
+import VueSession from 'vue-session'
+
+Vue.use(VueSession)
 export default {
-  name: 'app'
+  name: 'app',
+  created (){
+    if(this.$session.get('auth_token')){
+      this.$router.push('/');
+    }
+  }
 }
+
 </script>
 
 <style>
