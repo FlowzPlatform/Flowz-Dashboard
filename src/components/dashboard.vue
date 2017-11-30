@@ -1,131 +1,60 @@
 <template>
   <div class="dashboard">
-
-
-    <div id="myNav" class="overlay">
-
-      <div>
-
-
-          <div v-if="position1 == 'left' && index == 1 " class="card11 webpart" >
+   <div id="myNav" class="overlay">
+      <div v-for="card in cards">
+         <div  v-if="position1 == card.position && index == card.index " v-bind:class= card.class >
             <div class="img">
-                <img class="cardimg" src="../assets/images/web-builder-img.png" :style="{ backgroundColor: card1 }">
+               <img class="cardimg" src= "../assets/images/web-builder-img.png" :style="{ backgroundColor: card1 }">
             </div>
             <div class="tit">
-                <h4><b>Flowz</b></h4>
+               <h4><b>{{card.title}}</b></h4>
             </div>
             <div class="container11">
-            
-                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+               <p>{{card.desc}} </p>
             </div>
-          </div>
-
-          <div v-if="position1 == 'left' && index == 2 " class="card11 webpart" >
-            <div class="img">
-                <img class="cardimg" src="../assets/images/web-builder-img.png" :style="{ backgroundColor: card1 }">
-            </div>
-            <div class="tit">
-                <h4><b>Web Builder</b></h4>
-            </div>
-            <div class="container11">
-            
-                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
-            </div>
-          </div>
-
-          <div v-if="position1 == 'left' && index == 3 " class="card11 webpart" >
-            <div class="img">
-                <img class="cardimg" src="../assets/images/web-builder-img.png" :style="{ backgroundColor: card1 }">
-            </div>
-            <div class="tit">
-                <h4><b>V-Mail</b></h4>
-            </div>
-            <div class="container11">
-            
-                <p>This is a user friendly Vue based email client.It can receives the mail , list it and show the email content. It can also send mail in plain or html format to multiple User in a effective and efficient way.</p>
-            </div>
-          </div>
-
-          <div v-if="position1 == 'left' && index == 4 " class="card11 webpart" >
-            <div class="img">
-                <img class="cardimg" src="../assets/images/web-builder-img.png" :style="{ backgroundColor: card1 }">
-            </div>
-            <div class="tit">
-                <h4><b>MOM</b></h4>
-            </div>
-            <div class="container11">
-            
-                <p>It is an user friendly way of listing the tasks, assigning them, to track them, maintain comments or action taken and its status updates of minutes.The user can create subtasks upto any level in real time.</p>
-            </div>
-          </div>
-
-
-          <div v-if="position1 == 'right'" class="card11 crmpart">
-          <div  class="img">
-            <img class="cardimg" src="../assets/images/web-builder-img.png" width="100" height="250" :style="{ backgroundColor: card1 }">
-          </div>
-          <div class="tit">
-            <h4><b>Accounting</b></h4>
-        </div>
-            <div class="container11" >
-                
-                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
-            </div>
-          </div>
-          
-
-              <nav class="menu" id="overlay-content">
-
-                <input type="checkbox" checked href="#"  class="menu-open" @click="closeNav()" name="menu-open" id="menu-open"/>
-
-                <label class="menu-open-button" for="menu-open">
-                  <span class="lines line-1"></span>
-                  <span class="lines line-2"></span>
-                  <span class="lines line-3"></span>
-                </label>
-                <a href="#" class="menu-item flowz" @click="goToPricing(1)" v-on:mouseover="hoverOnSubmenu('red', 'left' , 1)"> <img class="cardimg" src="../assets/images/Flowz.png"> <span class="nam">Flowz</span></a>
-                <a href="#" class="menu-item ewbuil" @click="goToPricing(2)" v-on:mouseover="hoverOnSubmenu('purple', 'left' , 2)"> <img class="cardimg" src="../assets/images/Web-builder.png"> <span class="nam">Web Builder</span></a>
-                <a href="#" class="menu-item vmail" @click="goToPricing(3)" v-on:mouseover="hoverOnSubmenu('orange', 'left' ,3)">  <img class="cardimg" src="../assets/images/V-mail.png"> <span class="nam">V-mail</span> </a>
-                <a href="#" class="menu-item mom" @click="goToPricing(4)" v-on:mouseover="hoverOnSubmenu('lightblue', 'left',4)">  <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">MOM</span>  </a>
-
-              </nav>
-              <nav class="menu2" id="overlay-content2">
-                <input type="checkbox" href="#" class="menu2-open" @click="closeNav2()" name="menu2-open" id="menu2-open" />
-                <label class="menu2-open-button" for="menu2-open">
-                  <span class="lines2 line2-1"></span>
-                  <span class="lines2 line2-2"></span>
-                  <span class="lines2 line2-3"></span>
-                </label>
-                <!--<a href="#" class="menu2-item blue"> <i class="fa fa-anchor"></i> </a>
-                <a href="#" class="menu2-item green"> <i class="fa fa-coffee"></i> </a> -->
-                <a href="#" class="menu2-item account" @click="goToPricing(5)" v-on:mouseover="hoverOnSubmenu('red', 'right' , 5)"> <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">Accounting</span> </a>
-                <a href="#" class="menu2-item purple2" @click="goToPricing(6)" v-on:mouseover="hoverOnSubmenu('purple', 'right' , 6)"> <icon name="user-circle"></icon> </a>
-                <a href="#" class="menu2-item orange2" @click="goToPricing(7)" v-on:mouseover="hoverOnSubmenu('orange', 'right' , 7)"> <icon name="cab"></icon> </a>
-                <a href="#" class="menu2-item lightblue2" @click="goToPricing(8)" v-on:mouseover="hoverOnSubmenu('lightblue', 'right' , 8)"> <icon name="window-close"></icon> </a>
-              </nav>
+         </div>
+         <nav class="menu" id="overlay-content">
+            <input type="checkbox" checked href="#"  class="menu-open" @click="closeNav()" name="menu-open" id="menu-open"/>
+            <label class="menu-open-button" for="menu-open">
+            <span class="lines line-1"></span>
+            <span class="lines line-2"></span>
+            <span class="lines line-3"></span>
+            </label>
+            <a href="#" class="menu-item flowz" @click="goToPricing('http://google.com')" v-on:mouseover="hoverOnSubmenu('red', 'left' , 1)"> <img class="cardimg" src="../assets/images/Flowz.png"> <span class="nam">Flowz</span></a>
+            <a href="#" class="menu-item ewbuil" @click="goToPricing('http://google.com')" v-on:mouseover="hoverOnSubmenu('purple', 'left' , 2)"> <img class="cardimg" src="../assets/images/Web-builder.png"> <span class="nam">Web Builder</span></a>
+            <a href="#" class="menu-item vmail" @click="goToPricing('http://google.com')" v-on:mouseover="hoverOnSubmenu('orange', 'left' ,3)">  <img class="cardimg" src="../assets/images/V-mail.png"> <span class="nam">V-mail</span> </a>
+            <a href="#" class="menu-item mom" @click="goToPricing('http://google.com')" v-on:mouseover="hoverOnSubmenu('lightblue', 'left',4)">  <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">MOM</span>  </a>
+         </nav>
+         <nav class="menu2" id="overlay-content2">
+            <input type="checkbox" href="#" class="menu2-open" @click="closeNav2()" name="menu2-open" id="menu2-open" />
+            <label class="menu2-open-button" for="menu2-open">
+            <span class="lines2 line2-1"></span>
+            <span class="lines2 line2-2"></span>
+            <span class="lines2 line2-3"></span>
+            </label>
+            <!--<a href="#" class="menu2-item blue"> <i class="fa fa-anchor"></i> </a>
+               <a href="#" class="menu2-item green"> <i class="fa fa-coffee"></i> </a> -->
+            <a href="#" class="menu2-item account" @click="goToPricing('http://google.com')" v-on:mouseover="hoverOnSubmenu('red', 'right' , 5)"> <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">Accounting</span> </a>
+            <a href="#" class="menu2-item purple2" @click="goToPricing('http://google.com')" v-on:mouseover="hoverOnSubmenu('purple', 'right' , 6)"> <img class="cardimg" src="../assets/images/DBETL.png"> <span class="nam">DBETL</span>  </a>
+            <a href="#" class="menu2-item orange2" @click="goToPricing('http://google.com')" v-on:mouseover="hoverOnSubmenu('orange', 'right' , 7)"> <img class="cardimg" src="../assets/images/Quotes.png"> <span class="nam">Quotes</span>  </a>
+            <a href="#" class="menu2-item lightblue2" @click="goToPricing('http://google.com')" v-on:mouseover="hoverOnSubmenu('lightblue', 'right' , 8)"> <img class="cardimg" src="../assets/images/icon-1.png"> <span class="nam">Users</span>  </a>
+         </nav>
       </div>
-    </div>
-
-
-    <div class="dasbma">
+   </div>
+   <div class="dasbma">
       <div class="dastit dastit_pos"><span>Flowz Applications</span> Third-Party Applications</div>
-        <div class="dasund">
-            <div class="dasico">
-               <nav class="menu">
-
-                <a href="#"><img src="../assets/images/icon-1.png" id="icon1" @click="openNav()"> </a>
-
-              </nav>
-              <nav class="menu2">
-
-                <a href="#"><img src="../assets/images/icon-2.png" id="icon2" @click="openNav2()"> </a>
-              </nav>
-            </div>
-        </div>
-    </div>
-
-
-  </div>
+      <div class="dasund">
+         <div class="dasico">
+            <nav class="menu">
+               <a href="#"><img src="../assets/images/Website.png" id="icon1" @click="openNav()"> </a>
+            </nav>
+            <nav class="menu2">
+               <a href="#"><img src="../assets/images/CRM.png" id="icon2" @click="openNav2()"> </a>
+            </nav>
+         </div>
+      </div>
+   </div>
+</div>
 </template>
 
 <script>
@@ -149,7 +78,7 @@ export default {
       index : '',
       leftup: 1000,
       topup: 200,
-      cards : [{title : "a" , pos:1}]
+      cards : []
     }
   },
   created() {
@@ -172,6 +101,78 @@ export default {
         if(logintoken == undefined || !logintoken){
             this.$router.push('login');
         }
+
+
+        
+
+        this.cards = [
+          {
+              img : "../assets/images/web-builder-img.png",
+              index: "1",
+              class : "card11 webpart",
+              title : "Flowz",
+              position : "left",
+              desc : "Build your own business flow using BPMN without a vast knoledge of coding. It defines applications as networks of black box processes, which exchange data across predefined connections  by message passing, where the connections are specified externally to the processes.",
+              
+          },
+          {
+              img :"../assets/images/web-builder-img.png" ,
+              index: "2",
+              class : "card11 webpart",
+              position : "left",
+              title :"Web Builder" ,
+              desc : "Build the website you desire without any knowledge of coding.Flowz Web builder provides all the needed tool to create a stunning website.Just drag and drop the components to your page and publish the website.It is configured with very rich components and partial you can reuse through the process."
+          },
+          {
+              img :"../assets/images/web-builder-img.png" ,
+              index: "3",
+              class : "card11 webpart",
+              position : "left",
+              title : "V-Mail",
+              desc : "This is a user friendly Vue based email client.It can receives the mail , list it and show the email content. It can also send mail in plain or html format to multiple User in a effective and efficient way."
+          },
+          {
+              img :"../assets/images/web-builder-img.png" ,
+              index: "4",
+              class : "card11 webpart",
+              position : "left",
+              title : "MOM",
+              desc : "It is an user friendly way of listing the tasks, assigning them, to track them, maintain comments or action taken and its status updates of minutes.The user can create subtasks upto any level in real time."
+          },
+          {
+              img :"../assets/images/web-builder-img.png" ,
+              index: "5",
+              class : "card11 crmpart",
+              position : "right",
+              title : "Accounting",
+              desc : "It is an user friendly way of listing the tasks, assigning them, to track them, maintain comments or action taken and its status updates of minutes.The user can create subtasks upto any level in real time."
+          },
+          {
+              img :"../assets/images/web-builder-img.png" ,
+              index: "6",
+              class : "card11 crmpart",
+              position : "right",
+              title : "DBETL",
+              desc : "The Compatibility of your databases (both local and remote) are automatically created, configured and updated through the DBETL client. Creating, repairing, deleting and renaming and maintaining multiple databases is much simpler."
+          },
+          {
+              img :"../assets/images/web-builder-img.png" ,
+              index: "7",
+              class : "card11 crmpart",
+              position : "right",
+              title : "Quotes",
+              desc : "It is an user friendly way of listing the tasks, assigning them, to track them, maintain comments or action taken and its status updates of minutes.The user can create subtasks upto any level in real time."
+          },
+          {
+              img :"../assets/images/web-builder-img.png" ,
+              index: "8",
+              class : "card11 crmpart",
+              position : "right",
+              title : "Users",
+              desc : "Successful CRM is about competing in the relationship dimension. Not as an alternative to having a competitive product or reasonable price- but as a differentiator.Track all your user anytime from anywhere across the globe very easily."
+          }
+          
+      ]
     },
     
     mounted(){
@@ -209,7 +210,8 @@ export default {
       },
      
       goToPricing : function(data){
-          this.$router.push('pricing/'+data);
+          //this.$router.push('pricing/'+data);
+          window.location =data
       },
       openNav : function(){
         document.getElementById("menu-open").checked = true;
