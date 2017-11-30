@@ -22,7 +22,7 @@
             <div class="lrconpt">
 
                 <form id="form-facebook" name="form-facebook" action="http://ec2-54-88-11-110.compute-1.amazonaws.com/auth/facebook" method="post">
-                            <input type="hidden" name="success_url" value="http://localhost">
+                            <input type="hidden" name="success_url" value="http://localhost:8081">
                             <input type="hidden" name="key" value="108343389875876">
                             <input type="hidden" name="seceret" value="a121fc6c5188e589ef5b662866da47fe">
                             <input type="hidden" name="callbackUrl" value="http://ec2-54-88-11-110.compute-1.amazonaws.com/auth/facebook/callback">
@@ -261,13 +261,13 @@ border-radius: 50%;
 
 .signupButton {
     
-    background: #8ec622 !important;
+    background: #8ec622;
     /* line-height: 21px; */
-    color: #fff !important;
-    font-size: 17px !important;
-    padding: 10px 25px !important;
-    font-family: Helvetica-N-Md !important;
-    text-shadow: 2px 2px 1px rgba(0,0,0,0.8) !important;
+    color: #fff;
+    font-size: 17px;
+    padding: 10px 25px;
+    font-family: Helvetica-N-Md;
+    text-shadow: 2px 2px 1px rgba(0,0,0,0.8);
 }
 
 .google {
