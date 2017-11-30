@@ -58,7 +58,8 @@
                     
                     <div class="lconun">
                         <div class="lrinp">
-                            <input type="button" @click="loginUser()" value="Login" class="lbtn">
+                          
+                            <el-button type="success" size="small" class="signupButton" @click="loginUser()" :loading="saveFileLoadingLogin" >Login</el-button>
                             <a href="javascript:void()" class="lfort">Forgot Password</a>
                         </div>
                     </div>
@@ -77,7 +78,7 @@
                     </div>
 
                     <div class="lconun">
-                        <div class="lther" style="margin-top:9px"><span>Or login with</span></div>
+                        <div class="lther" style="margin-top:9px"><span>Or Register with</span></div>
                     </div>
 
 
@@ -101,8 +102,10 @@
                     </div>
                     
                     <div class="lconun">
-                        <div class="lrinp">
-                            <input type="button" value="Sign Up" @click="registerUser()" class="lbtn">
+                        <!-- <div class="lrinp">
+                            <input type="button" value="Sign Up" @click="registerUser()" class="lbtn"> -->
+                            <el-button type="success" size="small" class="signupButton" @click="registerUser()" :loading="saveFileLoading" >Sign Up</el-button>
+                            
                         </div>
                     </div>
                     
@@ -136,6 +139,8 @@ export default {
   name: 'login',
   data () {
     return {
+      saveFileLoading : false,
+      saveFileLoadingLogin:false,
       register:{
           fname:"",
           lname:"",
@@ -168,16 +173,30 @@ export default {
        submitFb : function(){
            $("#form-facebook").submit();
        },
-       registerUser: function(){
+       registerUser: async function(){
            let self = this;
-           axios.post(baseUrl+'/register', {
-                firstName: self.register.fname,
-                lastName: self.register.lname,
-                email: self.register.email
+           let emailValidator = await this.validateEmail(self.register.email);
+           console.log(emailValidator)
+          
+          if(self.register.fname == ""){
+               self.$message.warning("First Name is required");
+           }else if(self.register.lname == ""){
+               self.$message.warning("Last Name is required");
+           }else if(self.register.email == ""){
+               self.$message.warning("Email is required");
+           }else if(emailValidator == false){
+               self.$message.warning("Email is not valid");
+           }else{
+               self.saveFileLoading = true;
+               axios.post(baseUrl+'/register', {
+                firstName: self.register.fname.trim(),
+                lastName: self.register.lname.trim(),
+                email: self.register.email.trim()
             })
             .then(function (response) {
                 console.log(response);
                 if(response.data.code == 200){
+                    self.saveFileLoading = false;
                     //alert(response.data.message+", please check your email for password")
                     self.$message({
                         message : response.data.message+", please check your email for password",
@@ -186,6 +205,7 @@ export default {
                      $('.lundcon').addClass('sing');
                 }else{
                    // alert(response.data.error)
+                   self.saveFileLoading = false;
                    self.$message({
                     message: response.data.error,
                     type: 'warning'
@@ -194,33 +214,51 @@ export default {
             })
             .catch(function (error) {
                 console.log(error);
+                self.saveFileLoading = false;
                 //alert(error);
                 self.$message.error(error);
             });
+           }
+
+
+           
        },
-       loginUser:function(){
+
+      
+       loginUser: async function(){
            let self = this;
+           let emailValidator = await this.validateEmail(self.login.email);
+           console.log(emailValidator);
+
            if(self.login.email == ""){
                self.$message.warning("email field is required");
            }else if(self.login.password == ""){
                self.$message.warning("password field is required");
+           }else if(emailValidator == false){
+               self.$message.warning("Email is not valid");
            }else{
+               self.saveFileLoadingLogin = true;
                axios.post('http://ec2-54-88-11-110.compute-1.amazonaws.com/api/login', {
                 email: self.login.email.trim(),
                 password: self.login.password.trim()
             })
             .then(function (response) {
                // console.log(response);
-                
+                self.saveFileLoadingLogin = false;
                 self.$session.set('auth_token', response.data.logintoken)
                 
                 self.$router.push('/');
             })
             .catch(function (error) {
+                self.saveFileLoadingLogin = false;
                  self.$message.error("email or password is incorrect");
             });
            }
-       }
+       },
+        validateEmail(email) {
+        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+        }
    }
 }
 </script>
@@ -234,6 +272,17 @@ color: #fff  !important;
 padding: 12px 12px 3px 10px;
 border-radius: 50%;
 } 
+
+.signupButton {
+    
+    background: #8ec622;
+    /* line-height: 21px; */
+    color: #fff;
+    font-size: 17px;
+    padding: 10px 25px;
+    font-family: Helvetica-N-Md;
+    text-shadow: 2px 2px 1px rgba(0,0,0,0.8);
+}
 
 .google {
     background-color: #dd4b39;
