@@ -22,7 +22,7 @@
             <div class="lrconpt">
 
                 <form id="form-facebook" name="form-facebook" action="http://ec2-54-88-11-110.compute-1.amazonaws.com/auth/facebook" method="post">
-                            <input type="hidden" name="success_url" value="http://localhost:8081">
+                            <input type="hidden" name="success_url" value="http://localhost">
                             <input type="hidden" name="key" value="108343389875876">
                             <input type="hidden" name="seceret" value="a121fc6c5188e589ef5b662866da47fe">
                             <input type="hidden" name="callbackUrl" value="http://ec2-54-88-11-110.compute-1.amazonaws.com/auth/facebook/callback">
@@ -58,7 +58,8 @@
                     
                     <div class="lconun">
                         <div class="lrinp">
-                            <input type="button" @click="loginUser()" value="Login" class="lbtn">
+                          
+                            <el-button type="success" size="small" class="signupButton" @click="loginUser()" :loading="saveFileLoadingLogin" >Login</el-button>
                             <a href="javascript:void()" class="lfort">Forgot Password</a>
                         </div>
                     </div>
@@ -77,7 +78,7 @@
                     </div>
 
                     <div class="lconun">
-                        <div class="lther" style="margin-top:9px"><span>Or login with</span></div>
+                        <div class="lther" style="margin-top:9px"><span>Or Register with</span></div>
                     </div>
 
 
@@ -101,8 +102,10 @@
                     </div>
                     
                     <div class="lconun">
-                        <div class="lrinp">
-                            <input type="button" value="Sign Up" @click="registerUser()" class="lbtn">
+                        <!-- <div class="lrinp">
+                            <input type="button" value="Sign Up" @click="registerUser()" class="lbtn"> -->
+                            <el-button type="success" size="small" class="signupButton" @click="registerUser()" :loading="saveFileLoading" >Sign Up</el-button>
+                            
                         </div>
                     </div>
                     
@@ -136,6 +139,8 @@ export default {
   name: 'login',
   data () {
     return {
+      saveFileLoading : false,
+      saveFileLoadingLogin:false,
       register:{
           fname:"",
           lname:"",
@@ -170,7 +175,17 @@ export default {
        },
        registerUser: function(){
            let self = this;
-           axios.post(baseUrl+'/register', {
+           
+        
+          if(self.register.fname == ""){
+               self.$message.warning("First Name is required");
+           }else if(self.register.lname == ""){
+               self.$message.warning("Last Name is required");
+           }else if(self.register.email == ""){
+               self.$message.warning("Email is required");
+           }else{
+               self.saveFileLoading = true;
+               axios.post(baseUrl+'/register', {
                 firstName: self.register.fname,
                 lastName: self.register.lname,
                 email: self.register.email
@@ -178,6 +193,7 @@ export default {
             .then(function (response) {
                 console.log(response);
                 if(response.data.code == 200){
+                    self.saveFileLoading = false;
                     //alert(response.data.message+", please check your email for password")
                     self.$message({
                         message : response.data.message+", please check your email for password",
@@ -186,6 +202,7 @@ export default {
                      $('.lundcon').addClass('sing');
                 }else{
                    // alert(response.data.error)
+                   self.saveFileLoading = false;
                    self.$message({
                     message: response.data.error,
                     type: 'warning'
@@ -194,9 +211,14 @@ export default {
             })
             .catch(function (error) {
                 console.log(error);
+                self.saveFileLoading = false;
                 //alert(error);
                 self.$message.error(error);
             });
+           }
+
+
+           
        },
        loginUser:function(){
            let self = this;
@@ -205,18 +227,20 @@ export default {
            }else if(self.login.password == ""){
                self.$message.warning("password field is required");
            }else{
+               self.saveFileLoadingLogin = true;
                axios.post('http://ec2-54-88-11-110.compute-1.amazonaws.com/api/login', {
                 email: self.login.email.trim(),
                 password: self.login.password.trim()
             })
             .then(function (response) {
                // console.log(response);
-                
+                self.saveFileLoadingLogin = false;
                 self.$session.set('auth_token', response.data.logintoken)
                 
                 self.$router.push('/');
             })
             .catch(function (error) {
+                self.saveFileLoadingLogin = false;
                  self.$message.error("email or password is incorrect");
             });
            }
@@ -234,6 +258,17 @@ color: #fff  !important;
 padding: 12px 12px 3px 10px;
 border-radius: 50%;
 } 
+
+.signupButton {
+    
+    background: #8ec622 !important;
+    /* line-height: 21px; */
+    color: #fff !important;
+    font-size: 17px !important;
+    padding: 10px 25px !important;
+    font-family: Helvetica-N-Md !important;
+    text-shadow: 2px 2px 1px rgba(0,0,0,0.8) !important;
+}
 
 .google {
     background-color: #dd4b39;
