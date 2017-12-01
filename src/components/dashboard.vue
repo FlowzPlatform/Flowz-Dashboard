@@ -1,142 +1,60 @@
 <template>
   <div class="dashboard">
-
-
-    <div id="myNav" class="overlay">
-
-      <div>
-        <!-- <div v-if="card1 == 'red'" class="card11" :style="{ left: leftup + 'px' , top : topup + 'px'}">
-            <img class="cardimg" src="../assets/images/img.png" width="100" height="250" style="background-color:red;">
-            <div class="container11" style="background-color:white;padding: 10px 20px">
-                <h4><b>John Doe</b></h4>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
+   <div id="myNav" class="overlay">
+      <div v-for="card in cards">
+         <div  v-if="position1 == card.position && index == card.index " v-bind:class= card.class >
+            <div class="img">
+               <img class="cardimg" src= "../assets/images/web-builder-img.png" :style="{ backgroundColor: card1 }">
             </div>
-        </div>
-        <div v-if="card1 == 'purple'" class="card11" style="left: 100px;top: 250px;">
-           <img src="../assets/images/img.png"width="100" height="200" style="background-color:purple;border-radius: 5px 5px 0 0;width:100%">
-            <div class="container11" style="background-color:white;padding: 10px 20px">
-                <h4><b>John Doe</b></h4>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
+            <div class="tit">
+               <h4><b>{{card.title}}</b></h4>
             </div>
-        </div>
-        <div v-if="card1 == 'orange'" class="card11" style="left: 100px;top: 500px;">
-            <img src="../assets/images/img.png"width="100" height="200" style="background-color:orange;border-radius: 5px 5px 0 0;width:100%">
-            <div class="container11" style="background-color:white;padding: 10px 20px">
-                <h4><b>John Doe</b></h4>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
+            <div class="container11">
+               <p>{{card.desc}} </p>
             </div>
-        </div>
-        <div v-if="card1 == 'lightblue'" class="card11" style="left: 300px;top: 600px;">
-             <img src="../assets/images/img.png"width="100" height="200" style="background-color:lightblue;border-radius: 5px 5px 0 0;width:100%">
-            <div class="container11" style="background-color:white;padding: 10px 20px">
-                <h4><b>John Doe</b></h4>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-            </div>
-        </div> -->
-          <div v-if="position1 == 'left'" class="card11" :style="{ left: leftup + 'px' , top : topup + 'px'}">
-            <img class="cardimg" src="../assets/images/img.png" width="100" height="250" :style="{ backgroundColor: card1 }">
-            <div class="container11" style="background-color:white;padding: 10px 20px">
-                <h4><b>John Doe</b></h4>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-            </div>
-          </div>
-          <div v-if="position1 == 'right'" class="card11" :style="{ left: leftup + 'px' , top : topup + 'px'}">
-            <img class="cardimg" src="../assets/images/img.png" width="100" height="250" :style="{ backgroundColor: card1 }">
-            <div class="container11" style="background-color:white;padding: 10px 20px">
-                <h4><b>John Doe</b></h4>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-                <p>Architect & Engineer</p>
-            </div>
-          </div>
-          <nav class="menu" id="overlay-content">
-
-                <input type="checkbox" checked href="#"  class="menu-open" @click="closeNav()" name="menu-open" id="menu-open"/>
-
-                <label class="menu-open-button" for="menu-open">
-                  <span class="lines line-1"></span>
-                  <span class="lines line-2"></span>
-                  <span class="lines line-3"></span>
-                </label>
-              <!--    <a href="#" class="menu-item blue"> <i class="fa fa-anchor"></i> </a>
-                <a href="#" class="menu-item green"> <i class="fa fa-coffee"></i> </a> -->
-                <a href="#" class="menu-item red" @click="goToPricing(1)" v-on:mouseover="hoverOnSubmenu('red', 'left')"> <icon name="check"  id="check"></icon> </a>
-                <a href="#" class="menu-item purple" @click="goToMoM(2)" v-on:mouseover="hoverOnSubmenu('purple', 'left')"> <icon name="microphone"></icon> </a>
-                <a href="#" class="menu-item orange" @click="goToPricing(3)" v-on:mouseover="hoverOnSubmenu('orange', 'left')"> <icon name="star"></icon> </a>
-                <a href="#" class="menu-item lightblue" @click="goToPricing(4)" v-on:mouseover="hoverOnSubmenu('lightblue', 'left')"> <icon name="diamond"></icon> </a>
-
-              </nav>
-              <nav class="menu2" id="overlay-content2">
-                <input type="checkbox" href="#" class="menu2-open" @click="closeNav2()" name="menu2-open" id="menu2-open" />
-                <label class="menu2-open-button" for="menu2-open">
-                  <span class="lines2 line2-1"></span>
-                  <span class="lines2 line2-2"></span>
-                  <span class="lines2 line2-3"></span>
-                </label>
-                <!--<a href="#" class="menu2-item blue"> <i class="fa fa-anchor"></i> </a>
-                <a href="#" class="menu2-item green"> <i class="fa fa-coffee"></i> </a> -->
-                <a href="#" class="menu2-item red2" @click="goToPricing(5)" v-on:mouseover="hoverOnSubmenu('red', 'right')"> <icon name="database"></icon> </a>
-                <a href="#" class="menu2-item purple2" @click="goToPricing(6)" v-on:mouseover="hoverOnSubmenu('purple', 'right')"> <icon name="user-circle"></icon> </a>
-                <a href="#" class="menu2-item orange2" @click="goToPricing(7)" v-on:mouseover="hoverOnSubmenu('orange', 'right')"> <icon name="cab"></icon> </a>
-                <a href="#" class="menu2-item lightblue2" @click="goToPricing(8)" v-on:mouseover="hoverOnSubmenu('lightblue', 'right')"> <icon name="window-close"></icon> </a>
-              </nav>
+         </div>
+         <nav class="menu" id="overlay-content">
+            <input type="checkbox" checked href="#"  class="menu-open" @click="closeNav()" name="menu-open" id="menu-open"/>
+            <label class="menu-open-button" for="menu-open">
+            <span class="lines line-1"></span>
+            <span class="lines line-2"></span>
+            <span class="lines line-3"></span>
+            </label>
+            <a href="javascript:void(0)" class="menu-item flowz" @click="goTosubscriptionplan('http://engine.flowz.com')" v-on:mouseover="hoverOnSubmenu('red', 'left' , 1)"> <img class="cardimg" src="../assets/images/Flowz.png"> <span class="nam">Flowz</span></a>
+            <a href="javascript:void(0)" class="menu-item ewbuil" @click="goTosubscriptionplan('http://webbuilder.flowz.com')" v-on:mouseover="hoverOnSubmenu('purple', 'left' , 2)"> <img class="cardimg" src="../assets/images/Web-builder.png"> <span class="nam">Web Builder</span></a>
+            <a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan('http://vmail.flowz.com')" v-on:mouseover="hoverOnSubmenu('orange', 'left' ,3)">  <img class="cardimg" src="../assets/images/V-mail.png"> <span class="nam">V-mail</span> </a>
+            <a href="javascript:void(0)" class="menu-item mom" @click="goTosubscriptionplan('http://mom.flowz.com')" v-on:mouseover="hoverOnSubmenu('lightblue', 'left',4)">  <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">MOM</span>  </a>
+         </nav>
+         <nav class="menu2" id="overlay-content2">
+            <input type="checkbox" href="#" class="menu2-open" @click="closeNav2()" name="menu2-open" id="menu2-open" />
+            <label class="menu2-open-button" for="menu2-open">
+            <span class="lines2 line2-1"></span>
+            <span class="lines2 line2-2"></span>
+            <span class="lines2 line2-3"></span>
+            </label>
+            <!--<a href="#" class="menu2-item blue"> <i class="fa fa-anchor"></i> </a>
+               <a href="#" class="menu2-item green"> <i class="fa fa-coffee"></i> </a> -->
+            <a href="#" class="menu2-item account" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('red', 'right' , 5)"> <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">Accounting</span> </a>
+            <a href="#" class="menu2-item purple2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('purple', 'right' , 6)"> <img class="cardimg" src="../assets/images/DBETL.png"> <span class="nam">DBETL</span>  </a>
+            <a href="#" class="menu2-item orange2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('orange', 'right' , 7)"> <img class="cardimg" src="../assets/images/Quotes.png"> <span class="nam">Quotes</span>  </a>
+            <a href="#" class="menu2-item lightblue2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('lightblue', 'right' , 8)"> <img class="cardimg" src="../assets/images/icon-1.png"> <span class="nam">Users</span>  </a>
+         </nav>
       </div>
-    </div>
-
-
-    <div class="dasbma">
+   </div>
+   <div class="dasbma">
       <div class="dastit dastit_pos"><span>Flowz Applications</span> Third-Party Applications</div>
-        <div class="dasund">
-            <div class="dasico">
-               <nav class="menu">
-
-                <a href="#"><img src="../assets/images/icon-1.png" id="icon1" @click="openNav()"> </a>
-
-              </nav>
-              <nav class="menu2">
-
-                <a href="#"><img src="../assets/images/icon-2.png" id="icon2" @click="openNav2()"> </a>
-              </nav>
-            </div>
-        </div>
-    </div>
-
-
-  </div>
+      <div class="dasund">
+         <div class="dasico">
+            <nav class="menu">
+               <a href="javascript:void(0)"><img src="../assets/images/Website.png" id="icon1" @click="openNav()"> </a>
+            </nav>
+            <nav class="menu2">
+               <a href="javascript:void(0)"><img src="../assets/images/CRM.png" id="icon2" @click="openNav2()"> </a>
+            </nav>
+         </div>
+      </div>
+   </div>
+</div>
 </template>
 
 <script>
@@ -147,7 +65,7 @@ import VueSession from 'vue-session'
 //var jg = new jsGraphics("myNav");
  var img1 = document.getElementById("check");
  var img2 = document.getElementById("demoCardLeft");
-
+let location = psl.parse(window.location.hostname);
 Vue.use(VueSession)
 
 export default {
@@ -156,27 +74,106 @@ export default {
     return {
       msg: 'Welcome to Dashboard',
       card1: 'red',
-      position1: 'left',
+      position1: '',
+      index : '',
       leftup: 1000,
-      topup: 200
+      topup: 200,
+      cards : []
     }
   },
   created() {
 
         var url_string = window.location.href;
         var url = new URL(url_string);
+        location = location.domain === null ? location.input : location.domain ;
+        
 
         let token = url.searchParams.get("ob_id");
-        console.log(token)
+        console.log("dash ", token)
         if(token){
-            this.$session.start()
-            this.$session.set('auth_token', token);
+            //this.$session.start()
+            //this.$session.set('auth_token', token);
+            console.log("dash ", token)
+            this.$cookie.set('auth_token', token, {expires: 1, domain: location});
         }
 
-        let logintoken = this.$session.get('auth_token');
+        //let logintoken = this.$session.get('auth_token');
+        let logintoken =this.$cookie.get('auth_token')
         if(logintoken == undefined || !logintoken){
             this.$router.push('login');
         }
+
+
+        
+
+        this.cards = [
+          {
+              img : "../assets/images/web-builder-img.png",
+              index: "1",
+              class : "card11 webpart",
+              title : "Flowz",
+              position : "left",
+              desc : "Build your own business flow using BPMN without a vast knoledge of coding. It defines applications as networks of black box processes, which exchange data across predefined connections  by message passing, where the connections are specified externally to the processes.",
+              
+          },
+          {
+              img :"../assets/images/web-builder-img.png" ,
+              index: "2",
+              class : "card11 webpart",
+              position : "left",
+              title :"Web Builder" ,
+              desc : "Build the website you desire without any knowledge of coding.Flowz Web builder provides all the needed tool to create a stunning website.Just drag and drop the components to your page and publish the website.It is configured with very rich components and partial you can reuse through the process."
+          },
+          {
+              img :"../assets/images/web-builder-img.png" ,
+              index: "3",
+              class : "card11 webpart",
+              position : "left",
+              title : "V-Mail",
+              desc : "This is a user friendly Vue based email client.It can receives the mail , list it and show the email content. It can also send mail in plain or html format to multiple User in a effective and efficient way."
+          },
+          {
+              img :"../assets/images/web-builder-img.png" ,
+              index: "4",
+              class : "card11 webpart",
+              position : "left",
+              title : "MOM",
+              desc : "It is an user friendly way of listing the tasks, assigning them, to track them, maintain comments or action taken and its status updates of minutes.The user can create subtasks upto any level in real time."
+          },
+          {
+              img :"../assets/images/web-builder-img.png" ,
+              index: "5",
+              class : "card11 crmpart",
+              position : "right",
+              title : "Accounting",
+              desc : "It is an user friendly way of listing the tasks, assigning them, to track them, maintain comments or action taken and its status updates of minutes.The user can create subtasks upto any level in real time."
+          },
+          {
+              img :"../assets/images/web-builder-img.png" ,
+              index: "6",
+              class : "card11 crmpart",
+              position : "right",
+              title : "DBETL",
+              desc : "The Compatibility of your databases (both local and remote) are automatically created, configured and updated through the DBETL client. Creating, repairing, deleting and renaming and maintaining multiple databases is much simpler."
+          },
+          {
+              img :"../assets/images/web-builder-img.png" ,
+              index: "7",
+              class : "card11 crmpart",
+              position : "right",
+              title : "Quotes",
+              desc : "It is an user friendly way of listing the tasks, assigning them, to track them, maintain comments or action taken and its status updates of minutes.The user can create subtasks upto any level in real time."
+          },
+          {
+              img :"../assets/images/web-builder-img.png" ,
+              index: "8",
+              class : "card11 crmpart",
+              position : "right",
+              title : "Users",
+              desc : "Successful CRM is about competing in the relationship dimension. Not as an alternative to having a competitive product or reasonable price- but as a differentiator.Track all your user anytime from anywhere across the globe very easily."
+          }
+          
+      ]
     },
     
     mounted(){
@@ -184,7 +181,9 @@ export default {
     },
 
   methods :{
-      hoverOnSubmenu: function(color, position) {
+      hoverOnSubmenu: function(color, position, index) {
+        
+        this.index = index;
         this.card1 = color
         this.position1 = position
         if (position === 'right') {
@@ -197,6 +196,7 @@ export default {
         // console.log(color, position, this.card1)
         // alert('skjdk')
       },
+
       clearCard: function() {
         this.card1 = ''
         this.position1 = ''
@@ -209,13 +209,10 @@ export default {
        trigger2: function(){
           $(".menu2").toggleClass("active");
       },
-      logout : function(){
-           this.$session.destroy('auth_token');
-            this.$router.push('/');
-
-      },
-      goToPricing : function(data){
-          this.$router.push('pricing/'+data);
+     
+      goTosubscriptionplan : function(data){
+          //this.$router.push('subscriptionplan/');
+          window.location =data
       },
       goToMoM : function(data){
         console.log('Redirect to MOM')
@@ -266,6 +263,65 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+
+.menu-item.flowz {background-color:#065399;}
+.menu-item.ewbuil {background-color:#b86ead}
+.menu-item.vmail {background-color:#c32025}
+.menu-item.mom {background-color:#777777}
+
+.menu-item.flowz:hover {background-color:#0e406d;}
+.menu-item.ewbuil:hover {background-color:#8e1972}
+.menu-item.vmail:hover {background-color:#860203}
+.menu-item.mom:hover {background-color:#333333}
+.menus-icon img {width: 64px;
+    height: 64px;}
+
+    .card11.webpart {
+    position: fixed;
+    right: 2%;
+    top: 80px;
+    max-height: 60%;
+    overflow: auto;    padding: 10px;background-color: #fff;
+}
+.webpart .img {
+    width: 100px;
+    max-height: 100px;
+    display: inline-block
+}
+.webpart .img img { max-width: 100px;
+    max-height: 100px;}
+.webpart .tit {display: inline-block;    width: 150px;}
+.webpart .container11 {    padding: 2px 16px;
+    border-top: solid 1px #ccc;
+    padding-top: 10px;
+    margin-top: 10px;}
+  
+
+.card11.crmpart {
+    position: fixed;
+    left: 2%;
+    top: 80px;
+    max-height: 60%;
+    overflow: auto;    padding: 10px;background-color: #fff;
+}
+.crmpart .img {
+    width: 100px;
+    max-height: 100px;
+    display: inline-block
+}
+.crmpart .img img { max-width: 100px;
+    max-height: 100px;}
+.crmpart .tit {display: inline-block;    width: 150px;}
+.crmpart .container11 {    padding: 2px 16px;
+    border-top: solid 1px #ccc;
+    padding-top: 10px;
+    margin-top: 10px;}
+    
+.menu-item span.nam {font-size: 16px;line-height: 6px;padding: 0;top: -7px;position: relative;white-space: nowrap;}  
+.menu-item:hover span.nam {color:#828181}  
+.menu2-item span.nam {font-size: 16px;line-height: 6px;padding: 0;top: -7px;position: relative;white-space: nowrap;}  
+.menu2-item:hover span.nam {color:#828181}
 
 .card11 {
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);

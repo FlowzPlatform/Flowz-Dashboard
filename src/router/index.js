@@ -3,10 +3,31 @@ import Router from 'vue-router'
 import Layout from '@/components/Layout'
 import login from '@/components/login'
 import dashboard from '@/components/dashboard'
-import pricing from '@/components/pricing'
+import subscriptionplan from '@/components/subscriptionplan'
 
 
 Vue.use(Router)
+
+    // export default new Router({
+    //   routes: [
+    //     {
+    //       path: '/',
+    //       name: 'login',
+    //       component: login
+    //     },
+    //     {
+    //       path: '/dashboard',
+    //       name: 'dashboard',
+    //       component: dashboard
+    //     },
+    //     {
+    //       path: '/subscriptionplan/:id',
+    //       name: 'subscriptionplan',
+    //       component: subscriptionplan
+    //     }
+    //   ]
+    // })
+
 
     const routes = [{
       path: '/',
@@ -19,9 +40,10 @@ Vue.use(Router)
         name: 'dashboard',
         //meta: { description: 'Overview of environment' }
       }, {
-        path: 'pricing/:id',
-        component: pricing,
-        name: 'pricing',
+        // path: 'subscriptionplan/:id',
+        path: 'subscriptionplan',
+        component: subscriptionplan,
+        name: 'subscriptionplan',
       }]
     }, {
       path: '/login',
