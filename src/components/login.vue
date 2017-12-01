@@ -76,7 +76,7 @@
                     <div class="lconun" style="margin-top: 10px;">
                         <span class="lthlob">
                             <span class="lthlob">
-                            <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" class="google"><icon name="google"></icon></a> - <a href="#" class="linkdin"><icon name="linkedin"></icon></a>
+                            <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" @click="submitGoogle()" class="google"><icon name="google"></icon></a> - <a href="#" class="linkdin"><icon name="linkedin"></icon></a>
                         </span>
                         </span>
                     </div>
@@ -170,9 +170,10 @@ export default {
         //     this.$router.push('/');
         // }
         let token = this.$cookie.get('auth_token') ;
-        if(token){
+        if(token || token != null){
             this.$router.push('/');
         }
+        
   },
   
     
@@ -185,12 +186,12 @@ export default {
            $('.lundcon').removeClass('sing');
        },
        submitFb : function(){
-           $("#form-facebook").submit();
+           $("#form-facebook").submit();           
        },
        submitGoogle : function(){
-           alert(3);
+          
            $("#form-google").submit();
-       },
+        },
        registerUser: async function(){
            let self = this;
            let emailValidator = await this.validateEmail(self.register.email);

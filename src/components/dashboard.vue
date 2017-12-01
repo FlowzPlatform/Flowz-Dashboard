@@ -85,14 +85,15 @@ export default {
 
         var url_string = window.location.href;
         var url = new URL(url_string);
-
+        location = location.domain === null ? location.input : location.domain ;
         
 
         let token = url.searchParams.get("ob_id");
-        console.log(token)
+        console.log("dash ", token)
         if(token){
-            this.$session.start()
+            //this.$session.start()
             //this.$session.set('auth_token', token);
+            console.log("dash ", token)
             this.$cookie.set('auth_token', token, {expires: 1, domain: location});
         }
 
