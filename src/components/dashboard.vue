@@ -219,8 +219,8 @@ export default {
       },
       goToMoM : function(data){
         console.log('Redirect to MOM')
-        // this.$router.go('http://localhost:3000');
-        window.location='http://162.242.223.167';
+        window.location='http://localhost:3000';
+        // window.location='http://162.242.223.167';
       },
       openNav : function(){
         document.getElementById("menu-open").checked = true;
