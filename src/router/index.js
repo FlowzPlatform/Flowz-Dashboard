@@ -4,7 +4,7 @@ import Layout from '@/components/Layout'
 import HelloWorld from '@/components/HelloWorld'
 import login from '@/components/login'
 import dashboard from '@/components/dashboard'
-import pricing from '@/components/pricing'
+import subscriptionplan from '@/components/subscriptionplan'
 
 
 Vue.use(Router)
@@ -22,9 +22,9 @@ Vue.use(Router)
     //       component: dashboard
     //     },
     //     {
-    //       path: '/pricing/:id',
-    //       name: 'pricing',
-    //       component: pricing
+    //       path: '/subscriptionplan/:id',
+    //       name: 'subscriptionplan',
+    //       component: subscriptionplan
     //     }
     //   ]
     // })
@@ -41,9 +41,10 @@ Vue.use(Router)
         name: 'dashboard',
         //meta: { description: 'Overview of environment' }
       }, {
-        path: 'pricing/:id',
-        component: pricing,
-        name: 'pricing',
+        // path: 'subscriptionplan/:id',
+        path: 'subscriptionplan',
+        component: subscriptionplan,
+        name: 'subscriptionplan',
       }]
     }, {
       path: '/login',

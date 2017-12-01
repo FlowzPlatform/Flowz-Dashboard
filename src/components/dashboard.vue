@@ -20,10 +20,10 @@
             <span class="lines line-2"></span>
             <span class="lines line-3"></span>
             </label>
-            <a href="#" class="menu-item flowz" @click="goToPricing('http://google.com')" v-on:mouseover="hoverOnSubmenu('red', 'left' , 1)"> <img class="cardimg" src="../assets/images/Flowz.png"> <span class="nam">Flowz</span></a>
-            <a href="#" class="menu-item ewbuil" @click="goToPricing('http://google.com')" v-on:mouseover="hoverOnSubmenu('purple', 'left' , 2)"> <img class="cardimg" src="../assets/images/Web-builder.png"> <span class="nam">Web Builder</span></a>
-            <a href="#" class="menu-item vmail" @click="goToPricing('http://google.com')" v-on:mouseover="hoverOnSubmenu('orange', 'left' ,3)">  <img class="cardimg" src="../assets/images/V-mail.png"> <span class="nam">V-mail</span> </a>
-            <a href="#" class="menu-item mom" @click="goToPricing('http://google.com')" v-on:mouseover="hoverOnSubmenu('lightblue', 'left',4)">  <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">MOM</span>  </a>
+            <a href="javascript:void(0)" class="menu-item flowz" @click="goTosubscriptionplan('http://engine.flowz.com')" v-on:mouseover="hoverOnSubmenu('red', 'left' , 1)"> <img class="cardimg" src="../assets/images/Flowz.png"> <span class="nam">Flowz</span></a>
+            <a href="javascript:void(0)" class="menu-item ewbuil" @click="goTosubscriptionplan('http://webbuilder.flowz.com')" v-on:mouseover="hoverOnSubmenu('purple', 'left' , 2)"> <img class="cardimg" src="../assets/images/Web-builder.png"> <span class="nam">Web Builder</span></a>
+            <a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan('http://vmail.flowz.com')" v-on:mouseover="hoverOnSubmenu('orange', 'left' ,3)">  <img class="cardimg" src="../assets/images/V-mail.png"> <span class="nam">V-mail</span> </a>
+            <a href="javascript:void(0)" class="menu-item mom" @click="goTosubscriptionplan('http://mom.flowz.com')" v-on:mouseover="hoverOnSubmenu('lightblue', 'left',4)">  <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">MOM</span>  </a>
          </nav>
          <nav class="menu2" id="overlay-content2">
             <input type="checkbox" href="#" class="menu2-open" @click="closeNav2()" name="menu2-open" id="menu2-open" />
@@ -34,10 +34,10 @@
             </label>
             <!--<a href="#" class="menu2-item blue"> <i class="fa fa-anchor"></i> </a>
                <a href="#" class="menu2-item green"> <i class="fa fa-coffee"></i> </a> -->
-            <a href="#" class="menu2-item account" @click="goToPricing('http://google.com')" v-on:mouseover="hoverOnSubmenu('red', 'right' , 5)"> <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">Accounting</span> </a>
-            <a href="#" class="menu2-item purple2" @click="goToPricing('http://google.com')" v-on:mouseover="hoverOnSubmenu('purple', 'right' , 6)"> <img class="cardimg" src="../assets/images/DBETL.png"> <span class="nam">DBETL</span>  </a>
-            <a href="#" class="menu2-item orange2" @click="goToPricing('http://google.com')" v-on:mouseover="hoverOnSubmenu('orange', 'right' , 7)"> <img class="cardimg" src="../assets/images/Quotes.png"> <span class="nam">Quotes</span>  </a>
-            <a href="#" class="menu2-item lightblue2" @click="goToPricing('http://google.com')" v-on:mouseover="hoverOnSubmenu('lightblue', 'right' , 8)"> <img class="cardimg" src="../assets/images/icon-1.png"> <span class="nam">Users</span>  </a>
+            <a href="#" class="menu2-item account" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('red', 'right' , 5)"> <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">Accounting</span> </a>
+            <a href="#" class="menu2-item purple2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('purple', 'right' , 6)"> <img class="cardimg" src="../assets/images/DBETL.png"> <span class="nam">DBETL</span>  </a>
+            <a href="#" class="menu2-item orange2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('orange', 'right' , 7)"> <img class="cardimg" src="../assets/images/Quotes.png"> <span class="nam">Quotes</span>  </a>
+            <a href="#" class="menu2-item lightblue2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('lightblue', 'right' , 8)"> <img class="cardimg" src="../assets/images/icon-1.png"> <span class="nam">Users</span>  </a>
          </nav>
       </div>
    </div>
@@ -46,10 +46,10 @@
       <div class="dasund">
          <div class="dasico">
             <nav class="menu">
-               <a href="#"><img src="../assets/images/Website.png" id="icon1" @click="openNav()"> </a>
+               <a href="javascript:void(0)"><img src="../assets/images/Website.png" id="icon1" @click="openNav()"> </a>
             </nav>
             <nav class="menu2">
-               <a href="#"><img src="../assets/images/CRM.png" id="icon2" @click="openNav2()"> </a>
+               <a href="javascript:void(0)"><img src="../assets/images/CRM.png" id="icon2" @click="openNav2()"> </a>
             </nav>
          </div>
       </div>
@@ -210,8 +210,8 @@ export default {
           $(".menu2").toggleClass("active");
       },
      
-      goToPricing : function(data){
-          //this.$router.push('pricing/'+data);
+      goTosubscriptionplan : function(data){
+          //this.$router.push('subscriptionplan/');
           window.location =data
       },
       openNav : function(){

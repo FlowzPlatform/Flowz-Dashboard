@@ -1,12 +1,12 @@
 <template>
-  <div class="pricing">
+  <div class="subscription">
     
     <!-- Contenedor -->
-	<div class="pricing-wrapper clearfix">
+	<div class="subscription-wrapper clearfix">
 		<!-- Titulo -->
 		
-		<div class="pricing-table">
-			<h3 class="pricing-title">Basic</h3>
+		<div class="subscription-table">
+			<h3 class="subscription-title">Basic</h3>
 			<div class="price">$5<sup>/ month</sup></div>
 			<!-- Lista de Caracteristicas / Propiedades -->
 			<ul class="table-list">
@@ -18,12 +18,12 @@
 			<!-- Contratar / Subscribe -->
 			<div class="table-buy">
 				<p>$5<sup>/ month</sup></p>
-				<a href="#" class="pricing-action">Subscribe</a>
+				<a href="#" class="subscription-action">Subscribe</a>
 			</div>
 		</div>
 		
-		<div class="pricing-table recommended">
-			<h3 class="pricing-title">Premium</h3>
+		<div class="subscription-table recommended">
+			<h3 class="subscription-title">Premium</h3>
 			<div class="price">$10<sup>/ month</sup></div>
 			<!-- Lista de Caracteristicas / Propiedades -->
 			<ul class="table-list">
@@ -35,12 +35,12 @@
 			<!-- Contratar / Subscribe -->
 			<div class="table-buy">
 				<p>$10<sup>/ month</sup></p>
-				<a href="#" class="pricing-action">Subscribe</a>
+				<a href="#" class="subscription-action">Subscribe</a>
 			</div>
 		</div>
 
-		<div class="pricing-table">
-			<h3 class="pricing-title">Ultimate</h3>
+		<div class="subscription-table">
+			<h3 class="subscription-title">Ultimate</h3>
 			<div class="price">$20<sup>/ month</sup></div>
 			<!-- Lista de Caracteristicas / Propiedades -->
 			<ul class="table-list">
@@ -52,7 +52,7 @@
 			<!-- Contratar / Subscribe -->
 			<div class="table-buy">
 				<p>$20<sup>/ month</sup></p>
-				<a href="#" class="pricing-action">Subscribe</a>
+				<a href="#" class="subscription-action">Subscribe</a>
 			</div>
 		</div>
 	</div>
@@ -64,7 +64,7 @@
 
 
 export default {  
-  name: 'pricing',
+  name: 'subscription',
   data () {
     return {
       msg: 'Welcome to Price'
@@ -104,7 +104,7 @@ a {
 	text-decoration: none;
 }
 
-.pricing-table-title {
+.subscription-table-title {
 	text-transform: uppercase;
 	font-weight: 700;
 	font-size: 2.6em;
@@ -115,7 +115,7 @@ a {
 	text-shadow: 0 1px 1px rgba(0,0,0,0.4);
 }
 
-.pricing-table-title a {
+.subscription-table-title a {
 	font-size: 0.6em;
 }
 
@@ -129,12 +129,12 @@ a {
 /** ========================
  * Contenedor
  ============================*/
-.pricing-wrapper {
+.subscription-wrapper {
 	width: 960px;
 	margin: 40px auto 0;
 }
 
-.pricing-table {
+.subscription-table {
 	margin: 0 10px;
 	text-align: center;
 	width: 300px;
@@ -146,14 +146,14 @@ a {
 	transition: all 0.25s ease;
 }
 
-.pricing-table:hover {
+.subscription-table:hover {
 	-webkit-transform: scale(1.06);
 	-ms-transform: scale(1.06);
 	-o-transform: scale(1.06);
 	transform: scale(1.06);
 }
 
-.pricing-title {
+.subscription-title {
 	color: #FFF;
 	background: #e95846;
 	padding: 20px 0;
@@ -162,15 +162,15 @@ a {
 	text-shadow: 0 1px 1px rgba(0,0,0,0.4);
 }
 
-.pricing-table.recommended .pricing-title {
+.subscription-table.recommended .subscription-title {
 	background: #2db3cb;
 }
 
-.pricing-table.recommended .pricing-action {
+.subscription-table.recommended .subscription-action {
 	background: #2db3cb;
 }
 
-.pricing-table .price {
+.subscription-table .price {
 	background: #403e3d;
 	font-size: 2.4em;
     color: #fff;
@@ -179,7 +179,7 @@ a {
 	text-shadow: 0 1px 1px rgba(0,0,0,0.4);
 }
 
-.pricing-table .price sup {
+.subscription-table .price sup {
 	font-size: 0.4em;
 	position: relative;
 	left: 5px;
@@ -246,7 +246,7 @@ a {
 	left: 5px;
 }
 
-.table-buy .pricing-action {
+.table-buy .subscription-action {
 	float: right;
 	color: #FFF;
 	background: #e95846;
@@ -262,11 +262,11 @@ a {
 	transition: all 0.25s ease;
 }
 
-.table-buy .pricing-action:hover {
+.table-buy .subscription-action:hover {
 	background: #cf4f3e;
 }
 
-.recommended .table-buy .pricing-action:hover {
+.recommended .table-buy .subscription-action:hover {
 	background: #228799;	
 }
 
@@ -274,11 +274,11 @@ a {
  * Responsive
  ===================*/
  @media only screen and (min-width: 768px) and (max-width: 959px) {
- 	.pricing-wrapper {
+ 	.subscription-wrapper {
  		width: 768px;
  	}
 
- 	.pricing-table {
+ 	.subscription-table {
  		width: 236px;
  	}
 	
@@ -289,11 +289,11 @@ a {
  }
 
  @media only screen and (max-width: 767px) {
- 	.pricing-wrapper {
+ 	.subscription-wrapper {
  		width: 420px;
  	}
 
- 	.pricing-table {
+ 	.subscription-table {
  		display: block;
  		float: none;
  		margin: 0 0 20px 0;
@@ -302,7 +302,7 @@ a {
  }
 
 @media only screen and (max-width: 479px) {
-	.pricing-wrapper {
+	.subscription-wrapper {
 		width: 300px;
 	}
 } 
