@@ -24,8 +24,8 @@ body {margin: 0; padding: 0;}
 .lrpt .rsrpt > a {background-color:#005aaa;border-radius: 25px;color: #fff;font-size: 22px;text-decoration: none;font-family: 'Helvetica-N-Md';padding: 9px 30px;display: inline-block;}
 
 .lconpt {background-color: #fff;width: 365px;float: left;position: absolute;top: 0;border-right: dashed 1px #ccc;padding: 38px 0;opacity: 0;left: 100%;-webkit-transition: all 0.5s ease-in-out;-moz-transition: all 0.5s ease-in-out;-o-transition: all 0.5s ease-in-out;transition: all 0.5s ease-in-out;}
-.lconpt .lconun {width: 80%; float: left;}
-.lrinp {width:100%;margin-bottom: 20px;}
+.lconpt .lconun {width: 100%; hight:100%; float: center; padding: 0px 18px 0px 18px;}
+.lrinp {width:100%;margin-bottom: 12px;}
 .lrinp label {width:100%;color: #075eac;font-size: 16px;font-family: 'Helvetica-N-Md';font-weight: normal;margin: 0;}
 .lrinp input {width:100%;border: solid 1px #cccccc;line-height: 30px;border-radius: 5px;padding: 1px 5px;}
 .lrinp input.lbtn {width: auto;border-radius: 5px;background-color: #8ec600;color: #fff;font-size: 20px;line-height: 36px;padding: 0 16px;text-shadow: 2px 2px 1px rgba(0,0,0,0.8);border: 0;font-family: 'Helvetica-N-Md';}

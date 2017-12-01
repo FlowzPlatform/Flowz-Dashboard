@@ -33,7 +33,7 @@
 
                 <div class="lconpt">
                     
-                    <div class="lconun">
+                    <!-- <div class="lconun">
                         <span class="lthlob">
                             <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" class="google" @click="submitGoogle()"><icon name="google"></icon></a> - <a href="#" class="linkdin"><icon name="linkedin"></icon></a>
                         </span>
@@ -54,8 +54,52 @@
                             <label>Password</label>
                             <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) ">
                         </div>
+                    </div> -->
+                    <div class="lconun">
+                        <span class="lthlob">
+                            <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" class="google" @click="submitGoogle()"><icon name="google"></icon></a> - <a href="#" class="linkdin"><icon name="linkedin"></icon></a>
+                        </span>
                     </div>
-                    
+                   
+                    <div class="lconun" >
+                        <div class="lther" style="margin-top:20px"><span>Or login with</span></div>
+                    </div>
+
+                  
+                    <div>
+                        <Tabs class="lconun" type="card" value="1" @on-click=tabsClicked>
+                                <TabPane label="Standard" name="1">
+
+                                    <div class="lconun">
+                                        <div class="lrinp">
+                                            <label>Email</label>
+                                            <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) ">
+                                        </div>
+                                    </div>
+                                    <div class="lconun">
+                                        <div class="lrinp">
+                                            <label>Password</label>
+                                            <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) ">
+                                        </div>
+                                    </div>
+                                </TabPane>
+                                <TabPane label="LDAP" name="2">
+                                    <div class="lconun">
+                                        <div class="lrinp">
+                                            <label>Email</label>
+                                            <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) ">
+                                        </div>
+                                    </div>
+                                    <div class="lconun">
+                                        <div class="lrinp">
+                                            <label>Password</label>
+                                            <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) ">
+                                        </div>
+                                    </div>
+                                </TabPane>
+                        </Tabs>
+                        </div>
+                   
                     <div class="lconun">
                         <div class="lrinp">
                           
@@ -63,8 +107,6 @@
                             <a href="javascript:void()" class="lfort">Forgot Password</a>
                         </div>
                     </div>
-                    
-                    
                 </div>
                 <div class="rconpt">
 
@@ -163,7 +205,9 @@ export default {
       login : {
           email:"",
           password:""
-      }
+      },
+      selectedTabIndex:1,
+      
     }
   },
 
@@ -183,6 +227,11 @@ export default {
     
   
    methods: {
+    tabsClicked(val){
+                this.login.email = ''
+                this.login.password = ''
+                console.log('value is:',val);
+                this.selectedTabIndex = val;},
        showLogin : async function(targetName, action){
            $('.lundcon').addClass('sing');
        },
@@ -236,7 +285,8 @@ export default {
                 }
             })
             .catch(function (error) {
-                console.log(error);
+                this.login.password = ''
+                // console.log(error);
                 self.saveFileLoading = false;
                 //alert(error);
                 self.$message.error(error);
@@ -261,15 +311,18 @@ export default {
                self.$message.warning("Email is not valid");
            }else{
                self.saveFileLoadingLogin = true;
-               axios.post(config.loginUrl , {
+               axios.post(this.selectedTabIndex==1? config.loginUrl:config.ldapLoginUrl , {
                 email: self.login.email.trim(),
                 password: self.login.password.trim()
             })
             .then(function (response) {
-               // console.log(response);
+               console.log(response);
                 self.saveFileLoadingLogin = false;
                 //self.$session.set('auth_token', response.data.logintoken)
-
+                //             let location = psl.parse(window.location.hostname)
+                //   location = location.domain === null ? location.input : location.domain
+                //   console.log('Cookie :', Vue.cookie)
+                //   Vue.cookie.set('auth_token', token, {expires: 1, domain: location});
                 
                 location = location.domain === null ? location.input : location.domain ;
                 self.$cookie.set('auth_token', response.data.logintoken, {expires: 1, domain: location});
@@ -278,6 +331,7 @@ export default {
                 self.$router.push('/');
             })
             .catch(function (error) {
+                console.log("error-->",error)
                 self.saveFileLoadingLogin = false;
                  self.$message.error("email or password is incorrect");
             });
