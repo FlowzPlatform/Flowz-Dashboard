@@ -143,6 +143,8 @@ let facebookSuccessCallbackUrl = config.facebookSuccessCallbackUrl;
 
 let location = psl.parse(window.location.hostname)
 
+
+
 export default {
   name: 'login',
   data () {
