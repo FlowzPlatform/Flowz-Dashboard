@@ -21,19 +21,15 @@
             
             <div class="lrconpt">
 
-                <form id="form-facebook" name="form-facebook" action="http://ec2-54-88-11-110.compute-1.amazonaws.com/auth/facebook" method="post">
-                            <input type="hidden" name="success_url" value="http://localhost:8081">
-                            <input type="hidden" name="key" value="108343389875876">
-                            <input type="hidden" name="seceret" value="a121fc6c5188e589ef5b662866da47fe">
-                            <input type="hidden" name="callbackUrl" value="http://ec2-54-88-11-110.compute-1.amazonaws.com/auth/facebook/callback">
-                        
+                <form id="form-facebook" name="form-facebook" :action=loginWithFacebookUrl method="post">
+                            <input type="hidden" name="success_url" :value=facebookSuccessCallbackUrl>
+                            
                 </form>
 
                 <form id="form-google" name="form-google"
-                action = " http://ec2-54-88-11-110.compute-1.amazonaws.com/auth/Gplus" method="post">
+                :action = loginWithGoogleUrl method="post">
+                <input type="hidden" name="success_url" :value=googleSuccessCallbackUrl>
                 </form>
-
-
 
                 <div class="lconpt">
                     
@@ -142,8 +138,12 @@ Vue.use(ElementUI)
 Vue.use(psl)
 
 let baseUrl = config.feathersServiceBaseUrl;
+let facebookSuccessCallbackUrl = config.facebookSuccessCallbackUrl;
+
 
 let location = psl.parse(window.location.hostname)
+
+
 
 export default {
   name: 'login',
@@ -151,6 +151,10 @@ export default {
     return {
       saveFileLoading : false,
       saveFileLoadingLogin:false,
+      facebookSuccessCallbackUrl : config.facebookSuccessCallbackUrl,
+      googleSuccessCallbackUrl : config.googleSuccessCallbackUrl,
+      loginWithFacebookUrl : config.loginWithFacebookUrl,
+      loginWithGoogleUrl : config.loginWithGoogleUrl,
       register:{
           fname:"",
           lname:"",
