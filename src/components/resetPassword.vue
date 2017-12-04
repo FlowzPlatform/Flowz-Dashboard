@@ -15,7 +15,7 @@
    <div class="lcontended">
       <div class="lundcon lundconreset">
                  <div class="lconun">
-            <div class="lther" style="margin-top:9px;margin-bottom: 40px;"><span>Reset Password</span></div>
+            <div class="lther" style="margin-top:9px;margin-bottom: 40px;"><span class="resetPasswordText">Reset Password</span></div>
          </div>
           <div class="lconun">
             <div class="lrinp">
@@ -198,6 +198,10 @@ border-radius: 50%;
 
 .lconunresetbutton{
     margin-top: 25px;
+}
+
+.resetPasswordText{
+    font-size: 19px;
 }
 
 /* .backToLogin {
