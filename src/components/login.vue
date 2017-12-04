@@ -103,8 +103,8 @@
                     <div class="lconun">
                         <div class="lrinp">
                           
-                            <el-button type="success" size="small" class="signupButton" @click="loginUser()" :loading="saveFileLoadingLogin" >Login</el-button>
-                            <a href="javascript:void()" class="lfort">Forgot Password</a>
+                            <el-button type="success" size="small" class="signupButton" @click="loginUser()" @keyup.enter="loginUser()" :loading="saveFileLoadingLogin" >Login</el-button>
+                            <a v-show="this.selectedTabIndex==1" href="javascript:void()" class="lfort">Forgot Password</a>
                         </div>
                     </div>
                 </div>

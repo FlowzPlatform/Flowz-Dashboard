@@ -15,5 +15,6 @@
   left: 0;
   right: 0;
   height: 40px;
+  opacity: 0
 }
 </style>
