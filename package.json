@@ -17,6 +17,7 @@
     "vue": "^2.5.2",
     "vue-awesome": "^2.3.4",
     "vue-cookie": "^1.1.4",
+    "vue-particles": "^1.0.9",
     "vue-router": "^3.0.1",
     "vue-session": "^0.9.10",
     "wheelnav": "^1.7.1"

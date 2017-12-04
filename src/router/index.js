@@ -4,6 +4,7 @@ import Layout from '@/components/Layout'
 import login from '@/components/login'
 import dashboard from '@/components/dashboard'
 import subscriptionplan from '@/components/subscriptionplan'
+import resetpassword from '@/components/resetPassword'
 
 
 Vue.use(Router)
@@ -49,5 +50,11 @@ Vue.use(Router)
       path: '/login',
       name: 'login',
       component: login
-    }]
+    },
+    {
+      path: '/resetpassword',
+      name: 'resetpassword',
+      component: resetpassword
+    }
+  ]
     export default new Router({mode: 'history' , hashbang: false,routes: routes})

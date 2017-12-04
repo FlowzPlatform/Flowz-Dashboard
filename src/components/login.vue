@@ -1,10 +1,17 @@
 <template>
   <div class="login">
-    
+     
     <div class="lhed">
         <a href="#"><img src="../assets/images/logo.png"> </a>
     </div> 
-   
+
+     <!-- <vue-particles color="#ccc"  :particleOpacity="7"
+        :particlesNumber="200"
+        shapeType="circle"
+        :particleSize="4"
+        linesColor="#dedede"
+        ></vue-particles>
+    -->
     <div class="lcontended">
         <div class="lundcon">
             
@@ -69,19 +76,20 @@
                     <div>
                         <Tabs class="lconun" type="card" value="1" @on-click=tabsClicked>
                                 <TabPane label="Standard" name="1">
-
+                                    
                                     <div class="lconun">
                                         <div class="lrinp">
                                             <label>Email</label>
                                             <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) ">
                                         </div>
                                     </div>
-                                    <div class="lconun">
+                                    <div v-if="!showForgotPassword"  class="lconun">
                                         <div class="lrinp">
                                             <label>Password</label>
                                             <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) ">
                                         </div>
                                     </div>
+                                   
                                 </TabPane>
                                 <TabPane label="LDAP" name="2">
                                     <div class="lconun">
@@ -97,14 +105,17 @@
                                         </div>
                                     </div>
                                 </TabPane>
+                               
                         </Tabs>
                         </div>
                    
                     <div class="lconun">
                         <div class="lrinp">
                           
-                            <el-button type="success" size="small" class="signupButton" @click="loginUser()" :loading="saveFileLoadingLogin" >Login</el-button>
-                            <a href="javascript:void()" class="lfort">Forgot Password</a>
+                            <el-button type="success" size="small" v-if="!showForgotPassword" class="signupButton" v-on:keyup="loginUser()"  @click="loginUser()" :loading="saveFileLoadingLogin" >Login</el-button>
+                            <el-button type="success" size="small" class="signupButton"  v-if="showForgotPassword" @click="forgotPasswordSendEmail()" :loading="saveFileLoadingLogin" >Submit</el-button>
+                            <a href="javascript:void()" class="lfort" v-if="!showForgotPassword"  v-show="this.selectedTabIndex==1" @click="forgotPassword()">Forgot Password</a>
+                             <a href="javascript:void()" class="lfort" v-if="showForgotPassword" v-show="this.selectedTabIndex==1" @click="backtoLogin()">Back to Standard Login</a>
                         </div>
                     </div>
                 </div>
@@ -179,6 +190,9 @@ Vue.use(VueSession)
 Vue.use(ElementUI)
 Vue.use(psl)
 
+import VueParticles from 'vue-particles'
+Vue.use(VueParticles)
+
 let baseUrl = config.feathersServiceBaseUrl;
 let facebookSuccessCallbackUrl = config.facebookSuccessCallbackUrl;
 
@@ -207,6 +221,7 @@ export default {
           password:""
       },
       selectedTabIndex:1,
+      showForgotPassword : false
       
     }
   },
@@ -227,6 +242,15 @@ export default {
     
   
    methods: {
+
+    
+    forgotPassword : function(){
+        //$('.lconpt').hide();
+        this.showForgotPassword = true;
+    },
+    backtoLogin : function(){
+        this.showForgotPassword = false;
+    },
     tabsClicked(val){
                 this.login.email = ''
                 this.login.password = ''
@@ -299,6 +323,7 @@ export default {
 
       
        loginUser: async function(){
+           
            let self = this;
            let emailValidator = await this.validateEmail(self.login.email);
            console.log(emailValidator);
@@ -337,6 +362,39 @@ export default {
             });
            }
        },
+
+
+       forgotPasswordSendEmail : async function(){
+           let self = this;
+           let emailValidator = await this.validateEmail(self.login.email);
+           console.log(emailValidator);
+
+           if(self.login.email == ""){
+               self.$message.warning("email field is required");
+           }else if(emailValidator == false){
+               self.$message.warning("Email is not valid");
+           }else{
+               self.saveFileLoadingLogin = true;
+               axios.post( config.forgotPasswordUrl , {
+                email: self.login.email.trim(),
+                url: "http://google.com"
+            })
+            .then(function (response) {
+                self.saveFileLoadingLogin = false;
+                console.log(response)
+               if(response.data.code == 200){
+                   self.$message.success(response.data.message);
+                   self.login.email = ""
+               }
+            })
+            .catch(function (error) {
+                console.log("error-->",error)
+                self.saveFileLoadingLogin = false;
+                 self.$message.error("email  is incorrect");
+
+            });
+           }
+       },
         validateEmail(email) {
         var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(email);
@@ -346,6 +404,7 @@ export default {
 </script>
 
 <style>
+
 
 
 .fb {
@@ -379,6 +438,15 @@ border-radius: 50%;
   padding: 12px 12px 3px 10px;
 border-radius: 50%;
 }
+
+/* .backToLogin {
+        font-family: 'Helvetica-NT-Lt';
+        font-size: 14px;
+        color: #888888;
+        text-decoration: none;
+        float: right;
+        margin-top: 10px;
+} */
 </style>
 
 
