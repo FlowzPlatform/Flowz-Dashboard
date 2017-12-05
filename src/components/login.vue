@@ -1,10 +1,8 @@
 <template>
   <div class="login">
-     
     <div class="lhed">
         <a href="#"><img src="../assets/images/logo.png"> </a>
     </div> 
-
      <!-- <vue-particles color="#ccc"  :particleOpacity="7"
         :particlesNumber="200"
         shapeType="circle"
@@ -72,56 +70,56 @@
                         <div class="lther" style="margin-top:20px"><span>Or login with</span></div>
                     </div>
 
-                  
-                    <div>
-                        <Tabs class="lconun" type="card" value="1" @on-click=tabsClicked>
-                                <TabPane label="Standard" name="1">
+                    <!-- <form  v-on:submit.prevent="showForgotPassword ? 'loginUser' : 'forgotPasswordSendEmail'" action="#" method="post"> -->
+                        <form  v-on:submit.prevent="handleLoginSubmit" action="#" method="post">
+                            <Tabs class="lconun" type="card" value="1" @on-click=tabsClicked>
+                                    <TabPane label="Standard" name="1">
+                                        
+                                        <div class="lconun">
+                                            <div class="lrinp">
+                                                <label>Email</label>
+                                                <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) ">
+                                            </div>
+                                        </div>
+                                        <div v-if="!showForgotPassword"  class="lconun">
+                                            <div class="lrinp">
+                                                <label>Password</label>
+                                                <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) ">
+                                            </div>
+                                        </div>
                                     
-                                    <div class="lconun">
-                                        <div class="lrinp">
-                                            <label>Email</label>
-                                            <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) ">
+                                    </TabPane>
+                                    <TabPane label="LDAP" name="2">
+                                        <div class="lconun">
+                                            <div class="lrinp">
+                                                <label>Email</label>
+                                                <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) ">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div v-if="!showForgotPassword"  class="lconun">
-                                        <div class="lrinp">
-                                            <label>Password</label>
-                                            <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) ">
+                                        <div class="lconun">
+                                            <div class="lrinp">
+                                                <label>Password</label>
+                                                <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) ">
+                                            </div>
                                         </div>
-                                    </div>
-                                   
-                                </TabPane>
-                                <TabPane label="LDAP" name="2">
-                                    <div class="lconun">
-                                        <div class="lrinp">
-                                            <label>Email</label>
-                                            <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) ">
-                                        </div>
-                                    </div>
-                                    <div class="lconun">
-                                        <div class="lrinp">
-                                            <label>Password</label>
-                                            <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) ">
-                                        </div>
-                                    </div>
-                                </TabPane>
-                               
-                        </Tabs>
+                                    </TabPane>
+                            </Tabs>
+                        <div class="lconun">
+                            <div class="lrinp">
+                                <el-button type="success" size="small" v-if="!showForgotPassword" class="signupButton"  @click="loginUser()" :loading="saveFileLoadingLogin" >Login</el-button>
+
+                                <el-button type="success" size="small" class="signupButton"  v-if="showForgotPassword" @click="forgotPasswordSendEmail()" :loading="saveFileLoadingLogin" >Submit</el-button>
+
+                                <a href="javascript:void()" class="lfort" v-if="!showForgotPassword"  v-show="this.selectedTabIndex==1" @click="forgotPassword()">Forgot Password</a>
+
+                                <a href="javascript:void()" class="lfort" v-if="showForgotPassword" v-show="this.selectedTabIndex==1" @click="backtoLogin()">Back to Standard Login</a>
+
+                            </div>
                         </div>
-                   
-                    <div class="lconun">
-                        <div class="lrinp">
-                          
-                            <el-button type="success" size="small" v-if="!showForgotPassword" class="signupButton" v-on:keyup="loginUser()"  @click="loginUser()" :loading="saveFileLoadingLogin" >Login</el-button>
-                            <el-button type="success" size="small" class="signupButton"  v-if="showForgotPassword" @click="forgotPasswordSendEmail()" :loading="saveFileLoadingLogin" >Submit</el-button>
-                            <a href="javascript:void()" class="lfort" v-if="!showForgotPassword"  v-show="this.selectedTabIndex==1" @click="forgotPassword()">Forgot Password</a>
-                             <a href="javascript:void()" class="lfort" v-if="showForgotPassword" v-show="this.selectedTabIndex==1" @click="backtoLogin()">Back to Standard Login</a>
-                        </div>
-                    </div>
+                <button type="submit" style="display:none"></button>
+                </form>
                 </div>
                 <div class="rconpt">
-
-                    
                     <div class="lconun" style="margin-top: 10px;">
                         <span class="lthlob">
                             <span class="lthlob">
@@ -129,12 +127,10 @@
                         </span>
                         </span>
                     </div>
-
                     <div class="lconun">
                         <div class="lther" style="margin-top:9px"><span>Or Register with</span></div>
                     </div>
-
-
+                <form v-on:submit.prevent="registerUser" action="#" method="post">
                     <div class="lconun">
                         <div class="lrinp">
                             <label>First Name</label>
@@ -150,23 +146,19 @@
                     <div class="lconun">
                         <div class="lrinp">
                             <label>Email Id</label>
-                            <input type="text" class="" v-model="register.email" placeholder="Enter Your Email Id (Required) ">
+                            <input type="email" class="" v-model="register.email" placeholder="Enter Your Email Id (Required) ">
                         </div>
                     </div>
-                    
                     <div class="lconun">
-                        <!-- <div class="lrinp">
-                            <input type="button" value="Sign Up" @click="registerUser()" class="lbtn"> -->
                             <el-button type="success" size="small" class="signupButton" @click="registerUser()" :loading="saveFileLoading" >Sign Up</el-button>
-                            
-                        </div>
                     </div>
-                    
+                     <button type="submit" style="display:none"></button>
+                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    
   </div>
 </template>
 
@@ -245,7 +237,6 @@ export default {
 
     
     forgotPassword : function(){
-        //$('.lconpt').hide();
         this.showForgotPassword = true;
     },
     backtoLogin : function(){
@@ -255,7 +246,8 @@ export default {
                 this.login.email = ''
                 this.login.password = ''
                 console.log('value is:',val);
-                this.selectedTabIndex = val;},
+                this.selectedTabIndex = val;
+                },
        showLogin : async function(targetName, action){
            $('.lundcon').addClass('sing');
        },
@@ -300,7 +292,6 @@ export default {
                     });
                      $('.lundcon').addClass('sing');
                 }else{
-                   // alert(response.data.error)
                    self.saveFileLoading = false;
                    self.$message({
                     message: response.data.error,
@@ -309,19 +300,22 @@ export default {
                 }
             })
             .catch(function (error) {
-                this.login.password = ''
+                // this.login.password = ''
                 // console.log(error);
                 self.saveFileLoading = false;
                 //alert(error);
-                self.$message.error(error);
+                self.$message.error("Something went wrong , Please try again later");
             });
            }
-
-
-           
        },
 
-      
+         handleLoginSubmit : function(){
+           if(this.showForgotPassword){
+               this.forgotPasswordSendEmail()
+           }else{
+               this.loginUser()
+           }
+       },
        loginUser: async function(){
            
            let self = this;
@@ -330,10 +324,10 @@ export default {
 
            if(self.login.email == ""){
                self.$message.warning("email field is required");
-           }else if(self.login.password == ""){
-               self.$message.warning("password field is required");
            }else if(emailValidator == false){
                self.$message.warning("Email is not valid");
+           }else if(self.login.password == ""){
+               self.$message.warning("password field is required");
            }else{
                self.saveFileLoadingLogin = true;
                axios.post(this.selectedTabIndex==1? config.loginUrl:config.ldapLoginUrl , {
@@ -395,6 +389,7 @@ export default {
             });
            }
        },
+      
         validateEmail(email) {
         var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(email);

@@ -14,32 +14,37 @@
         
    <div class="lcontended">
       <div class="lundcon lundconreset">
-                 <div class="lconun">
+        <div class="lconun">
             <div class="lther" style="margin-top:9px;margin-bottom: 40px;"><span class="resetPasswordText">Reset Password</span></div>
          </div>
-          <div class="lconun">
-            <div class="lrinp">
-               <label>Email Id</label>
-               <input type="text" class="" v-model="reset.email" placeholder="Enter Your Email Id (Required) ">
-            </div>
-         </div>
+
+      <form v-on:submit.prevent="resetPassword" action="#" method="post">
+
          <div class="lconun">
-            <div class="lrinp">
-               <label>Type New Password</label>
-               <input type="text" class="" v-model="reset.newpassword" placeholder="Enter password (Required) ">
+                <div class="lrinp">
+                <label>Email Id</label>
+                <input type="email" class="" v-model="reset.email" placeholder="Enter Your Email Id (Required) ">
+                </div>
             </div>
-         </div>
-         <div class="lconun">
-            <div class="lrinp">
-               <label>Re-type Password</label>
-               <input type="text" class="" v-model="reset.renewpassword" placeholder="re-enter password (Required) ">
+            <div class="lconun">
+                <div class="lrinp">
+                <label>Type New Password</label>
+                <input type="text" class="" v-model="reset.newpassword" placeholder="Enter password (Required) ">
+                </div>
             </div>
-         </div>
-        
-         <div class="lconun lconunresetbutton">
-           
-            <el-button type="success" size="small" class="signupButton" @click="resetPassword()" :loading="saveFileLoading" >Reset Password</el-button>
-         </div>
+            <div class="lconun">
+                <div class="lrinp">
+                <label>Re-type Password</label>
+                <input type="text" class="" v-model="reset.renewpassword" placeholder="re-enter password (Required) ">
+                </div>
+            </div>
+            
+            <div class="lconun lconunresetbutton">
+                <el-button type="success" size="small" class="signupButton" @click="resetPassword()" :loading="saveFileLoading" >Reset Password</el-button>
+            </div>
+          <button type="submit" style="display:none"></button>
+          
+      </form>
       </div>
    </div>
 </div>
@@ -86,9 +91,13 @@ export default {
           newpassword:"",
           renewpassword:"",
           email:""
-      }
+      },
+      log: "",
+      login: "",
+      senha: ""
     }
   },
+
 
   created(){
 
@@ -106,7 +115,9 @@ export default {
     
   
    methods: {
-       resetPassword: async function(){
+
+       resetPassword: async function(e){
+          
            let self = this;
            let emailValidator = await this.validateEmail(self.reset.email);
           if(self.reset.newpassword == ""){
