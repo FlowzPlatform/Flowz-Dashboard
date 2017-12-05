@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard">
+  <div class="dashboard" >
    <div id="myNav" class="overlay">
       <div v-for="card in cards">
          <div  v-if="position1 == card.position && index == card.index " v-bind:class= card.class >
@@ -23,7 +23,7 @@
             <a href="javascript:void(0)" class="menu-item flowz" @click="goTosubscriptionplan('http://engine.flowz.com')" v-on:mouseover="hoverOnSubmenu('red', 'left' , 1)"> <img class="cardimg" src="../assets/images/Flowz.png"> <span class="nam">Flowz</span></a>
             <a href="javascript:void(0)" class="menu-item ewbuil" @click="goTosubscriptionplan('http://webbuilder.flowz.com')" v-on:mouseover="hoverOnSubmenu('purple', 'left' , 2)"> <img class="cardimg" src="../assets/images/Web-builder.png"> <span class="nam">Web Builder</span></a>
             <a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan('http://vmail.flowz.com')" v-on:mouseover="hoverOnSubmenu('orange', 'left' ,3)">  <img class="cardimg" src="../assets/images/V-mail.png"> <span class="nam">V-mail</span> </a>
-            <a href="javascript:void(0)" class="menu-item mom" @click="goTosubscriptionplan('http://mom.flowz.com')" v-on:mouseover="hoverOnSubmenu('lightblue', 'left',4)">  <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">MOM</span>  </a>
+            <a href="javascript:void(0)" class="menu-item mom" @click="goTosubscriptionplan('http://localhost:3000')" v-on:mouseover="hoverOnSubmenu('lightblue', 'left',4)">  <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">MOM</span>  </a>
          </nav>
          <nav class="menu2" id="overlay-content2">
             <input type="checkbox" href="#" class="menu2-open" @click="closeNav2()" name="menu2-open" id="menu2-open" />
@@ -265,15 +265,49 @@ export default {
 <style scoped>
 
 
-.menu-item.flowz {background-color:#065399;}
-.menu-item.ewbuil {background-color:#b86ead}
-.menu-item.vmail {background-color:#c32025}
-.menu-item.mom {background-color:#777777}
+.dashboard::after {    content: "";
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-image: url(../assets/images/logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    opacity: 0.08;
+    animation: logozoom 5s;
+    z-index: -1; } 
 
-.menu-item.flowz:hover {background-color:#0e406d;}
-.menu-item.ewbuil:hover {background-color:#8e1972}
-.menu-item.vmail:hover {background-color:#860203}
-.menu-item.mom:hover {background-color:#333333}
+    @keyframes logozoom {
+      0% {
+        opacity: 0.01;
+    }
+    30% {
+      opacity: 0.05;
+    }
+    50% {
+      opacity: 0.02;
+    }
+    100% {
+      opacity: 0.08;
+    }
+    }
+
+  .menu2-open:checked + .menu2-open-button{ width: 56px;
+    height: 67px;
+    background-color: #e4e4e4;
+    transform: scale(1.2, 1) translate3d(0, 0, 0) !important;
+    left: 53px;
+    top: 8px;}
+.menu-open:checked + .menu-open-button { width: 56px;
+    height: 67px;
+    background-color: #e4e4e4;
+    transform: scale(1.2, 1) translate3d(0, 0, 0) !important;
+    left: 57px;
+    top: 8px;}
+.menu2 a img,
+.menu a img {display: inline-block !important;}
 .menus-icon img {width: 64px;
     height: 64px;}
 
@@ -318,9 +352,9 @@ export default {
     padding-top: 10px;
     margin-top: 10px;}
     
-.menu-item span.nam {font-size: 16px;line-height: 6px;padding: 0;top: -7px;position: relative;white-space: nowrap;}  
+.menu-item span.nam {font-size: 12px;line-height: 6px;padding: 0;top: -7px;position: relative;white-space: nowrap;}  
 .menu-item:hover span.nam {color:#828181}  
-.menu2-item span.nam {font-size: 16px;line-height: 6px;padding: 0;top: -7px;position: relative;white-space: nowrap;}  
+.menu2-item span.nam {font-size: 12px;line-height: 6px;padding: 0;top: -7px;position: relative;white-space: nowrap;}  
 .menu2-item:hover span.nam {color:#828181}
 
 .card11 {
@@ -391,8 +425,7 @@ html, body {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0, 0.1);
+    background-color: rgba(251, 251, 251, 0.1);
 }
 
 .overlay-content {
@@ -431,7 +464,6 @@ html, body {
 }
 
 .overlay a:hover, .overlay a:focus {
-    color: #f1f1f1;
 }
 
 .overlay .closebtn {
@@ -451,26 +483,12 @@ html, body {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #demoCardLeft{
   display : none;
 }
 
 .dastit_pos{
-  width: 100%;top: 13%;margin: auto;position: absolute;
+  width: 100%;top: 13%;margin: auto;position: absolute; opacity: 0
 }
 
 @media screen and (max-width: 700px) {
@@ -486,7 +504,6 @@ a {
 
 .menu-item,
 .menu-open-button {
-   background: #EEEEEE;
    border-radius: 100%;
    width: 80px;
    height: 80px;
@@ -577,8 +594,7 @@ a {
 } */
 
 .menu-item:hover {
-   background: #EEEEEE;
-   color: #3290B1;
+  
 }
 
 .menu-item:nth-child(3) {
@@ -761,17 +777,6 @@ a {
    color: #62C2E4;
    text-shadow: none;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 .menu2-item,
 .menu2-open-button {
@@ -1028,22 +1033,6 @@ a {
    color: #62C2E4;
    text-shadow: none;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 .wrapper {

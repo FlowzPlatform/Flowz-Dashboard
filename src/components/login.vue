@@ -311,10 +311,17 @@ export default {
                self.$message.warning("Email is not valid");
            }else{
                self.saveFileLoadingLogin = true;
-               axios.post(this.selectedTabIndex==1? config.loginUrl:config.ldapLoginUrl , {
-                email: self.login.email.trim(),
-                password: self.login.password.trim()
-            })
+               let userObj;
+               if(this.selectedTabIndex==1){
+                    userObj = {email: self.login.email.trim(),
+                    password: self.login.password.trim()}
+               }
+               else{
+                userObj = {email: self.login.email.trim(),
+                    passwd: self.login.password.trim()}
+               }
+               console.log('UserObject :', userObj)
+            axios.post(this.selectedTabIndex==1? config.loginUrl:config.ldapLoginUrl , userObj)
             .then(function (response) {
                console.log(response);
                 self.saveFileLoadingLogin = false;
