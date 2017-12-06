@@ -1,11 +1,11 @@
 <template>
     <Menu mode="horizontal" :theme="'primary'" style="background:#ffffff;">
         <Row type="flex">
-        <Col :span="1">
+        <!-- <Col :span="1">
             <Row type="flex" justify="end" align="middle">
               
             </Row>
-        </Col>
+        </Col> -->
         <i-col :span="5">
             <div class="f-logo">
                 <a href="#"><img src="../assets/images/logo.png"> </a>
@@ -14,9 +14,9 @@
         <i-col :span="18">
             <Row type="flex" justify="end">
                 <div class="layout-nav">
-                    <Menu-item name="2">
+                    <!-- <Menu-item name="2">
                         
-                    </Menu-item>
+                    </Menu-item> -->
                     <Menu-item name="3">
                       <Submenu name="1">
                         <template slot="title">
