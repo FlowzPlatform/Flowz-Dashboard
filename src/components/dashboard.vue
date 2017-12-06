@@ -2,58 +2,67 @@
   <div class="dashboard" >
    <div id="myNav" class="overlay">
       <div v-for="card in cards">
-         <div  v-if="position1 == card.position && index == card.index " v-bind:class= card.class >
-            <div class="img">
-               <img class="cardimg" src= "../assets/images/web-builder-img.png" :style="{ backgroundColor: card1 }">
+         <div  v-if="position1 == card.position && index == card.index " v-bind:class= card.class :style="{background : card1}" >
+           
+          <div class="img" >
+               <img class="cardimg" :src= card.img :style="{ backgroundColor: card1 }">
             </div>
             <div class="tit">
                <h4><b>{{card.title}}</b></h4>
             </div>
             <div class="container11">
-               <p>{{card.desc}} </p>
+               <p style="text-align: justify; font-size:12px; font-family: cursive" >{{card.desc}} </p>
             </div>
          </div>
-         <nav class="menu" id="overlay-content">
-            <input type="checkbox" checked href="#"  class="menu-open" @click="closeNav()" name="menu-open" id="menu-open"/>
-            <label class="menu-open-button" for="menu-open">
-            <span class="lines line-1"></span>
-            <span class="lines line-2"></span>
-            <span class="lines line-3"></span>
-            </label>
-            <a href="javascript:void(0)" class="menu-item flowz" @click="goTosubscriptionplan('http://engine.flowz.com')" v-on:mouseover="hoverOnSubmenu('red', 'left' , 1)"> <img class="cardimg" src="../assets/images/Flowz.png"> <span class="nam">Flowz</span></a>
-            <a href="javascript:void(0)" class="menu-item ewbuil" @click="goTosubscriptionplan('http://webbuilder.flowz.com')" v-on:mouseover="hoverOnSubmenu('purple', 'left' , 2)"> <img class="cardimg" src="../assets/images/Web-builder.png"> <span class="nam">Web Builder</span></a>
-            <a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan('http://vmail.flowz.com')" v-on:mouseover="hoverOnSubmenu('orange', 'left' ,3)">  <img class="cardimg" src="../assets/images/V-mail.png"> <span class="nam">V-mail</span> </a>
-            <a href="javascript:void(0)" class="menu-item mom" @click="goTosubscriptionplan('http://localhost:3000')" v-on:mouseover="hoverOnSubmenu('lightblue', 'left',4)">  <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">MOM</span>  </a>
-         </nav>
-         <nav class="menu2" id="overlay-content2">
-            <input type="checkbox" href="#" class="menu2-open" @click="closeNav2()" name="menu2-open" id="menu2-open" />
-            <label class="menu2-open-button" for="menu2-open">
-            <span class="lines2 line2-1"></span>
-            <span class="lines2 line2-2"></span>
-            <span class="lines2 line2-3"></span>
-            </label>
-            <!--<a href="#" class="menu2-item blue"> <i class="fa fa-anchor"></i> </a>
-               <a href="#" class="menu2-item green"> <i class="fa fa-coffee"></i> </a> -->
-            <a href="#" class="menu2-item account" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('red', 'right' , 5)"> <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">Accounting</span> </a>
-            <a href="#" class="menu2-item purple2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('purple', 'right' , 6)"> <img class="cardimg" src="../assets/images/DBETL.png"> <span class="nam">DBETL</span>  </a>
-            <a href="#" class="menu2-item orange2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('orange', 'right' , 7)"> <img class="cardimg" src="../assets/images/Quotes.png"> <span class="nam">Quotes</span>  </a>
-            <a href="#" class="menu2-item lightblue2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('lightblue', 'right' , 8)"> <img class="cardimg" src="../assets/images/icon-1.png"> <span class="nam">Users</span>  </a>
-         </nav>
       </div>
    </div>
+   
    <div class="dasbma">
       <div class="dastit dastit_pos"><span>Flowz Applications</span> Third-Party Applications</div>
       <div class="dasund">
          <div class="dasico">
             <nav class="menu">
-               <a href="javascript:void(0)"><img src="../assets/images/Website.png" id="icon1" @click="openNav()"> </a>
+              <div class="socialCircle-container-left">
+                <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item mom" @click="goTosubscriptionplan('http://mom.flowz.com')" v-on:mouseover="hoverOnSubmenu('#b89fda', 'left',4)">  <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">MOM</span>  </a></div>
+                <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan('http://vmail.flowz.com')" v-on:mouseover="hoverOnSubmenu('#f97777', 'left' ,3)">  <img class="cardimg" src="../assets/images/V-mail.png"> <span class="nam">V-mail</span> </a></div>
+                <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item ewbuil" @click="goTosubscriptionplan('http://webbuilder.flowz.com')" v-on:mouseover="hoverOnSubmenu('#e6a2d1', 'left' , 2)"> <img class="cardimg" src="../assets/images/Web-builder.png"> <span class="nam">Web Builder</span></a></div>
+                 <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item flowz" @click="goTosubscriptionplan('http://engine.flowz.com')" v-on:mouseover="hoverOnSubmenu('#689bc7', 'left' , 1)"> <img class="cardimg" src="../assets/images/Flowz.png"> <span class="nam">Flowz</span></a></div>
+      
+                   <div class="socialCircle-center-left closed left-menu">
+                       <input type="checkbox" checked v-show="active1" href="#"  class="menu-open" name="menu-open" id="menu-open"/>
+                       <label class="menu-open-button" for="menu-open"  v-show="active1" @click="openNav()">
+                       <span class="lines line-1"></span>
+                       <span class="lines line-2"></span>
+                       <span class="lines line-3"></span>
+                       </label>
+                       <a href="javascript:void(0)"><img src="../assets/images/Website.png" id="icon1"  @click="openNav()"> </a>
+                   </div>
+                 </div>
             </nav>
             <nav class="menu2">
-               <a href="javascript:void(0)"><img src="../assets/images/CRM.png" id="icon2" @click="openNav2()"> </a>
+               <div class="socialCircle-container-right">
+                   <div class="socialCircle-item-right">  <a href="#" class="menu2-item account" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('red', 'right' , 5)"> <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">Accounting</span> </a></div>
+                   <div class="socialCircle-item-right"><a href="#" class="menu2-item purple2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('purple', 'right' , 6)"> <img class="cardimg" src="../assets/images/DBETL.png"> <span class="nam">DBETL</span>  </a></div>
+                   <div class="socialCircle-item-right"><a href="#" class="menu2-item orange2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('orange', 'right' , 7)"> <img class="cardimg" src="../assets/images/Quotes.png"> <span class="nam">Quotes</span>  </a></div>
+                   <div class="socialCircle-item-right"><a href="#" class="menu2-item lightblue2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('lightblue', 'right' , 8)"> <img class="cardimg" src="../assets/images/icon-1.png"> <span class="nam">Users</span>  </a></div>
+                   <div class="socialCircle-center-right closed right-menu">
+                     <div v-show="active2">
+                       <input type="checkbox" checked href="#"  class="menu2-open" name="menu2-open" id="menu2-open"/>
+                       <label class="menu2-open-button" for="menu2-open" @click="openNav2()">
+                           <span class="lines2 line2-1"></span>
+                           <span class="lines2 line2-2"></span>
+                           <span class="lines2 line2-3"></span>
+                       </label>
+                     </div>
+                       <a href="javascript:void(0)"><img src="../assets/images/CRM.png" id="icon2" @click="openNav2()"> </a>
+                   </div>
+                 </div>
+               
             </nav>
          </div>
       </div>
    </div>
+
 </div>
 </template>
 
@@ -73,16 +82,32 @@ export default {
   data () {
     return {
       msg: 'Welcome to Dashboard',
-      card1: 'red',
+      card1: '',
       position1: '',
       index : '',
       leftup: 1000,
       topup: 200,
-      cards : []
+      cards : [],
+      active1:false,
+      active2:false
     }
   },
   created() {
 
+    $(document).ready(function() {
+      $( ".right-menu" ).socialCircle({
+        rotate: 270,
+        radius:140,
+        circleSize: 2,
+        speed:500
+    });
+      $( ".left-menu" ).socialCircle({
+      rotate: 90,
+      radius:140,
+      circleSize: 2,
+      speed:500
+    });
+  })
         var url_string = window.location.href;
         var url = new URL(url_string);
         location = location.domain === null ? location.input : location.domain ;
@@ -108,7 +133,8 @@ export default {
 
         this.cards = [
           {
-              img : "../assets/images/web-builder-img.png",
+              img : "../src/assets/images/todo.png",
+              color: "#FFFFFF",
               index: "1",
               class : "card11 webpart",
               title : "Flowz",
@@ -117,7 +143,8 @@ export default {
               
           },
           {
-              img :"../assets/images/web-builder-img.png" ,
+              img :"../src/assets/images/todo.png" ,
+              color: "red",
               index: "2",
               class : "card11 webpart",
               position : "left",
@@ -125,7 +152,8 @@ export default {
               desc : "Build the website you desire without any knowledge of coding.Flowz Web builder provides all the needed tool to create a stunning website.Just drag and drop the components to your page and publish the website.It is configured with very rich components and partial you can reuse through the process."
           },
           {
-              img :"../assets/images/web-builder-img.png" ,
+              img :"../src/assets/images/vmail.png" ,
+              color: "yellow",
               index: "3",
               class : "card11 webpart",
               position : "left",
@@ -133,7 +161,8 @@ export default {
               desc : "This is a user friendly Vue based email client.It can receives the mail , list it and show the email content. It can also send mail in plain or html format to multiple User in a effective and efficient way."
           },
           {
-              img :"../assets/images/web-builder-img.png" ,
+              img :"../src/assets/images/todo.png" ,
+              color: "gray",
               index: "4",
               class : "card11 webpart",
               position : "left",
@@ -141,7 +170,7 @@ export default {
               desc : "It is an user friendly way of listing the tasks, assigning them, to track them, maintain comments or action taken and its status updates of minutes.The user can create subtasks upto any level in real time."
           },
           {
-              img :"../assets/images/web-builder-img.png" ,
+              img :"../src/assets/images/web-builder-img.png" ,
               index: "5",
               class : "card11 crmpart",
               position : "right",
@@ -149,7 +178,7 @@ export default {
               desc : "It is an user friendly way of listing the tasks, assigning them, to track them, maintain comments or action taken and its status updates of minutes.The user can create subtasks upto any level in real time."
           },
           {
-              img :"../assets/images/web-builder-img.png" ,
+              img :"../src/assets/images/web-builder-img.png" ,
               index: "6",
               class : "card11 crmpart",
               position : "right",
@@ -157,7 +186,7 @@ export default {
               desc : "The Compatibility of your databases (both local and remote) are automatically created, configured and updated through the DBETL client. Creating, repairing, deleting and renaming and maintaining multiple databases is much simpler."
           },
           {
-              img :"../assets/images/web-builder-img.png" ,
+              img :"../src/assets/images/web-builder-img.png" ,
               index: "7",
               class : "card11 crmpart",
               position : "right",
@@ -165,7 +194,7 @@ export default {
               desc : "It is an user friendly way of listing the tasks, assigning them, to track them, maintain comments or action taken and its status updates of minutes.The user can create subtasks upto any level in real time."
           },
           {
-              img :"../assets/images/web-builder-img.png" ,
+              img :"../src/assets/images/web-builder-img.png" ,
               index: "8",
               class : "card11 crmpart",
               position : "right",
@@ -220,20 +249,22 @@ export default {
         // window.location='http://162.242.223.167';
       },
       openNav : function(){
-        document.getElementById("menu-open").checked = true;
-        document.getElementById("menu2-open").checked = true;
-        document.getElementById("myNav").style.display = "block";
-        document.getElementById("overlay-content").style.display = "block";
-        document.getElementById("overlay-content2").style.display = "none";
-        document.getElementById("icon1").style.display = "none";
+        this.clearCard();
+        if(this.active2){
+          $( ".right-menu" ).click();
+          this.active2=!this.active2;
+        }
+        console.log("OPen Nav")
+       this.active1=!this.active1;
       },
-      openNav2 : function(){
-        document.getElementById("menu-open").checked = true;
-        document.getElementById("menu2-open").checked = true;
-        document.getElementById("myNav").style.display = "block";
-        document.getElementById("overlay-content2").style.display = "block";
-        document.getElementById("overlay-content").style.display = "none";
-        document.getElementById("icon2").style.display = "none";
+       openNav2 : function(){
+        this.clearCard();
+        if(this.active1){
+        $( ".left-menu" ).click();
+        this.active1=!this.active1;
+        }
+        // if(!this.active2)
+          this.active2=!this.active2;
       },
 
       closeNav : function(){
@@ -264,6 +295,73 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.socialCircle-item-left {
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  margin: 50%;
+  text-align: center;
+  color: #ffffff;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.socialCircle-container-left {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+}
+
+.socialCircle-center-left {
+  width: 100px;
+  height: 100px;
+  margin: 49%;
+  position: absolute;
+  text-align: center;
+  color: #ffffff;
+  font-size: 60px;
+  cursor: pointer;
+}
+
+
+.socialCircle-item-right {
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  margin-left: 52%;
+  margin-right: 50%;
+  margin-top: 52%;
+  margin-bottom: 50%;
+  text-align: center;
+  color: #ffffff;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.socialCircle-container-right {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+}
+
+.socialCircle-center-right {
+  width: 100px;
+  height: 100px;
+  margin: 50%;
+  position: absolute;
+  text-align: center;
+  color: #ffffff;
+  font-size: 60px;
+  cursor: pointer;
+}
+
 
 .dashboard::after {    content: "";
     position: fixed;
@@ -271,7 +369,7 @@ export default {
     bottom: 0;
     left: 0;
     right: 0;
-    background-image: url(../assets/images/logo.png);
+    background-image: url(../assets/images/logo-bg.png);
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center center;
@@ -294,38 +392,42 @@ export default {
     }
     }
 
-  .menu2-open:checked + .menu2-open-button{ width: 56px;
-    height: 67px;
-    background-color: #e4e4e4;
-    transform: scale(1.2, 1) translate3d(0, 0, 0) !important;
-    left: 53px;
-    top: 8px;}
-.menu-open:checked + .menu-open-button { width: 56px;
-    height: 67px;
-    background-color: #e4e4e4;
-    transform: scale(1.2, 1) translate3d(0, 0, 0) !important;
-    left: 57px;
-    top: 8px;}
+    .menu2-open:checked + .menu2-open-button{ 
+      width: 60px;
+      height: 70px;
+      background-color: #e4e4e4;
+      transform: scale(1.2, 1) translate3d(0, 0, 0) !important;
+      left: 55%;
+      top: 15px;
+      }
+  .menu-open:checked + .menu-open-button {    
+      width: 60px;
+      height: 70px;
+      background-color: #e4e4e4;
+      transform: scale(1.2, 1) translate3d(0, 0, 0) !important;
+      left: 55%;
+      top: 15px;}
 .menu2 a img,
 .menu a img {display: inline-block !important;}
 .menus-icon img {width: 64px;
     height: 64px;}
 
-    .card11.webpart {
+.card11.webpart {
     position: fixed;
     right: 2%;
-    top: 80px;
+    top: 120px;
     max-height: 60%;
-    overflow: auto;    padding: 10px;background-color: #fff;
+    overflow: auto;    padding: 10px;background-color: #f3d9e5;
 }
 .webpart .img {
     width: 100px;
     max-height: 100px;
-    display: inline-block
+    display: inline-block;
+    border: 1px solid #b3afaf;
 }
 .webpart .img img { max-width: 100px;
     max-height: 100px;}
-.webpart .tit {display: inline-block;    width: 150px;}
+.webpart .tit {display: inline-block;    width: 150px; font-family: -webkit-body;}
 .webpart .container11 {    padding: 2px 16px;
     border-top: solid 1px #ccc;
     padding-top: 10px;
@@ -335,7 +437,7 @@ export default {
 .card11.crmpart {
     position: fixed;
     left: 2%;
-    top: 80px;
+    top: 120px;
     max-height: 60%;
     overflow: auto;    padding: 10px;background-color: #fff;
 }
@@ -352,9 +454,9 @@ export default {
     padding-top: 10px;
     margin-top: 10px;}
     
-.menu-item span.nam {font-size: 12px;line-height: 6px;padding: 0;top: -7px;position: relative;white-space: nowrap;}  
+.menu-item span.nam {font-size: 12px;line-height: 6px;padding: 0;top: -7px;position: relative;white-space: nowrap; opacity: 0}  
 .menu-item:hover span.nam {color:#828181}  
-.menu2-item span.nam {font-size: 12px;line-height: 6px;padding: 0;top: -7px;position: relative;white-space: nowrap;}  
+.menu2-item span.nam {font-size: 12px;line-height: 6px;padding: 0;top: -7px;position: relative;white-space: nowrap; ; opacity: 0}  
 .menu2-item:hover span.nam {color:#828181}
 
 .card11 {
@@ -417,7 +519,7 @@ html, body {
 
 
 
-.overlay {
+/* .overlay {
     height: 100%;
     width: 100%;
     display: none;
@@ -426,7 +528,7 @@ html, body {
     top: 0;
     left: 0;
     background-color: rgba(251, 251, 251, 0.1);
-}
+} */
 
 .overlay-content {
     position: relative;
@@ -505,9 +607,10 @@ a {
 .menu-item,
 .menu-open-button {
    border-radius: 100%;
-   width: 80px;
-   height: 80px;
-    margin-left: -42px;
+   width: 70px;
+   height: 70px;
+   margin-left: -34px;
+   margin-top:5px;
    position: absolute;
    color: #FFFFFF;
    text-align: center;
@@ -519,6 +622,7 @@ a {
    transition: transform ease-out 200ms;
    transition: transform ease-out 200ms, -webkit-transform ease-out 200ms;
 }
+
 
 .menu-open {
    display: none;
@@ -782,9 +886,10 @@ a {
 .menu2-open-button {
    background: #EEEEEE;
    border-radius: 100%;
-   width: 80px;
-   height: 80px;
-   margin-left: -38px;
+   width: 70px;
+   height: 70px;
+   margin-left: -34px;
+   margin-top:5px;
    position: absolute;
    color: #FFFFFF;
    text-align: center;
@@ -796,6 +901,7 @@ a {
    transition: transform ease-out 200ms;
    transition: transform ease-out 200ms, -webkit-transform ease-out 200ms;
 }
+
 
 .menu2-open {
    display: none;
