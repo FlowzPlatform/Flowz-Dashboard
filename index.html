@@ -10,9 +10,13 @@
       <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
       <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
           
+      <link rel="stylesheet" href="bower_components/BigVideo/css/bigvideo.css">
+      
       <link href="./static/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
       <link href="./static/css/font.css" rel="stylesheet" type="text/css" />
       <link href="./static/css/custom.css" rel="stylesheet" type="text/css" />
+      <link href="https://fonts.googleapis.com/css?family=Noto+Serif|Lobster" rel="stylesheet">
+
       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/wheelnav@1.7.1/js/dist/raphael.min.js"></script>
       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/wheelnav@1.7.1/js/dist/wheelnav.min.js"></script>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -22,9 +26,57 @@
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> 
       <script src="scripts/socialCircle.js"></script> 
 
+      <style>
+      body {
+        font-family: 'Noto Serif', serif;
+        font-family: 'Lobster', serif;
+        font-size: 48px;
+      }
+    </style>
+
   </head>
   <body>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+
+    <!-- BigVideo Dependencies -->
+    <script>window.jQuery || document.write('<script src="bower_components/jquery/jquery.min.js"><\/script>')</script>
+    <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="bower_components/jquery-ui/ui/minified/jquery-ui.min.js"></script>
+    <script src="//vjs.zencdn.net/4.3/video.js"></script>
+
+    <!-- BigVideo -->
+    <script src="bower_components/BigVideo/lib/bigvideo.js"></script>
+
+    <!-- Demo -->
+    <script>
+	    $(function() {
+            var BV = new $.BigVideo({useFlashForFirefox:false});
+            var vids = [
+            'vids/NY_street.mp4',
+            'vids/night_light _roads.mp4',
+            'vids/street_activity.mp4',
+            'vids/freezy_traffic.mp4',
+            'vids/sunset_lakeview.mp4',
+            'vids/Meeting.mp4',
+            'vids/water_flow.mp4',
+            'vids/mini_icy rocky_waves.mp4',
+            'vids/road_view.mp4',
+            'vids/sunset_lakeview.mp4',
+            'vids/Aerial _Sailboat _at_Sunset.mp4',
+            'vids/seaplane_half _turn.mp4',
+            'vids/winter_city_view.mp4',
+            'vids/sky_contemplation.mp4',
+            'vids/night_pier.mp4',
+            'vids/city_stadium.mp4',
+            'vids/take_off_on_water.mp4',
+            'vids/seaplane_half _turn.mp4',
+        ];
+        vids.sort(function() { return 0.5 - Math.random() }); // random order on load
+        console.log(vids);
+        BV.init();
+        BV.showPlaylist(vids,{ambient:true});
+	    });
+    </script>
   </body>
 </html>

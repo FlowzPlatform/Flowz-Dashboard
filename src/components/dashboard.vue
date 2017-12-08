@@ -3,15 +3,15 @@
    <div id="myNav" class="overlay">
       <div v-for="card in cards">
          <div  v-if="position1 == card.position && index == card.index " v-bind:class= card.class :style="{background : card1}" >
-           
-          <div class="img" >
-               <img class="cardimg" :src= card.img :style="{ backgroundColor: card1 }">
-            </div>
             <div class="tit">
-               <h4><b>{{card.title}}</b></h4>
+                <h4><b>{{card.title}}</b></h4>
+             </div>
+          <div class="img" >
+               <img class="cardimg" :src= card.img >
             </div>
+            
             <div class="container11">
-               <p style="text-align: justify; font-size:12px; font-family: cursive" >{{card.desc}} </p>
+               <p style="text-align: justify; font-size:14px; font-family: Lobster, serif" >{{card.desc}} </p>
             </div>
          </div>
       </div>
@@ -23,10 +23,10 @@
          <div class="dasico">
             <nav class="menu">
               <div class="socialCircle-container-left">
-                <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item mom" @click="goTosubscriptionplan('http://mom.flowz.com')" v-on:mouseover="hoverOnSubmenu('#b89fda', 'left',4)">  <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">MOM</span>  </a></div>
-                <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan('http://vmail.flowz.com')" v-on:mouseover="hoverOnSubmenu('#f97777', 'left' ,3)">  <img class="cardimg" src="../assets/images/V-mail.png"> <span class="nam">V-mail</span> </a></div>
-                <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item ewbuil" @click="goTosubscriptionplan('http://webbuilder.flowz.com')" v-on:mouseover="hoverOnSubmenu('#e6a2d1', 'left' , 2)"> <img class="cardimg" src="../assets/images/Web-builder.png"> <span class="nam">Web Builder</span></a></div>
-                 <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item flowz" @click="goTosubscriptionplan('http://engine.flowz.com')" v-on:mouseover="hoverOnSubmenu('#689bc7', 'left' , 1)"> <img class="cardimg" src="../assets/images/Flowz.png"> <span class="nam">Flowz</span></a></div>
+                <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item mom" @click="goTosubscriptionplan('http://mom.flowz.com')" v-on:mouseover="hoverOnSubmenu('#6BBAA7', 'left',4)">  <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">MOM</span>  </a></div>
+                <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan('http://vmail.flowz.com')" v-on:mouseover="hoverOnSubmenu('#FBA100', 'left' ,3)">  <img class="cardimg" src="../assets/images/V-mail.png"> <span class="nam">V-mail</span> </a></div>
+                <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item ewbuil" @click="goTosubscriptionplan('http://webbuilder.flowz.com')" v-on:mouseover="hoverOnSubmenu('#6C648B', 'left' , 2)"> <img class="cardimg" src="../assets/images/Web-builder.png"> <span class="nam">Web Builder</span></a></div>
+                 <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item flowz" @click="goTosubscriptionplan('http://engine.flowz.com')" v-on:mouseover="hoverOnSubmenu('#B6A19E', 'left' , 1)"> <img class="cardimg" src="../assets/images/Flowz.png"> <span class="nam">Work-flow</span></a></div>
       
                    <div class="socialCircle-center-left closed left-menu">
                        <input type="checkbox" checked v-show="active1" href="#"  class="menu-open" name="menu-open" id="menu-open"/>
@@ -41,10 +41,10 @@
             </nav>
             <nav class="menu2">
                <div class="socialCircle-container-right">
-                   <div class="socialCircle-item-right">  <a href="#" class="menu2-item account" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('red', 'right' , 5)"> <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">Accounting</span> </a></div>
-                   <div class="socialCircle-item-right"><a href="#" class="menu2-item purple2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('purple', 'right' , 6)"> <img class="cardimg" src="../assets/images/DBETL.png"> <span class="nam">DBETL</span>  </a></div>
-                   <div class="socialCircle-item-right"><a href="#" class="menu2-item orange2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('orange', 'right' , 7)"> <img class="cardimg" src="../assets/images/Quotes.png"> <span class="nam">Quotes</span>  </a></div>
-                   <div class="socialCircle-item-right"><a href="#" class="menu2-item lightblue2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('lightblue', 'right' , 8)"> <img class="cardimg" src="../assets/images/icon-1.png"> <span class="nam">Users</span>  </a></div>
+                   <div class="socialCircle-item-right">  <a href="#" class="menu2-item account" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('#6BBAA7', 'right' , 5)"> <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">Accounting</span> </a></div>
+                   <div class="socialCircle-item-right"><a href="#" class="menu2-item purple2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('#FBA100', 'right' , 6)"> <img class="cardimg" src="../assets/images/DBETL.png"> <span class="nam">DBETL</span>  </a></div>
+                   <div class="socialCircle-item-right"><a href="#" class="menu2-item orange2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('#6C648B', 'right' , 7)"> <img class="cardimg" src="../assets/images/Quotes.png"> <span class="nam">Quotes</span>  </a></div>
+                   <div class="socialCircle-item-right"><a href="#" class="menu2-item lightblue2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('#B6A19E', 'right' , 8)"> <img class="cardimg" src="../assets/images/icon-1.png"> <span class="nam">Users</span>  </a></div>
                    <div class="socialCircle-center-right closed right-menu">
                      <div v-show="active2">
                        <input type="checkbox" checked href="#"  class="menu2-open" name="menu2-open" id="menu2-open"/>
@@ -95,18 +95,22 @@ export default {
   created() {
 
     $(document).ready(function() {
+      
+      setTimeout(() => {
       $( ".right-menu" ).socialCircle({
-        rotate: 270,
-        radius:140,
-        circleSize: 2,
-        speed:500
-    });
-      $( ".left-menu" ).socialCircle({
-      rotate: 90,
+      rotate: 270,
       radius:140,
       circleSize: 2,
       speed:500
-    });
+  });
+    $( ".left-menu" ).socialCircle({
+    rotate: 90,
+    radius:140,
+    circleSize: 2,
+    speed:500
+  });
+    }, 1500);
+
   })
         var url_string = window.location.href;
         var url = new URL(url_string);
@@ -137,7 +141,7 @@ export default {
               color: "#FFFFFF",
               index: "1",
               class : "card11 webpart",
-              title : "Flowz",
+              title : "Work-flow",
               position : "left",
               desc : "Build your own business flow using BPMN without a vast knoledge of coding. It defines applications as networks of black box processes, which exchange data across predefined connections  by message passing, where the connections are specified externally to the processes.",
               
@@ -210,7 +214,9 @@ export default {
     },
 
   methods :{
-      hoverOnSubmenu: function(color, position, index) {
+    hoverOnSubmenu: function(color, position, index) {
+        if((position=='left' && this.active1) || (position=='right' && this.active2)){
+
         
         this.index = index;
         this.card1 = color
@@ -224,7 +230,8 @@ export default {
         }
         // console.log(color, position, this.card1)
         // alert('skjdk')
-      },
+      }
+    },
 
       clearCard: function() {
         this.card1 = ''
@@ -420,18 +427,21 @@ body {
     overflow: auto;    padding: 10px;background-color: #f3d9e5;
 }
 .webpart .img {
-    width: 100px;
-    max-height: 100px;
+    margin-top: 5px;
+    width: auto;
+    max-height: auto;
     display: inline-block;
-    border: 1px solid #b3afaf;
+    /* border: 1px solid #b3afaf; */
 }
-.webpart .img img { max-width: 100px;
-    max-height: 100px;}
-.webpart .tit {display: inline-block;    width: 150px; font-family: -webkit-body;}
+.webpart .img img { 
+    max-width: -webkit-fill-available;
+    max-height: -webkit-fill-available;}
+.webpart .tit {display: inline-block;    width: -webkit-fill-available; font-family: 'Noto serif'; color: white}
 .webpart .container11 {    padding: 2px 16px;
     border-top: solid 1px #ccc;
     padding-top: 10px;
-    margin-top: 10px;}
+    margin-top: 10px;
+    color: white}
   
 
 .card11.crmpart {
@@ -442,17 +452,19 @@ body {
     overflow: auto;    padding: 10px;background-color: #fff;
 }
 .crmpart .img {
-    width: 100px;
-    max-height: 100px;
+    margin-top: 5px;
+    width: auto;
+    max-height: auto;
     display: inline-block
 }
-.crmpart .img img { max-width: 100px;
-    max-height: 100px;}
-.crmpart .tit {display: inline-block;    width: 150px;}
+.crmpart .img img { max-width: -webkit-fill-available;
+    max-height: -webkit-fill-available;}
+.crmpart .tit {display: inline-block;    width: 150px; font-family: 'Noto serif'; color: white}
 .crmpart .container11 {    padding: 2px 16px;
     border-top: solid 1px #ccc;
     padding-top: 10px;
-    margin-top: 10px;}
+    margin-top: 10px;
+    color: white}
     
 .menu-item span.nam {font-size: 12px;line-height: 6px;padding: 0;top: -7px;position: relative;white-space: nowrap; opacity: 0}  
 .menu-item:hover span.nam {color:#828181}  
@@ -471,7 +483,7 @@ body {
 }
 
 .cardimg {
-    border-radius: 5px 5px 0 0;
+    /* border-radius: 5px 5px 0 0; */
     width:100%
 }
 
