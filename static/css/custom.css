@@ -13,7 +13,7 @@ font-family: 'Helvetica-LT-Roman';
 body {margin: 0; padding: 0;}
 .lhed { display: block; width: 100%; padding: 30px;}
 .lcontended {width: 100%;  display: block;}
-.lundcon {max-width: 700px;width: 100%;position: relative;float: left;overflow: hidden;top: 50%;left: 50%;margin: auto;position: absolute;-ms-transform: translateX(-50%) translateY(-50%);transform: translateX(-50%) translateY(-50%);-webkit-transform: translateX(-50%) translateY(-50%); background: steelblue}
+.lundcon {max-width: 700px;width: 100%;position: relative;float: left;overflow: hidden;top: 50%;left: 50%;margin: auto;position: absolute;-ms-transform: translateX(-50%) translateY(-50%);transform: translateX(-50%) translateY(-50%);-webkit-transform: translateX(-50%) translateY(-50%); background: rgba(70, 131, 180, 0)}
 .lrpt {width: 100%;min-height: 250px;padding: 112px 0;float: left;}
 .lrpt .lsrpt,.lrpt .rsrpt {float: left;}
 .lrpt .lsrpt {width: 50%; display: inline-block;}

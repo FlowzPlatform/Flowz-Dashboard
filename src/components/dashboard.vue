@@ -21,12 +21,72 @@
       <div class="dastit dastit_pos"><span>Flowz Applications</span> Third-Party Applications</div>
       <div class="dasund">
          <div class="dasico">
+		 
+		 
             <nav class="menu">
               <div class="socialCircle-container-left">
-                <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item mom" @click="goTosubscriptionplan('http://mom.flowz.com')" v-on:mouseover="hoverOnSubmenu('#6BBAA7', 'left',4)">  <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">MOM</span>  </a></div>
-                <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan('http://vmail.flowz.com')" v-on:mouseover="hoverOnSubmenu('#FBA100', 'left' ,3)">  <img class="cardimg" src="../assets/images/V-mail.png"> <span class="nam">V-mail</span> </a></div>
-                <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item ewbuil" @click="goTosubscriptionplan('http://webbuilder.flowz.com')" v-on:mouseover="hoverOnSubmenu('#6C648B', 'left' , 2)"> <img class="cardimg" src="../assets/images/Web-builder.png"> <span class="nam">Web Builder</span></a></div>
-                 <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item flowz" @click="goTosubscriptionplan('http://engine.flowz.com')" v-on:mouseover="hoverOnSubmenu('#B6A19E', 'left' , 1)"> <img class="cardimg" src="../assets/images/Flowz.png"> <span class="nam">Work-flow</span></a></div>
+                <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item mom" @click="goTosubscriptionplan('http://mom.flowz.com')" v-on:mouseover="hoverOnSubmenu('#6BBAA7', 'left',4)">
+				
+					<div class="dashcub mom">
+						<div class="dascutx">
+							<div class="dascufo">
+								<span class="tit">MOM</span>
+								<span class="tex">It is an user friendly 
+				way of listing the 
+				tasks, assigning them</span>
+							</div>   
+						</div>
+					   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-4.png"> </div></div>
+					</div>
+					
+				</a></div>
+				
+                <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan('http://vmail.flowz.com')" v-on:mouseover="hoverOnSubmenu('#FBA100', 'left' ,3)">
+					
+					<div class="dashcub v-mail">
+						<div class="dascutx">
+							<div class="dascufo">
+								<span class="tit">V-Mail</span>
+								<span class="tex">This is a user 
+				friendly Vue based 
+				email client.It can 
+				receives the mail</span>
+							</div>   
+						</div>
+					   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-3.png"> </div></div>
+					</div>
+					
+				</a></div>
+                <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item ewbuil" @click="goTosubscriptionplan('http://webbuilder.flowz.com')" v-on:mouseover="hoverOnSubmenu('#6C648B', 'left' , 2)">
+				
+					<div class="dashcub web-builder">
+						<div class="dascutx">
+							<div class="dascufo">
+								<span class="tit">Web Builder</span>
+								<span class="tex">Build the website 
+				you desire without 
+				any knowledge 
+				of coding.</span>
+							</div>   
+						</div>
+					   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-2.png"> </div></div>
+					</div>
+					
+				</a></div>
+                 <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item flowz" @click="goTosubscriptionplan('http://engine.flowz.com')" v-on:mouseover="hoverOnSubmenu('#B6A19E', 'left' , 1)">
+					
+					<div class="dashcub flow">
+						<div class="dascutx">
+							<div class="dascufo">
+								<span class="tit">flow</span>
+								<span class="tex">Build your own business fow using BPMN without knoledge of coding</span>
+							</div>   
+						</div>
+					   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-1.png"> </div></div>
+					</div>
+					
+					
+				 </a></div>
       
                    <div class="socialCircle-center-left closed left-menu">
                        <input type="checkbox" checked v-show="active1" href="#"  class="menu-open" name="menu-open" id="menu-open"/>
@@ -39,12 +99,73 @@
                    </div>
                  </div>
             </nav>
+			
+			
+			
             <nav class="menu2">
                <div class="socialCircle-container-right">
-                   <div class="socialCircle-item-right">  <a href="#" class="menu2-item account" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('#6BBAA7', 'right' , 5)"> <img class="cardimg" src="../assets/images/MOM.png"> <span class="nam">Accounting</span> </a></div>
-                   <div class="socialCircle-item-right"><a href="#" class="menu2-item purple2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('#FBA100', 'right' , 6)"> <img class="cardimg" src="../assets/images/DBETL.png"> <span class="nam">DBETL</span>  </a></div>
-                   <div class="socialCircle-item-right"><a href="#" class="menu2-item orange2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('#6C648B', 'right' , 7)"> <img class="cardimg" src="../assets/images/Quotes.png"> <span class="nam">Quotes</span>  </a></div>
-                   <div class="socialCircle-item-right"><a href="#" class="menu2-item lightblue2" @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('#B6A19E', 'right' , 8)"> <img class="cardimg" src="../assets/images/icon-1.png"> <span class="nam">Users</span>  </a></div>
+                   <div class="socialCircle-item-right">  <a href="#" class="menu2-item " @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('#6BBAA7', 'right' , 5)"> 
+				   
+					<div class="dashcub accounting">
+						<div class="dascutx">
+							<div class="dascufo">
+								<span class="tit">Accounting</span>
+								<span class="tex">It is an user friendly
+				way of listing the tasks,
+				assigning them</span>
+							</div>   
+						</div>
+					   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-5.png"> </div></div>
+					</div>
+				   
+				   </a></div>
+                   <div class="socialCircle-item-right"><a href="#" class="menu2-item " @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('#FBA100', 'right' , 6)"> 
+				   
+					<div class="dashcub dbetl">
+						<div class="dascutx">
+							<div class="dascufo">
+								<span class="tit">DBETL</span>
+								<span class="tex">The Compatibility of
+				your databases
+				are automatically
+				created</span>
+							</div>   
+						</div>
+					   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-6.png"> </div></div>
+					</div>
+				   
+				   </a></div>
+                   <div class="socialCircle-item-right"><a href="#" class="menu2-item " @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('#6C648B', 'right' , 7)"> 
+				   
+					<div class="dashcub quotes">
+						<div class="dascutx">
+							<div class="dascufo">
+								<span class="tit">Quotes</span>
+								<span class="tex">It is an user friendly
+				way of listing the
+				tasks,assigning
+				them,to track them</span>
+							</div>   
+						</div>
+					   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-7.png"> </div></div>
+					</div>
+				   
+				   </a></div>
+                   <div class="socialCircle-item-right"><a href="#" class="menu2-item " @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('#B6A19E', 'right' , 8)">
+				   
+					<div class="dashcub users">
+						<div class="dascutx">
+							<div class="dascufo">
+								<span class="tit">Users</span>
+								<span class="tex">Successful CRM is
+				about competing in the
+				relationship dimension.</span>
+							</div>   
+						</div>
+					   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-8.png"> </div></div>
+					</div>
+				   
+				   </a></div>
                    <div class="socialCircle-center-right closed right-menu">
                      <div v-show="active2">
                        <input type="checkbox" checked href="#"  class="menu2-open" name="menu2-open" id="menu2-open"/>
@@ -307,9 +428,85 @@ body {
   padding: 0;
 }
 
+.socialCircle-container-left .menu-item {width:210px; height:185px;}
+
+.socialCircle-container-left .socialCircle-item-left:nth-child(1) {-webkit-transform: translate3d(36px, 180px, 0) rotate(-160deg);
+    transform: translate3d(36px, 180px, 0) rotate(-160deg);}
+
+.socialCircle-container-left .socialCircle-item-left:nth-child(2) {-webkit-transform: translate3d(-95px, 132px, 0) rotate(-114deg);
+    transform: translate3d(-95px, 132px, 0) rotate(-114deg);}
+
+.socialCircle-container-left .socialCircle-item-left:nth-child(3) {-webkit-transform: translate3d(-149px, -2px, 0) rotate(-65deg);
+    transform: translate3d(-149px, -2px, 0) rotate(-65deg);}
+
+.socialCircle-container-left .socialCircle-item-left:nth-child(4) {    -webkit-transform: translate3d(-88px, -122px, 0) rotate(-22deg);
+    transform: translate3d(-88px, -122px, 0) rotate(-22deg);}
+	
+
+	
+	
+.socialCircle-container-left .socialCircle-item-left:nth-child(1) .dascufo {-webkit-transform: translate3d(5px, 88px, 0) rotate(-199deg);
+    transform: translate3d(5px, 88px, 0) rotate(-199deg); width:120px;}
+
+.socialCircle-container-left .socialCircle-item-left:nth-child(2) .dascufo {-webkit-transform: translate3d(38px, 63px, 0) rotate(-249deg);
+    transform: translate3d(38px, 63px, 0) rotate(-249deg); width: 110px;}
+
+.socialCircle-container-left .socialCircle-item-left:nth-child(3) .dascufo {-webkit-transform: translate3d(30px, 36px, 0) rotate(68deg);
+    transform: translate3d(30px, 36px, 0) rotate(68deg);     width: 110px;}
+
+.socialCircle-container-left .socialCircle-item-left:nth-child(4) .dascufo {    -webkit-transform: translate3d(13px, 18px, 0) rotate(21deg);
+    transform: translate3d(13px, 18px, 0) rotate(21deg);}
+	
+	
+	
+	
+.socialCircle-container-right .socialCircle-item-right:nth-child(1) {-webkit-transform:translate3d(-47px, -165px, 0) rotate(380deg);
+    transform: translate3d(-47px, -165px, 0) rotate(380deg);}
+	
+.socialCircle-container-right .socialCircle-item-right:nth-child(2) {-webkit-transform: translate3d(102px, -103px, 0) rotate(73deg);
+    transform:translate3d(102px, -103px, 0) rotate(73deg);}
+
+.socialCircle-container-right .socialCircle-item-right:nth-child(3) {-webkit-transform: translate3d(130px, 31px, 0) rotate(120deg);
+    transform:translate3d(130px, 31px, 0) rotate(120deg);}
+
+.socialCircle-container-right .socialCircle-item-right:nth-child(4) {    -webkit-transform: translate3d(37px, 141px, 0) rotate(168deg);
+    transform: translate3d(37px, 141px, 0) rotate(168deg);}
+	
+	
+.socialCircle-container-right .socialCircle-item-right .dascufo { text-align: right;}
+
+.socialCircle-container-right .socialCircle-item-right:nth-child(1) .dascufo {-webkit-transform:translate3d(-15px, 16px, 0) rotate(342deg);
+    transform:translate3d(-15px, 16px, 0) rotate(342deg);}
+	
+.socialCircle-container-right .socialCircle-item-right:nth-child(2) .dascufo {-webkit-transform: translate3d(-40px, 38px, 0) rotate(-73deg);
+     transform: translate3d(-40px, 38px, 0) rotate(-73deg);     width: 110px;}
+
+.socialCircle-container-right .socialCircle-item-right:nth-child(3) .dascufo {-webkit-transform:translate3d(-40px, 90px, 0) rotate(-120deg);
+    transform:translate3d(-40px, 90px, 0) rotate(-120deg); width: 100px;}
+
+.socialCircle-container-right .socialCircle-item-right:nth-child(4) .dascufo {    -webkit-transform: translate3d(-9px, 84px, 0) rotate(-170deg);
+    transform:translate3d(-9px, 84px, 0) rotate(-170deg); width: 110px;}
+	
+	
+	
+	
+.socialCircle-container-right .socialCircle-item-right[style="border-radius: 0px; top: 50px; left: 50px; line-height: 0px; margin: 0px;"],
+.socialCircle-container-right .socialCircle-item-right[style="border-radius: 0px; top: 0px; left: 0px; line-height: 0px;"],
+
+.socialCircle-container-left  .socialCircle-item-left[style="border-radius: 0px; top: 50px; left: 50px; line-height: 0px; margin: 0px;"],
+.socialCircle-container-left  .socialCircle-item-left[style="border-radius: 0px; top: 0px; left: 0px; line-height: 0px;"] {
+    opacity: 0;
+    height: 0px;
+    width: 0px;
+    -webkit-transition: -webkit-transform ease-out 200ms;
+    transition: -webkit-transform ease-out 200ms;
+    transition: transform ease-out 200ms;
+    transition: transform ease-out 200ms, -webkit-transform ease-out 200ms;
+    overflow: hidden;
+    transform: scale(0);
+}
+
 .socialCircle-item-left {
-  width: 80px;
-  height: 80px;
   position: absolute;
   margin: 50%;
   text-align: center;
@@ -338,8 +535,6 @@ body {
 
 
 .socialCircle-item-right {
-  width: 80px;
-  height: 80px;
   position: absolute;
   margin-left: 52%;
   margin-right: 50%;
@@ -376,12 +571,12 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    background-image: url(../assets/images/logo-bg.png);
-    background-size: contain;
+    background-image: url(../assets/images/BG.jpg);
+    background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
-    opacity: 0.08;
-    animation: logozoom 5s;
+    opacity:1;
+   
     z-index: -1; } 
 
     @keyframes logozoom {
@@ -414,8 +609,8 @@ body {
       transform: scale(1.2, 1) translate3d(0, 0, 0) !important;
       left: 55%;
       top: 15px;}
-.menu2 a img,
-.menu a img {display: inline-block !important;}
+/*.menu2 a img,
+.menu a img {display: inline-block !important;}*/
 .menus-icon img {width: 64px;
     height: 64px;}
 
@@ -640,9 +835,9 @@ a {
    display: none;
 }
 
-.menu a img{
+/*.menu a img{
   border-radius: 50%;
-}
+}*/
 
 .lines {
    width: 25px;
@@ -896,7 +1091,6 @@ a {
 
 .menu2-item,
 .menu2-open-button {
-   background: #EEEEEE;
    border-radius: 100%;
    width: 70px;
    height: 70px;
@@ -919,9 +1113,6 @@ a {
    display: none;
 }
 
-.menu2 a img{
-  border-radius: 50%;
-}
 
 .lines2 {
    width: 25px;
@@ -989,7 +1180,6 @@ a {
 } */
 
 .menu2-item:hover {
-   background: #EEEEEE;
    color: #3290B1;
 }
 
@@ -1240,6 +1430,75 @@ h1.heading {
   font-weight:600;
   text-transform: uppercase
 }
+
+
+.dasbordmin {background-image: url(../assets/images/BG.jpg); background-size: cover; width: 100%; height: 100%; position: fixed; }
+
+.dashcub {margin-top: 20px;text-align: center;display: inline-block;}
+.dascutx {height: 115px;width: 210px;position: relative;}
+.dascuico{width: 120px;position: relative;background-color: #c8df4a;height: 47px;-webkit-border-radius: 0px 0px 126px 126px / 0px 0px 110px 110px;border-radius: 0%  0%  130%  130%  / 0   0%   260%  260%;display: inline-block;top: -1px;}
+.dascutx:before {content: "";position: absolute;background-color: #ffffff;width: 210px;top: -20px;height: 40px;left: 0;border-radius: 100%;}
+.dascutx:after {content: "";height: 115px;width: 210px;position: absolute;border-top: 115px solid #ffffff;border-left: 45px solid transparent;border-right: 45px solid transparent;left: 0;top: 0;}
+.dascuico:after {content: "";background-color: #c8df4a;width: 100%;top: -7px;height: 17px;left: 0;border-radius: 100%;display: inline-block;position: absolute;}
+.dascufo {position: relative;z-index: 1;width: 149px;margin: 0 auto;text-align: left;}
+.dascufo .tit {width: 100%;display: inline-block;font-family: 'Helvetica-N-Md';font-size: 18px;text-transform: capitalize; line-height:20px; float:left;}
+.dascufo .tex {font-family: 'Helvetica-LT-Roman';font-size: 13px;line-height: 15px;display: inline-block; line-height:14px; float:left;}
+.dasvubot {min-height: 46px;display: inline-block;vertical-align: middle;position: relative;z-index: 1;margin-top: -19px;}
+
+.flow .tit {color: #576509;}
+.flow .tex {color: #666666;}
+.flow .dascuico:after {}
+.flow .dascuico {}
+
+.web-builder .tit {color: #348218;}
+.web-builder .tex {color: #666666;}
+.web-builder .dascuico:after {background-color: #6dc64d;}
+.web-builder .dascuico {
+    background-color: #6dc64d;
+}
+
+.v-mail .tit {color: #187268;}
+.v-mail .tex {color: #666666;}
+.v-mail .dascuico:after {background-color: #5ec1b6;}
+.v-mail .dascuico {
+    background-color: #5ec1b6;
+}
+
+.mom .tit {color: #1d4585;}
+.mom .tex {color: #666666;}
+.mom .dascuico:after {background-color: #4c7ecb;}
+.mom .dascuico {
+    background-color: #4c7ecb;
+}
+
+.accounting .tit {color: #a56c10;}
+.accounting .tex {color: #666666;}
+.accounting .dascuico:after {background-color: #f2a82e;}
+.accounting .dascuico {
+    background-color: #f2a82e;
+}
+
+.dbetl .tit {color: #902e07;}
+.dbetl .tex {color: #666666;}
+.dbetl .dascuico:after {background-color: #f55d21;}
+.dbetl .dascuico {
+    background-color: #f55d21;
+}
+
+.quotes .tit {color: #770154;}
+.quotes .tex {color: #666666;}
+.quotes .dascuico:after {background-color: #c547a0;}
+.quotes .dascuico {
+    background-color: #c547a0;
+}
+
+.users .tit {color: #3b096c;}
+.users .tex {color: #666666;}
+.users .dascuico:after {background-color: #7e51ac;}
+.users .dascuico {
+    background-color: #7e51ac;
+}
+
 
 
 </style>
