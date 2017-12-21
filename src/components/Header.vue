@@ -14,7 +14,6 @@
             </i-col>
             <i-col :span="18">
                 <Row type="flex" justify="end">
-                    <div class="user">
                     <div class="layout-nav">
                         <Submenu name="3">
                             <template slot="title">
@@ -29,7 +28,6 @@
                             </MenuItem>
                         </Submenu>
                     </div>
-                </div>
                 </Row>
             </i-col>
         </Row>
@@ -50,20 +48,6 @@
 
 
         },
-        created() {
-            
-            setTimeout(() => {
-                BackgroundCheck.init({
-                targets: '.user'
-            });
-            }, 5000);
-            // All targets
-            BackgroundCheck.refresh();
-
-            // if(this.$session.get('user')){
-            //     this.email = this.$session.get('user');
-            // };
-        },
         methods: {
             //   logout () {
             //         this.$session.destroy('auth_token');
@@ -82,10 +66,10 @@
 </script>
 <style scoped>
     .user.background--light {
-        color: black;
-    }
-
+        color: #be2828;
+      }
+      
     .user.background--dark {
-        color: white;
-    }
+        color: rgb(32, 136, 63);
+      }
 </style>
