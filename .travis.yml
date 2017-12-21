@@ -7,17 +7,17 @@ services:
 
 branches:
   only:
-  - master
+  - demo
 
 jobs:
   include:
     - stage: Flowz-Dashboard-Fronted-Flowz
       script:
       - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-      - docker build -t flowz_dashboard_fronted_flowz:"$DOCKER_IMAGE_TAG" .
+      - docker build -t flowz_dashboard_fronted_flowz:demo .
       - docker images
-      - docker tag flowz_dashboard_fronted_flowz:"$DOCKER_IMAGE_TAG" $DOCKER_USERNAME/flowz_dashboard_fronted_flowz:"$DOCKER_IMAGE_TAG"
-      - docker push $DOCKER_USERNAME/flowz_dashboard_fronted_flowz:"$DOCKER_IMAGE_TAG"
+      - docker tag flowz_dashboard_fronted_flowz:demo $DOCKER_USERNAME/flowz_dashboard_fronted_flowz:demo
+      - docker push $DOCKER_USERNAME/flowz_dashboard_fronted_flowz:demo
     - stage: Upgrade Rancher Service
       script:
       - bash ./upgrade.sh
