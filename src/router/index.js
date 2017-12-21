@@ -31,7 +31,7 @@ Vue.use(Router)
 
     const routes = [{
       path: '/',
-      name: 'Layout',
+      name: 'MainLayout',
       component: Layout,
       children: [{
         path: '/',

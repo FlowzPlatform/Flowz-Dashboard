@@ -44,7 +44,7 @@
     <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
     <script src="bower_components/jquery-ui/ui/minified/jquery-ui.min.js"></script>
     <script src="//vjs.zencdn.net/4.3/video.js"></script>
-
+   
     <!-- BigVideo -->
     <script src="bower_components/BigVideo/lib/bigvideo.js"></script>
 
@@ -73,9 +73,26 @@
             'vids/seaplane_half _turn.mp4',
         ];
         vids.sort(function() { return 0.5 - Math.random() }); // random order on load
-        console.log(vids);
+        // // Show loading animation.
+        // var playPromise =  BV;
+        // console.log('playPromise', playPromise)
+        // if (playPromise !== undefined) {
+        //   playPromise.then(_ => {
+        //     // Automatic playback started!
+        //     // Show playing UI.
+        //     console.log('playPromise', playPromise)
+        //     BV.init();
+        //     BV.showPlaylist(vids,{ambient:true, doLoop:true});
+        //   })
+        //   .catch(error => {
+        //     // Auto-play was prevented
+        //     // Show paused UI.
+        //     console.log('error', error)
+        //     BV.getPlayer().pause();
+        //   });
+        // }
         BV.init();
-        BV.showPlaylist(vids,{ambient:true});
+        BV.showPlaylist(vids,{ambient:true, doLoop:true});
 	    });
     </script>
   </body>
