@@ -1,16 +1,15 @@
 <template>
   <div>
-     <Header></Header>
-  <!-- <div style="border: 2px solid darkblue; margin:50px 200px 0px 200px; background-color: #fff; position:relative"> -->
-    <Card class="ivu-card1-bordered">
+    <Header></Header>
+    <div style="border: 2px solid darkblue; margin-top:5%; background-color: #fff; position:relative">
     <div class="container">
       <div class="row add-service">
-        <div class="col-md-9"></div>
-        <div class="col-md-3">
-          <div class="col-md-8" @click="createPlan()">
+        <div class="col-xs-9"></div>
+        <div class="col-xs-3">
+          <div class="col-xs-8" @click="createPlan()">
             <h4>new plan</h4>
           </div>
-          <div class="col-md-4 main-option" @click="update()">
+          <div class="col-xs-4 main-option" @click="update()">
             <h4>update</h4>
           </div>
         </div>
@@ -19,57 +18,57 @@
     <div v-for="(plan, pIndex) in plans">
       <div class="container">
         <hr>
-        <div class="col-md-9">
+        <div class="col-xs-9" style="margin-top:10px">
           <div class="row">
-            <div class="col-md-7">
+            <div class="col-xs-7">
               <div class="row">
-                <div class="col-md-4 no-margin" align="right">
+                <div class="col-xs-4 no-margin" >
                   <h4>Plan Name:</h4>
                 </div>
-                <div class="col-md-8 no-margin">
+                <div class="col-xs-8 no-margin">
                   <h4><input type="text" class="description" v-model="plan.name" placeholder="______________________"></h4>
                 </div>
               </div>
             </div>
-            <div class="col-md-5">
+            <div class="col-xs-5">
               <div class="row">
-                <div class="col-md-4 no-margin">
+                <div class="col-xs-4 no-margin">
                   <h4>Validity: </h4>
                 </div>
-                <div class="col-md-3 no-margin" align="right">
+                <div class="col-xs-3 no-margin" >
                   <h4><input type="number" title="Validity" class="description" v-model="plan.validity" min=1 placeholder="____________________"></input></h4>
                 </div>
-                <div class="col-md-5 no-margin" align="left">
+                <div class="col-xs-5 no-margin" align="left">
                   <h4>days</h4>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-md-3">
-          <div class="row pull-right">
-            <div class="col-md-4 no-margin" align="right">
+        <div class="col-xs-3" style="margin-top:10px">
+          <div class="row">
+            <div class="col-xs-4 no-margin" >
               <h4>Price:</h4>
             </div>
-            <div class="col-md-5 no-margin">
+            <div class="col-xs-5 no-margin">
               <div class="row no-margin">
-                <div class="col-md-2 no-margin">
+                <div class="col-xs-2 no-margin">
                   <h4>$</h4>
                 </div>
-                <div class="col-md-10 no-margin">
+                <div class="col-xs-10 no-margin">
                   <h4><input type="number" class="description" v-model="plan.price" placeholder="______________________"></input></h4>
                 </div>
               </div>
             </div>
-            <div class="col-md-3 options-main">
+            <div class="col-xs-3 options-main">
               <div class="row">
-                <div class="col-md-6" @click="deletePlan(pIndex)">
+                <div class="col-xs-6" @click="deletePlan(pIndex)">
                   <icon name="trash" scale="1.4"></icon>
                 </div>
-                <div class="col-md-6" v-if="checkOpen(pIndex)" @click="expand(pIndex)">
+                <div class="col-xs-6" v-if="checkOpen(pIndex)" @click="expand(pIndex)">
                   <icon name="arrow-up" scale="1.4"></icon>
                 </div>
-                <div class="col-md-6" v-else @click="expand(pIndex)">
+                <div class="col-xs-6" v-else @click="expand(pIndex)">
                   <icon name="arrow-down" scale="1.4"></icon>
                 </div>
               </div>
@@ -78,7 +77,8 @@
         </div>
       </div>
       <div :id="'plan_'+pIndex" class="outer-toggle">
-        <Card class="ivu-card-bordered">
+        <Card>
+         <!-- <Tree :data="plan.obj"></Tree> -->
          <div class="schema-form ivu-table-wrapper">
          <div class="ivu-table ivu-table-border">
                 <div class="ivu-table-body">
@@ -124,23 +124,27 @@
                                 <td class="">
                                     <div class="ivu-table-cell">
                                       {{item.module}}
+                                        <!-- <Input type="text" v-model="item.module" placeholder="Module" size="small" class="schema-form-input"></Input> -->
                                     </div>
                                 </td>
                                 <td class="">
                                   <div class="ivu-table-cell">
                                     {{item.service}}
+                                      <!-- <Input type="text" v-model="item.service" placeholder="Module" size="small" class="schema-form-input"></Input> -->
                                   </div>
                                 </td>
                                 <td class="">
                                   <div class="">
                                     <div class="ivu-table-cell">
                                       {{item.action}}
+                                        <!-- <Input type="text" v-model="item.action" placeholder="Module" size="small" class="schema-form-input"></Input> -->
                                     </div>
                                   </div>
                                 </td>
                                 <td class="">
                                   <div class="ivu-table-cell">
                                     {{item.url}}
+                                      <!-- <Input type="text" v-model="item.url" placeholder="Module" size="small" class="schema-form-input"></Input> -->
                                   </div>
                                 </td>
                                 <td class="">
@@ -170,9 +174,9 @@
     <div class="container">
       <hr>
     </div>
-  </Card>
-  </div>
+  <!-- </Card> -->
 </div>
+  </div>
 </template>
 
 <script>
@@ -190,23 +194,21 @@ Vue.use(BootstrapVue);
 // import 'bootstrap-vue/dist/bootstrap-vue.css'
 import _ from 'lodash'
 // let baseUrl = process.env.baseUrl;
-// import defaultSubscription from '@/api/default-subscription'
-// import secureRoutes from '@/api/secure-routes'
+
+import Header from './Header.vue'
 import axios from 'axios'
 import iView from 'iview'
 import locale from 'iview/dist/locale/en-US'
 import 'iview/dist/styles/iview.css' // CSS
 Vue.use(iView, { locale })
-import Header from './Header.vue'
+
+
 import 'vue-awesome/icons'
 import $ from 'jquery'
 Vue.component('icon', Icon)
 export default {
-  name: 'createPlan',
-  components: {
-    vSelect,
-    Header
-  },
+  name: 'setDefaultRoutes',
+  components: {vSelect,Header},
   data(){
     return {
       services: [],
@@ -227,6 +229,7 @@ export default {
               for(let i=0;i<response.data.data.length;i++){
                self.plans.push(response.data.data[i])
              }
+
       })
       .catch(function (error) {
         console.log("**********",error)
@@ -238,6 +241,7 @@ export default {
   },
   methods: {
     checkOpen (index) {
+      // if (_.intersection(this.currentOpen,[index]).length > 0)) return true
       return false
     },
     checkAnyMethodAvailable (methods) {
@@ -297,7 +301,9 @@ export default {
       $('#plan_'+plan).slideToggle(700)
     },
     update () {
+      // let obj1 = []
       console.log("this.plans",this.plans)
+
       axios({
                 method:'delete',
                 url:"http://localhost:3030/subscription-plans",
@@ -329,12 +335,18 @@ export default {
                     title: 'Please check...some error'
                 });
               });
+      // })
+
     }
   }
 }
 </script>
 
 <style>
+  .col-xs-3 {
+    padding-right: 0px;
+    padding-left: 0px;
+  }
   .service-header {
     border-bottom: solid 2px #000044;
     background-color: #000044;
@@ -371,14 +383,13 @@ export default {
     margin: 10px;
   }
 
-  h4 {
-    font-size: 2em;
-    margin: 8px;
-  }
-
   h5 {
     font-size: 1.5em;
   }
+
+  h4, .h4 {
+    font-size: 21px;
+}
 
   .options {
     padding: 3px;
@@ -415,6 +426,7 @@ export default {
 
   .add-service {
     cursor: pointer;
+    margin-top: 10px;
   }
 
   .main-option {
@@ -503,22 +515,21 @@ export default {
     margin-bottom: 1%;
     width: 60%;
 }
-.ivu-card1-bordered {
-    border: 4px solid #dddee1;
-    border-color: #072C75;
-    margin-left: 15%;
-    margin-right: 15%;
-    margin-bottom: 1%;
-    margin-top:5%;
-    width: 70%;
-}
 
 .redInput input {
   background-color: #19be6b;
   color: #fff;
 }
 
-.ivu-table-cell{
-  font-size: 15px;
+.ivu-table-cell {
+    padding-left: 18px;
+    padding-right: 18px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    word-break: break-all;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    font-size: 14px;
 }
 </style>
