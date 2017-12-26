@@ -21,6 +21,12 @@
                                 {{email}}
                             </template>
                             <MenuItem name="1-1">
+                                <a @click="settings()">
+                                    <Icon type="ios-locked-settings" :size="16"></Icon>
+                                    ACL
+                                </a>
+                                </MenuItem>
+                            <MenuItem name="1-2">
                             <a @click="logout()">
                                 <Icon type="ios-locked-outline" :size="16"></Icon>
                                 Logout
@@ -60,6 +66,10 @@
                 this.$cookie.delete('auth_token', { domain: location });
                 this.$router.push('/login');
 
+            },
+            settings: function () {
+                //this.$session.destroy('auth_token');
+                this.$router.push('/acl');
             },
         }
     }
