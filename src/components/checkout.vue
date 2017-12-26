@@ -78,6 +78,7 @@
 import axios from 'axios'
 import Header from './Header.vue'
 
+
 export default {
   name: 'checkout',
   components: {
@@ -135,6 +136,7 @@ export default {
 			          this.payInfo.class = 'alert alert-success'
 			          this.payInfo.msgType = 'Success!'
 			          this.payInfo.msg = 'Payment successfully Done.'
+								this.$router.push('/plan-details/' + this.sub_id)
 			        }
 
 					 })

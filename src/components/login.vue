@@ -1,13 +1,13 @@
 <template>
   <div class="login">
-    
+
     <div class="lhed">
         <a href="#"><img src="../assets/images/logo.png"> </a>
-    </div> 
-   
+    </div>
+
     <div class="lcontended">
         <div class="lundcon">
-            
+
             <div class="lrpt" >
                 <div class="lsrpt" @click="showLogin">
                     <span>Have you an <br> account?</span>
@@ -18,12 +18,12 @@
                     <a href="javascript:void(0)">Register</a>
                 </div>
             </div>
-            
+
             <div class="lrconpt">
 
                 <form id="form-facebook" name="form-facebook" :action=loginWithFacebookUrl method="post">
                             <input type="hidden" name="success_url" :value=facebookSuccessCallbackUrl>
-                            
+
                 </form>
 
                 <form id="form-google" name="form-google"
@@ -32,13 +32,13 @@
                 </form>
 
                 <div class="lconpt">
-                    
+
                     <!-- <div class="lconun">
                         <span class="lthlob">
                             <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" class="google" @click="submitGoogle()"><icon name="google"></icon></a> - <a href="#" class="linkdin"><icon name="linkedin"></icon></a>
                         </span>
                     </div>
-                   
+
                     <div class="lconun" >
                         <div class="lther" style="margin-top:20px"><span>Or login with</span></div>
                     </div>
@@ -60,12 +60,12 @@
                             <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" class="google" @click="submitGoogle()"><icon name="google"></icon></a> - <a href="#" class="linkdin"><icon name="linkedin"></icon></a>
                         </span>
                     </div>
-                   
+
                     <div class="lconun" >
                         <div class="lther" style="margin-top:20px"><span>Or login with</span></div>
                     </div>
 
-                  
+
                     <div>
                         <Tabs class="lconun" type="card" value="1" @on-click=tabsClicked>
                                 <TabPane label="Standard" name="1">
@@ -99,10 +99,10 @@
                                 </TabPane>
                         </Tabs>
                         </div>
-                   
+
                     <div class="lconun">
                         <div class="lrinp">
-                          
+
                             <el-button type="success" size="small" class="signupButton" @click="loginUser()" @keyup.enter="loginUser()" :loading="saveFileLoadingLogin" >Login</el-button>
                             <a v-show="this.selectedTabIndex==1" href="javascript:void()" class="lfort">Forgot Password</a>
                         </div>
@@ -110,7 +110,7 @@
                 </div>
                 <div class="rconpt">
 
-                    
+
                     <div class="lconun" style="margin-top: 10px;">
                         <span class="lthlob">
                             <span class="lthlob">
@@ -142,20 +142,20 @@
                             <input type="text" class="" v-model="register.email" placeholder="Enter Your Email Id (Required) ">
                         </div>
                     </div>
-                    
+
                     <div class="lconun">
                         <!-- <div class="lrinp">
                             <input type="button" value="Sign Up" @click="registerUser()" class="lbtn"> -->
                             <el-button type="success" size="small" class="signupButton" @click="registerUser()" :loading="saveFileLoading" >Sign Up</el-button>
-                            
+
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
     </div>
-    
+
   </div>
 </template>
 
@@ -207,12 +207,12 @@ export default {
           password:""
       },
       selectedTabIndex:1,
-      
+
     }
   },
 
   created(){
-        
+
         // let token = this.$session.get('auth_token');
         // if(token){
         //     this.$router.push('/');
@@ -221,11 +221,11 @@ export default {
         if(token || token != null){
             this.$router.push('/');
         }
-        
+
   },
-  
-    
-  
+
+
+
    methods: {
     tabsClicked(val){
                 this.login.email = ''
@@ -239,17 +239,17 @@ export default {
            $('.lundcon').removeClass('sing');
        },
        submitFb : function(){
-           $("#form-facebook").submit();           
+           $("#form-facebook").submit();
        },
        submitGoogle : function(){
-          
+
            $("#form-google").submit();
         },
        registerUser: async function(){
            let self = this;
            let emailValidator = await this.validateEmail(self.register.email);
            console.log(emailValidator)
-          
+
           if(self.register.fname == ""){
                self.$message.warning("First Name is required");
            }else if(self.register.lname == ""){
@@ -294,10 +294,10 @@ export default {
            }
 
 
-           
+
        },
 
-      
+
        loginUser: async function(){
            let self = this;
            let emailValidator = await this.validateEmail(self.login.email);
@@ -321,11 +321,11 @@ export default {
                 //   location = location.domain === null ? location.input : location.domain
                 //   console.log('Cookie :', Vue.cookie)
                 //   Vue.cookie.set('auth_token', token, {expires: 1, domain: location});
-                
+
                 location = location.domain === null ? location.input : location.domain ;
                 self.$cookie.set('auth_token', response.data.logintoken, {expires: 1, domain: location});
 
-                
+
                 self.$router.push('/');
             })
             .catch(function (error) {
@@ -351,10 +351,10 @@ background-color: #337ab7;
 color: #fff  !important;
 padding: 12px 12px 3px 10px;
 border-radius: 50%;
-} 
+}
 
 .signupButton {
-    
+
     background: #8ec622;
     /* line-height: 21px; */
     color: #fff;
@@ -378,5 +378,3 @@ border-radius: 50%;
 border-radius: 50%;
 }
 </style>
-
-

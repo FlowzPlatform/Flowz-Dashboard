@@ -7,6 +7,7 @@ import subscriptionplan from '@/components/subscriptionplan'
 import createPlan from '@/components/create-plan'
 import subscriptionList from '@/components/subscription-list'
 import checkout from '@/components/checkout'
+import planDetails from '@/components/plan-details'
 
 Vue.use(Router)
 
@@ -36,6 +37,11 @@ Vue.use(Router)
           path: '/subscription-list',
           name: 'subscriptionList',
           component: subscriptionList
+        },
+        {
+          path: '/plan-details/:id',
+          name: 'planDetails',
+          component: planDetails
         },
         {
           path: '/checkout/:id',

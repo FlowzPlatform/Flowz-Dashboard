@@ -49,6 +49,7 @@ import Header from './Header.vue'
     },
     methods: {
       init () {
+				let self = this
 				  axios({
 									method:'get',
 									url:"http://localhost:3030/subscription-plans"
@@ -60,7 +61,7 @@ import Header from './Header.vue'
 							 })
 							 .catch(function (error) {
 								 console.log("**********",error)
-								 this.$Notice.error({
+								 self.$Notice.error({
 										 duration: 5,
 										 title: 'Please check...some error'
 								 });
