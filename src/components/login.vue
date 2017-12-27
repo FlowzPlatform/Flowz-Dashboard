@@ -219,7 +219,7 @@ export default {
         // }
         let token = this.$cookie.get('auth_token') ;
         if(token || token != null){
-            this.$router.push('/');
+            // this.$router.push('/');
         }
 
   },
@@ -314,19 +314,20 @@ export default {
              axios.post(this.selectedTabIndex==1? config.loginUrl:config.ldapLoginUrl , {email: self.login.email.trim(),
                     password: self.login.password.trim()})
             .then(function (response) {
-               console.log(response);
+               console.log("+++++++++++++response",response);
                 self.saveFileLoadingLogin = false;
                 //self.$session.set('auth_token', response.data.logintoken)
-                //             let location = psl.parse(window.location.hostname)
+                            let location = psl.parse(window.location.hostname)
                 //   location = location.domain === null ? location.input : location.domain
                 //   console.log('Cookie :', Vue.cookie)
                 //   Vue.cookie.set('auth_token', token, {expires: 1, domain: location});
-
+                self.$store.commit('SET_TOKEN', response.data.logintoken)
                 location = location.domain === null ? location.input : location.domain ;
                 self.$cookie.set('auth_token', response.data.logintoken, {expires: 1, domain: location});
+                self.$router.push({path: '/dashboard'})
 
 
-                self.$router.push('/');
+                // self.$router.push('/dashboard');
             })
             .catch(function (error) {
                 console.log("error-->",error)

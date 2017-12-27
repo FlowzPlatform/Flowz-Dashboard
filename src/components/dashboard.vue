@@ -9,85 +9,85 @@
           <div class="img" >
                <img class="cardimg" :src= card.img >
             </div>
-            
+
             <div class="container11">
                <p style="text-align: justify; font-size:14px; font-family: Lobster, serif" >{{card.desc}} </p>
             </div>
          </div>
       </div>
    </div>
-   
+
    <div class="dasbma">
       <div class="dastit dastit_pos"><span>Flowz Applications</span> Third-Party Applications</div>
       <div class="dasund">
          <div class="dasico">
-		 
-		 
+
+
             <nav class="menu">
               <div class="socialCircle-container-left">
                 <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item mom" @click="goTosubscriptionplan('http://mom.flowz.com')" v-on:mouseover="hoverOnSubmenu('rgba(76, 126, 203, 0.7)', 'left',4)">
-				
+
 					<div class="dashcub mom">
 						<div class="dascutx">
 							<div class="dascufo">
 								<span class="tit">MOM</span>
-								<span class="tex">It is an user friendly 
-				way of listing the 
+								<span class="tex">It is an user friendly
+				way of listing the
 				tasks, assigning them</span>
-							</div>   
+							</div>
 						</div>
 					   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-4.png"> </div></div>
 					</div>
-					
+
 				</a></div>
-				
+
                 <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan('http://vmail.flowz.com')" v-on:mouseover="hoverOnSubmenu('rgba(94, 193, 182, 0.7)', 'left' ,3)">
-					
+
 					<div class="dashcub v-mail">
 						<div class="dascutx">
 							<div class="dascufo">
 								<span class="tit">V-Mail</span>
-								<span class="tex">This is a user 
-				friendly Vue based 
-				email client.It can 
+								<span class="tex">This is a user
+				friendly Vue based
+				email client.It can
 				receives the mail</span>
-							</div>   
+							</div>
 						</div>
 					   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-3.png"> </div></div>
 					</div>
-					
+
 				</a></div>
                 <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item ewbuil" @click="goTosubscriptionplan('http://webbuilder.flowz.com')" v-on:mouseover="hoverOnSubmenu('rgba(109, 198, 77, 0.7)', 'left' , 2)">
-				
+
 					<div class="dashcub web-builder">
 						<div class="dascutx">
 							<div class="dascufo">
 								<span class="tit">Web Builder</span>
-								<span class="tex">Build the website 
-				you desire without 
-				any knowledge 
+								<span class="tex">Build the website
+				you desire without
+				any knowledge
 				of coding.</span>
-							</div>   
+							</div>
 						</div>
 					   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-2.png"> </div></div>
 					</div>
-					
+
 				</a></div>
                  <div class="socialCircle-item-left"><a href="javascript:void(0)" class="menu-item flowz" @click="goTosubscriptionplan('http://engine.flowz.com')" v-on:mouseover="hoverOnSubmenu('rgba(200, 223, 74, 0.7)', 'left' , 1)">
-					
+
 					<div class="dashcub flow">
 						<div class="dascutx">
 							<div class="dascufo">
 								<span class="tit">flow</span>
 								<span class="tex">Build your own business fow using BPMN without knoledge of coding</span>
-							</div>   
+							</div>
 						</div>
 					   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-1.png"> </div></div>
 					</div>
-					
-					
+
+
 				 </a></div>
-      
+
                    <div class="socialCircle-center-left closed left-menu">
                        <input type="checkbox" checked v-show="active1" href="#"  class="menu-open" name="menu-open" id="menu-open"/>
                        <label class="menu-open-button" for="menu-open"  v-show="active1" @click="openNav()">
@@ -99,13 +99,13 @@
                    </div>
                  </div>
             </nav>
-			
-			
-			
+
+
+
             <nav class="menu2">
                <div class="socialCircle-container-right">
-                   <div class="socialCircle-item-right">  <a href="#" class="menu2-item " @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('rgba(242, 168, 46, 0.7)', 'right' , 5)"> 
-				   
+                   <div class="socialCircle-item-right">  <a href="#" class="menu2-item " @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('rgba(242, 168, 46, 0.7)', 'right' , 5)">
+
 					<div class="dashcub accounting">
 						<div class="dascutx">
 							<div class="dascufo">
@@ -113,14 +113,14 @@
 								<span class="tex">It is an user friendly
 				way of listing the tasks,
 				assigning them</span>
-							</div>   
+							</div>
 						</div>
 					   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-5.png"> </div></div>
 					</div>
-				   
+
 				   </a></div>
-                   <div class="socialCircle-item-right"><a href="#" class="menu2-item " @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('rgba(245, 93, 33, 0.7)', 'right' , 6)"> 
-				   
+                   <div class="socialCircle-item-right"><a href="#" class="menu2-item " @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('rgba(245, 93, 33, 0.7)', 'right' , 6)">
+
 					<div class="dashcub dbetl">
 						<div class="dascutx">
 							<div class="dascufo">
@@ -129,14 +129,14 @@
 				your databases
 				are automatically
 				created</span>
-							</div>   
+							</div>
 						</div>
 					   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-6.png"> </div></div>
 					</div>
-				   
+
 				   </a></div>
-                   <div class="socialCircle-item-right"><a href="#" class="menu2-item " @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('rgba(197, 71, 160, 0.7)', 'right' , 7)"> 
-				   
+                   <div class="socialCircle-item-right"><a href="#" class="menu2-item " @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('rgba(197, 71, 160, 0.7)', 'right' , 7)">
+
 					<div class="dashcub quotes">
 						<div class="dascutx">
 							<div class="dascufo">
@@ -145,14 +145,14 @@
 				way of listing the
 				tasks,assigning
 				them,to track them</span>
-							</div>   
+							</div>
 						</div>
 					   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-7.png"> </div></div>
 					</div>
-				   
+
 				   </a></div>
                    <div class="socialCircle-item-right"><a href="#" class="menu2-item " @click="goTosubscriptionplan('#')" v-on:mouseover="hoverOnSubmenu('rgba(126, 81, 172, 0.7)', 'right' , 8)">
-				   
+
 					<div class="dashcub users">
 						<div class="dascutx">
 							<div class="dascufo">
@@ -160,11 +160,11 @@
 								<span class="tex">Successful CRM is
 				about competing in the
 				relationship dimension.</span>
-							</div>   
+							</div>
 						</div>
 					   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-8.png"> </div></div>
 					</div>
-				   
+
 				   </a></div>
                    <div class="socialCircle-center-right closed right-menu">
                      <div v-show="active2">
@@ -178,7 +178,7 @@
                        <a href="javascript:void(0)"><img src="../assets/images/CRM.png" id="icon2" @click="openNav2()"> </a>
                    </div>
                  </div>
-               
+
             </nav>
          </div>
       </div>
@@ -216,7 +216,7 @@ export default {
   created() {
 
     $(document).ready(function() {
-      
+
       setTimeout(() => {
       $( ".right-menu" ).socialCircle({
       rotate: 270,
@@ -236,7 +236,7 @@ export default {
         var url_string = window.location.href;
         var url = new URL(url_string);
         location = location.domain === null ? location.input : location.domain ;
-        
+
 
         let token = url.searchParams.get("ob_id");
         console.log("dash ", token)
@@ -248,13 +248,15 @@ export default {
         }
 
         //let logintoken = this.$session.get('auth_token');
-        let logintoken =this.$cookie.get('auth_token')
+        let logintoken = this.$cookie.get('auth_token')
+        console.log("*************",logintoken)
         if(logintoken == undefined || !logintoken){
-            this.$router.push('login');
+          //  this.$router.push('/login');
+
         }
 
 
-        
+
 
         this.cards = [
           {
@@ -265,7 +267,7 @@ export default {
               title : "Work-flow",
               position : "left",
               // desc : "Build your own business flow using BPMN without a vast knoledge of coding. It defines applications as networks of black box processes, which exchange data across predefined connections  by message passing, where the connections are specified externally to the processes.",
-              
+
           },
           {
               img :"../src/assets/images/todo.png" ,
@@ -326,19 +328,24 @@ export default {
               title : "Users",
               // desc : "Successful CRM is about competing in the relationship dimension. Not as an alternative to having a competitive product or reasonable price- but as a differentiator.Track all your user anytime from anywhere across the globe very easily."
           }
-          
+
       ]
     },
-    
-    mounted(){
 
+    mounted(){
+      let logintoken = this.$cookie.get('auth_token')
+      console.log("*************",logintoken)
+      if(logintoken == undefined || !logintoken){
+        //  this.$router.push('/login');
+
+      }
     },
 
   methods :{
     hoverOnSubmenu: function(color, position, index) {
         if((position=='left' && this.active1) || (position=='right' && this.active2)){
 
-        
+
         this.index = index;
         this.card1 = color
         this.position1 = position
@@ -366,7 +373,7 @@ export default {
        trigger2: function(){
           $(".menu2").toggleClass("active");
       },
-     
+
       goTosubscriptionplan : function(data){
           //this.$router.push('subscriptionplan/');
           window.location =data
@@ -441,10 +448,10 @@ body {
 
 .socialCircle-container-left .socialCircle-item-left:nth-child(4) {    -webkit-transform: translate3d(-88px, -122px, 0) rotate(-22deg);
     transform: translate3d(-88px, -122px, 0) rotate(-22deg);}
-	
 
-	
-	
+
+
+
 .socialCircle-container-left .socialCircle-item-left:nth-child(1) .dascufo {-webkit-transform: translate3d(5px, 88px, 0) rotate(-199deg);
     transform: translate3d(5px, 88px, 0) rotate(-199deg); width:120px;}
 
@@ -456,13 +463,13 @@ body {
 
 .socialCircle-container-left .socialCircle-item-left:nth-child(4) .dascufo {    -webkit-transform: translate3d(13px, 18px, 0) rotate(21deg);
     transform: translate3d(13px, 18px, 0) rotate(21deg);}
-	
-	
-	
-	
+
+
+
+
 .socialCircle-container-right .socialCircle-item-right:nth-child(1) {-webkit-transform:translate3d(-47px, -165px, 0) rotate(380deg);
     transform: translate3d(-47px, -165px, 0) rotate(380deg);}
-	
+
 .socialCircle-container-right .socialCircle-item-right:nth-child(2) {-webkit-transform: translate3d(102px, -103px, 0) rotate(73deg);
     transform:translate3d(102px, -103px, 0) rotate(73deg);}
 
@@ -471,13 +478,13 @@ body {
 
 .socialCircle-container-right .socialCircle-item-right:nth-child(4) {    -webkit-transform: translate3d(37px, 141px, 0) rotate(168deg);
     transform: translate3d(37px, 141px, 0) rotate(168deg);}
-	
-	
+
+
 .socialCircle-container-right .socialCircle-item-right .dascufo { text-align: right;}
 
 .socialCircle-container-right .socialCircle-item-right:nth-child(1) .dascufo {-webkit-transform:translate3d(-15px, 16px, 0) rotate(342deg);
     transform:translate3d(-15px, 16px, 0) rotate(342deg);}
-	
+
 .socialCircle-container-right .socialCircle-item-right:nth-child(2) .dascufo {-webkit-transform: translate3d(-40px, 38px, 0) rotate(-73deg);
      transform: translate3d(-40px, 38px, 0) rotate(-73deg);     width: 110px;}
 
@@ -486,10 +493,10 @@ body {
 
 .socialCircle-container-right .socialCircle-item-right:nth-child(4) .dascufo {    -webkit-transform: translate3d(-9px, 84px, 0) rotate(-170deg);
     transform:translate3d(-9px, 84px, 0) rotate(-170deg); width: 110px;}
-	
-	
-	
-	
+
+
+
+
 .socialCircle-container-right .socialCircle-item-right[style="border-radius: 0px; top: 50px; left: 50px; line-height: 0px; margin: 0px;"],
 .socialCircle-container-right .socialCircle-item-right[style="border-radius: 0px; top: 0px; left: 0px; line-height: 0px;"],
 
@@ -577,7 +584,7 @@ body {
     background-position: center center;
     opacity: 0.08;
     animation: logozoom 5s;
-    z-index: -1; } 
+    z-index: -1; }
 
     @keyframes logozoom {
       0% {
@@ -594,7 +601,7 @@ body {
     }
     }
 
-    .menu2-open:checked + .menu2-open-button{ 
+    .menu2-open:checked + .menu2-open-button{
       width: 60px;
       height: 70px;
       background-color: #e4e4e4;
@@ -602,7 +609,7 @@ body {
       left: 55%;
       top: 15px;
       }
-  .menu-open:checked + .menu-open-button {    
+  .menu-open:checked + .menu-open-button {
       width: 60px;
       height: 70px;
       background-color: #e4e4e4;
@@ -629,7 +636,7 @@ body {
     display: inline-block;
     /* border: 1px solid #b3afaf; */
 }
-.webpart .img img { 
+.webpart .img img {
     max-width: -webkit-fill-available;
     max-height: -webkit-fill-available;}
 .webpart .tit {display: inline-block;    width: -webkit-fill-available; font-family: 'Helvetica-N-Md'; color: white; text-align:center;}
@@ -638,7 +645,7 @@ body {
     padding-top: 10px;
     margin-top: 10px;*/
     color: white}
-  
+
 
 .card11.crmpart {
     position: fixed;
@@ -663,10 +670,10 @@ body {
     padding-top: 10px;
     margin-top: 10px;
     color: white*/}
-    
-.menu-item span.nam {font-size: 12px;line-height: 6px;padding: 0;top: -7px;position: relative;white-space: nowrap; opacity: 0}  
-.menu-item:hover span.nam {color:#828181}  
-.menu2-item span.nam {font-size: 12px;line-height: 6px;padding: 0;top: -7px;position: relative;white-space: nowrap; ; opacity: 0}  
+
+.menu-item span.nam {font-size: 12px;line-height: 6px;padding: 0;top: -7px;position: relative;white-space: nowrap; opacity: 0}
+.menu-item:hover span.nam {color:#828181}
+.menu2-item span.nam {font-size: 12px;line-height: 6px;padding: 0;top: -7px;position: relative;white-space: nowrap; ; opacity: 0}
 .menu2-item:hover span.nam {color:#828181}
 
 .card11 {
@@ -908,7 +915,7 @@ a {
 } */
 
 .menu-item:hover {
-  
+
 }
 
 .menu-item:nth-child(3) {

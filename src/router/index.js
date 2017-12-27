@@ -11,77 +11,55 @@ import planDetails from '@/components/plan-details'
 
 Vue.use(Router)
 
-    export default new Router({
-      routes: [
+export default new Router({
+  mode: 'history',
+  routes: [
+    {
+      path: '/',
+      name: 'Layout',
+      component: Layout,
+      meta: { requiresAuth: true },
+      children:[
         {
-          path: '/',
-          name: 'login',
-          component: login
-        },
-        {
-          path: '/dashboard',
+          path: 'dashboard',
           name: 'dashboard',
-          component: dashboard
+          component: dashboard,
+          meta: { requiresAuth: true }
         },
         {
-          path: '/subscriptionplan/:id',
-          name: 'subscriptionplan',
-          component: subscriptionplan
-        },
-        {
-          path: '/create-plan',
+          path: 'create-plan',
           name: 'createPlan',
-          component: createPlan
+          component: createPlan,
+          meta: { requiresAuth: true }
         },
         {
-          path: '/subscription-list',
+          path: 'subscription-list',
           name: 'subscriptionList',
-          component: subscriptionList
+          component: subscriptionList,
+          meta: { requiresAuth: true }
         },
         {
-          path: '/plan-details/:id',
-          name: 'planDetails',
-          component: planDetails
+            path: '/checkout/:id',
+            name: 'checkout',
+            component: checkout,
+            props: {
+              id: Text,
+              required: false
+            },
+            meta: { requiresAuth: true }
         },
         {
-          path: '/checkout/:id',
-          name: 'checkout',
-          component: checkout,
-          props: {
-            id: Text,
-            required: false
-          }
-    }
+           path: '/plan-details/:id',
+           name: 'planDetails',
+           component: planDetails,
+           meta: { requiresAuth: true }
+         }
       ]
-    })
-
-
-    // const routes = [
-    //   {
-    //   path: '/',
-    //   name: 'MainLayout',
-    //   component: Layout,
-    //   children: [{
-    //     path: '/',
-    //     //alias: '',
-    //     component: dashboard,
-    //     name: 'dashboard',
-    //     //meta: { description: 'Overview of environment' }
-    //   }, {
-    //     // path: 'subscriptionplan/:id',
-    //     path: 'subscriptionplan',
-    //     component: subscriptionplan,
-    //     name: 'subscriptionplan',
-    //   }]
-    // },
-    // {
-    //   path: '/login',
-    //   name: 'login',
-    //   component: login
-    // },
-    // {
-    //   path: '/create-plan',
-    //   name: 'createPlan',
-    //   component: createPlan
-    // }]
-    // export default new Router({mode: 'history' , hashbang: false,routes: routes})
+    },
+      {
+        path: '/login',
+        name: 'login',
+        component: login
+      }
+  ]
+})

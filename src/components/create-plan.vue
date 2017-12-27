@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header></Header>
+    <!-- <Header></Header> -->
     <div style="border: 2px solid darkblue; margin-top:5%; background-color: #fff; position:relative">
     <div class="container">
       <div class="row add-service">
@@ -15,7 +15,7 @@
         </div>
       </div>
     </div>
-    <div v-for="(plan, pIndex) in plans">
+    <div v-for="(plan, pIndex) in plans" :id="'plans_'+pIndex">
       <div class="container">
         <hr>
         <div class="col-xs-9" style="margin-top:10px">
@@ -35,12 +35,13 @@
                 <div class="col-xs-4 no-margin">
                   <h4>Validity: </h4>
                 </div>
-                <div class="col-xs-3 no-margin" >
-                  <h4><input type="number" title="Validity" class="description" v-model="plan.validity" min=1 placeholder="____________________"></input></h4>
+                <div class="col-xs-3 no-margin">
+                  <h4><input type="number" title="Validity" class="description" v-model="plan.validity" @input="validateValidity(plan.validity,pIndex)" min=1 placeholder="____________________"></input></h4>
                 </div>
                 <div class="col-xs-5 no-margin" align="left">
                   <h4>days</h4>
                 </div>
+                <div id="validateErr"></div>
               </div>
             </div>
           </div>
@@ -56,10 +57,11 @@
                   <h4>$</h4>
                 </div>
                 <div class="col-xs-10 no-margin">
-                  <h4><input type="number" class="description" v-model="plan.price" placeholder="______________________"></input></h4>
+                  <h4><input type="number" class="description" v-model="plan.price"  @input="validatePrice(plan.price,pIndex)" placeholder="______________________"></input></h4>
                 </div>
               </div>
             </div>
+
             <div class="col-xs-3 options-main">
               <div class="row">
                 <div class="col-xs-6" @click="deletePlan(pIndex)">
@@ -71,8 +73,12 @@
                 <div class="col-xs-6" v-else @click="expand(pIndex)">
                   <icon name="arrow-down" scale="1.4"></icon>
                 </div>
+                <!-- <div class="col-xs-6">
+                <Icon type="ios-copy" size=>
+                </div> -->
               </div>
             </div>
+              <div id="priceErr"></div>
           </div>
         </div>
       </div>
@@ -207,7 +213,7 @@ import 'vue-awesome/icons'
 import $ from 'jquery'
 Vue.component('icon', Icon)
 export default {
-  name: 'setDefaultRoutes',
+  name: 'createPlan',
   components: {vSelect,Header},
   data(){
     return {
@@ -240,6 +246,28 @@ export default {
       });
   },
   methods: {
+    validateValidity(validity,pIndex){
+      console.log("called",validity)
+      if(validity < 10){
+        let me = $('#plans_'+pIndex).find(".container")
+        me.find("#validateErr").html("Validity should be greater than 10")
+      }
+    else{
+        let me = $('#plans_'+pIndex).find(".container")
+        me.find("#validateErr").html("")
+      }
+    },
+    validatePrice(price,pIndex){
+      console.log("called",price)
+      if(price < 50){
+        let me = $('#plans_'+pIndex).find(".container")
+        me.find("#priceErr").html("Price should be greater than 50")
+      }
+    else{
+        let me = $('#plans_'+pIndex).find(".container")
+        me.find("#priceErr").html("")
+      }
+    },
     checkOpen (index) {
       // if (_.intersection(this.currentOpen,[index]).length > 0)) return true
       return false
@@ -284,8 +312,8 @@ export default {
 
         self.plans.push({
          name: '',
-         validity:'',
-         price:'',
+         validity:'10',
+         price:'55',
          time_unit: 'days',
          details:data5
        })
@@ -298,6 +326,7 @@ export default {
       this.plans.splice(plan, 1)
     },
     expand (plan) {
+      console.log("plan...",plan)
       $('#plan_'+plan).slideToggle(700)
     },
     update () {
@@ -343,6 +372,15 @@ export default {
 </script>
 
 <style>
+#validateErr {
+   font-size: 16px;
+   color: red;
+   margin-top: 25px;
+}
+#priceErr{
+  font-size:16px;
+  color:red;
+}
   .col-xs-3 {
     padding-right: 0px;
     padding-left: 0px;

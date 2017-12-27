@@ -3,7 +3,7 @@
         <Row type="flex">
             <!-- <Col :span="1">
             <Row type="flex" justify="end" align="middle">
-              
+
             </Row>
         </Col> -->
             <i-col :span="5">
@@ -25,6 +25,7 @@
                                 <Icon type="ios-locked-outline" :size="16"></Icon>
                                 Logout
                             </a>
+                              <!-- <p>csdcsscd</p> -->
                             </MenuItem>
                         </Submenu>
                     </div>
@@ -49,18 +50,25 @@
 
         },
         methods: {
-            //   logout () {
-            //         this.$session.destroy('auth_token');
-            //         this.$router.push('/login');
-            //    }
+              logout () {
+                console.log("called....")
+                    // this.$session.destroy('auth_token');
+                    // this.$router.push('/login');
+                    let location = psl.parse(window.location.hostname)
+                    location = location.domain === null ? location.input : location.domain
+                    this.$cookie.delete('auth_token', {domain: location});
+                    this.$store.commit('SET_TOKEN', null)
+                    this.$store.commit('SET_USER', null)
+                    this.$router.push('login')
+               }
 
-            logout: function () {
-                //this.$session.destroy('auth_token');
-
-                this.$cookie.delete('auth_token', { domain: location });
-                this.$router.push('/login');
-
-            },
+            // logout: function () {
+            //     //this.$session.destroy('auth_token');
+            //     console.log("logout called")
+            //     this.$cookie.delete('auth_token', { domain: location });
+            //     this.$router.push('/login');
+            //
+            // },
         }
     }
 </script>
@@ -68,7 +76,7 @@
     .user.background--light {
         color: #be2828;
       }
-      
+
     .user.background--dark {
         color: rgb(32, 136, 63);
       }
