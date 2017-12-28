@@ -475,3 +475,6 @@ body {color: #d1d1d1;}
 
 
 </style>
+<style>
+  .vjs-control-bar {display:none;}
+  </style>
