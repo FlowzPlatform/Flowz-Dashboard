@@ -164,24 +164,24 @@ export default {
   },
   created() {
 
-    $(document).ready(function() {
+  //   $(document).ready(function() {
       
-      setTimeout(() => {
-      $( ".right-menu" ).socialCircle({
-      rotate: 270,
-      radius:140,
-      circleSize: 2,
-      speed:500
-  });
-    $( ".left-menu" ).socialCircle({
-    rotate: 90,
-    radius:140,
-    circleSize: 2,
-    speed:500
-  });
-    }, 1500);
+  //     setTimeout(() => {
+  //     $( ".right-menu" ).socialCircle({
+  //     rotate: 270,
+  //     radius:140,
+  //     circleSize: 2,
+  //     speed:500
+  // });
+  //   $( ".left-menu" ).socialCircle({
+  //   rotate: 90,
+  //   radius:140,
+  //   circleSize: 2,
+  //   speed:500
+  // });
+  //   }, 1500);
 
-  })
+  // })
         
 var url_string = window.location.href;
         var url = new URL(url_string);
