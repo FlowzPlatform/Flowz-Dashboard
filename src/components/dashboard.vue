@@ -246,7 +246,10 @@ export default {
     },
     
     mounted(){
-
+      let token = this.$cookie.get('auth_token') ;
+        if(token == null || token == undefined || token == ''){
+            this.$router.push('/Login');
+        }
     },
 
   methods :{
