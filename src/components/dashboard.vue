@@ -173,7 +173,7 @@ export default {
 
         this.cards = [
           {
-              img : "../src/assets/images/todo.png",
+              img : "/assets/images/todo.png",
               color: "#FFFFFF",
               index: "1",
               class : "card11 webpart",
@@ -183,7 +183,7 @@ export default {
               
           },
           {
-              img :"../src/assets/images/todo.png" ,
+              img :"/assets/images/todo.png" ,
               color: "red",
               index: "2",
               class : "card11 webpart",
@@ -192,7 +192,7 @@ export default {
               // desc : "Build the website you desire without any knowledge of coding.Flowz Web builder provides all the needed tool to create a stunning website.Just drag and drop the components to your page and publish the website.It is configured with very rich components and partial you can reuse through the process."
           },
           {
-              img :"../src/assets/images/vmail.png" ,
+              img :"/assets/images/vmail.png" ,
               color: "yellow",
               index: "3",
               class : "card11 webpart",
@@ -201,7 +201,7 @@ export default {
               // desc : "This is a user friendly Vue based email client.It can receives the mail , list it and show the email content. It can also send mail in plain or html format to multiple User in a effective and efficient way."
           },
           {
-              img :"../src/assets/images/todo.png" ,
+              img :"/assets/images/todo.png" ,
               color: "gray",
               index: "4",
               class : "card11 webpart",
@@ -210,7 +210,7 @@ export default {
               // desc : "It is an user friendly way of listing the tasks, assigning them, to track them, maintain comments or action taken and its status updates of minutes.The user can create subtasks upto any level in real time."
           },
           {
-              img :"../src/assets/images/account.png" ,
+              img :"/assets/images/account.png" ,
               index: "5",
               class : "card11 crmpart",
               position : "left",
@@ -218,7 +218,7 @@ export default {
               // desc : "It is an user friendly way of listing the tasks, assigning them, to track them, maintain comments or action taken and its status updates of minutes.The user can create subtasks upto any level in real time."
           },
           {
-              img :"../src/assets/images/databases.jpg" ,
+              img :"/assets/images/databases.jpg" ,
               index: "6",
               class : "card11 crmpart",
               position : "left",
@@ -226,7 +226,7 @@ export default {
              // desc : "The Compatibility of your databases (both local and remote) are automatically created, configured and updated through the DBETL client. Creating, repairing, deleting and renaming and maintaining multiple databases is much simpler."
           },
           {
-              img :"../src/assets/images/web-builder-img.png" ,
+              img :"/assets/images/web-builder-img.png" ,
               index: "7",
               class : "card11 crmpart",
               position : "right",
@@ -234,7 +234,7 @@ export default {
              // desc : "It is an user friendly way of listing the tasks, assigning them, to track them, maintain comments or action taken and its status updates of minutes.The user can create subtasks upto any level in real time."
           },
           {
-              img :"../src/assets/images/web-builder.jpg" ,
+              img :"/assets/images/web-builder.jpg" ,
               index: "8",
               class : "card11 crmpart",
               position : "right",
