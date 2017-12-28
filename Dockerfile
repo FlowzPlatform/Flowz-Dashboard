@@ -29,6 +29,7 @@ RUN npm install
 RUN npm run build
 RUN cp -a -f /opt/app/bower_components /var/www/html/
 RUN cp -a -f /opt/app/vids   /var/www/html/
+RUN cp -a -f /opt/app/src/assets   /var/www/html/
 RUN cp -a -f /opt/app/dist/* /var/www/html/
 RUN cp /opt/app/.htaccess /var/www/html/
 RUN cp /opt/app/vhost.conf /etc/apache2/sites-enabled/
