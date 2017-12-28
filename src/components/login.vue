@@ -57,7 +57,7 @@
                     </div> -->
                     <div class="lconun">
                         <span class="lthlob">
-                            <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" class="google" @click="submitGoogle()"><icon name="google"></icon></a> - <a href="#" class="linkdin"><icon name="linkedin"></icon></a>
+                            <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" class="google" @click="submitGoogle()"><icon name="google"></icon></a></icon></a>
                         </span>
                     </div>
                    
@@ -114,7 +114,7 @@
                     <div class="lconun" style="margin-top: 10px;">
                         <span class="lthlob">
                             <span class="lthlob">
-                            <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" @click="submitGoogle()" class="google"><icon name="google"></icon></a> - <a href="#" class="linkdin"><icon name="linkedin"></icon></a>
+                            <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" @click="submitGoogle()" class="google"><icon name="google"></icon></a></icon></a>
                         </span>
                         </span>
                     </div>
