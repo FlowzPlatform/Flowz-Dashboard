@@ -1,56 +1,61 @@
 <template>
-  <div class="table-wrapper">
-        <table class="vuetable">
-            <thead class="header">
-                <tr>
-                    <template v-for="(field, fieldNumber) in fields">
-                        <th :class="field.titleClass" colspan="4" :style="getSectionBorderClass(fieldNumber-1,1) ">
-                            {{ getTitle(field) }}&nbsp;
-                        </th>
-                    </template>
-                </tr>
-            </thead>
-            <tbody v-cloak  class="results">
-                <tr class='hidden'>
-                    <th class="center aligned" colspan="4">
-                        User Action
-                    </th>
-                    <template v-for="(field,fieldIndex) in fields.length-1">
-                        <template v-for="n in 4">
-                            <td :style="getSectionBorderClass(fieldIndex,n)">
-                                {{ getFieldValue(n)}}
-
-                            </td>
-                        </template>
-                    </template>
-                </tr>
-                <template v-for="(item, itemNumber) in tableData">
-                    <tr @dblClick="onRowDoubleClicked(item, $event)" :class="onRowClass(item, itemNumber)">
-                        <template v-for="(field,fieldNumber) in fields">
-                            <td v-if="fieldNumber ==0" :class="field.dataClass" @dblclick="onCellDoubleClicked(item, field, $event)" colspan="4">
-                                {{ item.name }}
-                            </td>
-
-                            <template v-for="n in 4" v-else>
-                                <td :style="getSectionBorderClass(fieldNumber-1,n)">
-                                    <component :class="field.dataClass" is="custom-action" :row-field-data="item"  :row-index="itemNumber" :row-check="getObjectValue(item, field, n)"
-                                        :row-field="field" :role-value="getRoleValue(n)" :task-type-id="taskTypeId"></component>
-                                </td>
+    <div>
+        <h1 v-model="module" style="text-align: center; font-weight:bold;margin-bottom:10px; margin-top: 15px;">{{ titleCase(module) }}</h1>
+            <div class="table-wrapper"> 
+                    <table class="vuetable table-bordered" style="font-size: 115%;">
+                        <thead class="header">
+                         
+                        </thead>
+                        <tbody v-cloak  class="results">
+                            <template v-for="(item, itemNumber) in tableData">
+            
+                                    <tr v-if="itemNumber == 0" class="row header blue">
+                                            <template v-for="(field, fieldNumber) in fields">
+                                                
+                                                <th v-if="fieldNumber == 0" >
+                                                </th>
+                                                <th  v-else :colspan="maxAction(tableData)"  scope="col" style="text-align: center;padding:10px;border-left: 3px solid #cdd0d4;" :class="field.titleClass">
+                                                    {{ getTitle(field) }}&nbsp;
+                                                </th>
+                                            </template>
+                                        </tr>
+                                <tr @dblClick="onRowDoubleClicked(item, $event)" class="row" :class="onRowClass(item, itemNumber)">
+                                    <template v-for="(field,fieldNumber) in fields">
+                                        <td v-if="fieldNumber ==0" :class="field.dataClass" style="padding:10px;font-weight:bold;border-right: 3px solid #cdd0d4;"  @dblclick="onCellDoubleClicked(item, field, $event)">
+                                                {{ titleCase(item.service) }}
+                                        </td>
+                                        <template v-for="n in item.actions" v-else>
+                                                <td :colspan="maxAction(tableData) / Object.keys(n).length" v-for="(key, index) in Object.keys(n)" style="padding:10px;" :style="getSectionBorderClass(Object.keys(n).length,index)">
+                                                     <span style="font-size:12px">{{ titleCase(key) }}</span><br/> <input class="field.dataClass" style="width: 15px;height: 15px;cursor: pointer;" type="checkbox" @click="setAccessPermision(field, item, key,$event)" :checked="getCheckboxValue(field, item, key)" />
+                                                     <!-- {{ titleCase(key) }}
+                                                     <div class="checkbox">
+                                                            <label style="font-size: 0.9em;">
+                                                                    <input  type="checkbox" @click="setAccessPermision(field, item, key,$event)" :checked="getCheckboxValue(field, item, key)" />
+                                                                <span class="cr"><i class="cr-icon fa fa-check"></i></span>
+                                                            </label>
+                                                    </div>   -->
+                                                    
+            
+                                                </td>
+                                        </template>
+                                    </template>
+                                </tr>
                             </template>
-                        </template>
-                    </tr>
-                </template>
-            </tbody>
-        </table>
+                        </tbody>
+                    </table>
+                </div>
     </div>
+  
 </template>
 
 <script>
 import axios from 'axios'
+import _ from 'lodash'
      /* eslint-disable*/
      var tableColumns = []
 export default {
-    // props: {
+    
+     props: {
     //     wrapperClass: {
     //         type: String,
     //         default: function() {
@@ -88,13 +93,15 @@ export default {
     //         required: true
     //     }
     //     ,
-    //     taskTypeId:{
+    // taskTypeId:{
     //         type: String,
     //         required: true
-    //     }
-        
-        
-    // },
+    //     },
+    rowClassCallback: {
+            type: String,
+            default: ''
+        }
+     },
     data: function() {
         return {
             eventPrefix: 'vuetable:',
@@ -102,7 +109,9 @@ export default {
             currentPage: 1,
             visibleDetailRows: [],
             tableData: [],
-            fields: tableColumns
+            fields: tableColumns,
+            permissionsAll:[],
+            module: ''
         }
     },
     directives: {
@@ -115,6 +124,54 @@ export default {
         },
     },
     methods: {
+        maxAction (item) {
+            return _.chain(item).map((m) => {
+                return Object.keys(m.actions[0]).length
+            }).max().value()
+        },
+        countColspan: function(){
+            var arraData = []
+            for (var tblData in this.tableData){
+                let tblAction = this.tableData[tblData]
+                for (var action in tblAction.actions){
+                     arraData.push(Object.keys(tblAction.actions[action]).length) 
+                }
+            }
+            return _.max(arraData)
+            console.log("Array data: ",_.max(arraData));
+
+        },
+        getRoles: function(){
+        var self = this
+        axios.get('http://localhost:3050/register-roles?module=todo', {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+      }).then(function (response) {
+          console.log("Get all roles:",response.data.data);
+          self.module = response.data.data[0].module
+          if(response.data.data.length > 0){
+            tableColumns = [{
+                    name: 'name',
+                    title: '',
+                    sortField: 'name'
+                }];
+                self.fields = tableColumns;
+                //this.roles = response.body;
+                response.data.data.forEach(function (row) {
+                    row.titleClass = 'center aligned'
+                    row.dataClass = 'center aligned'
+                    tableColumns.push(row)
+                }, self);
+                self.callTaskList();
+          }
+          return response.data.data
+        })
+        .catch(function (error) {
+          console.log("Get all roles error:",error);
+          console.log(error);
+        })
+        },
         callTaskList: function () {
                 // services.roleAccessService.find({
                 //     query: {
@@ -127,16 +184,52 @@ export default {
                 //     console.log("Response roles:--", response)
                 //     this.tableData = response;
                 // });
-               console.log("Table columns:",tableColumns);
+                ///http://localhost:3030/register-permission-scope?module=dbetl
+
+        var self = this
+        axios.get('http://localhost:3050/register-resource?module=todo', {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+      }).then(function (response) {
+          console.log("Get resources:",response.data.data);
+          if(response.data.data.length > 0){
+            self.tableData = response.data.data;
+            console.log("Table rows:",self.tableData);
+            //self.setpermissionArray()
+          }
+          return response.data.data
+        })
+        .catch(function (error) {
+          console.log("Get role permissions error:",error);
+          console.log(error);
+        })
                
+        },
+        getCheckboxValue: function(role, resources, action){
+           let resID = resources.id+"_"+action
+         
+            let index = _.findIndex(this.permissionsAll, function(d) { return (d.roleId === role.id) && (d.resourceId === resID) })
+            if (index > -1) {
+                let permission = this.permissionsAll[index].access_value
+                // console.log("----------------------------------------------------------")
+                // console.log("role:",role.role)
+                // console.log("resources:",resources.service)
+                // console.log("resources:",resources.id+"_"+action)
+                // console.log("action:",action);
+                // console.log("Permissions:",permission);
+                return parseInt(permission)
+               // return tag_name
+            }
         },
         getColSpan: function (fieldIndex) {
             var colSpan = fieldIndex == 0 ? 4 : 1
         },
-        getSectionBorderClass: function (fieldIndex, colSpanIndex) {
-            if (colSpanIndex == 1)
-                return ""
-            else
+        getSectionBorderClass: function (totalCount, index) {
+            console.log("(totalCount-1) == index:",(totalCount-1) == index);
+            if ((totalCount-1) == index)
+                return "border-right: 3px solid #cdd0d4;"
+                else
                 return ""
         },
         getRoleValue:function(index)
@@ -179,8 +272,31 @@ export default {
             var key = dataItem[idColumn]
             return key
         },
-        itemAction: function(action,isChecked, data,rowCheck) {
-            //  var idColumn = this.extractArgs(fieldName)
+        setAccessPermision: function(roleField, item, action, event) {
+        var accessVal = 0
+        if(event.target.checked) {
+            accessVal = 1
+        }
+        console.log("Set permission params 1:",accessVal);
+        console.log("Set permission params: 2",item.id+'_'+action);
+        return axios.post('http://api.flowz.com/authldap/setpermission', {
+            resourceId:  item.id+'_'+action , //resourceid_action
+            roleId:  roleField.id ,
+            taskType:  'global', // scope
+            accessValue: accessVal,
+            app: "todo"
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            }
+            })
+            .then(function (response) {
+            console.log("Set permission response:",response);
+            })
+            .catch(function (error) {
+            console.log("Set permission error:",error);
+            console.log(error);
+            });
         },
         normalizeFields: function() {
             var self = this
@@ -209,7 +325,7 @@ export default {
                 self.fields.$set(i, obj)
             })
         },
-        getObjectValue: function(object, path, crudIndex) {
+        getObjectValue: function(object, path, crudIndex) { //item, field, n
             // defaultValue = (typeof defaultValue == 'undefined') ? null : defaultValue
             if (path.id) {
                 var roleId = object.roleid;
@@ -243,7 +359,7 @@ export default {
         },
         getTitle: function(field) {
             if (typeof field.title === 'undefined') {
-                return this.titleCase(field.name.replace('.', ' '))
+                return this.titleCase(field.role.replace('.', ' '))
             }
             return this.titleCase(field.title)
         },
@@ -350,31 +466,21 @@ export default {
             this.hideDetailRow(dataItem)
         },
         'vuetable:normalize-fields': function() {
+            console.log("Normalized fields called");
             this.normalizeFields()
         }
     },
     created: function() {
         var self = this
-        axios.get('http://localhost:3040/register-roles', {
+        axios.get('http://api.flowz.com/authldap/getallpermission/todo', {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
         },
       }).then(function (response) {
-          console.log("Get all roles:",response.data.data.roles);
+          console.log("Get all permissions:",response.data.data);
           if(response.data.data.length > 0){
-            tableColumns = [{
-                    name: 'name',
-                    title: '',
-                    sortField: 'name'
-                }];
-                self.fields = tableColumns;
-                //this.roles = response.body;
-                response.data.data.forEach(function (row) {
-                    row.titleClass = 'center aligned'
-                    row.dataClass = 'center aligned'
-                    tableColumns.push(row)
-                }, self);
-                self.callTaskList();
+                self.permissionsAll = response.data.data;
+                self.getRoles();
           }
           return response.data.data
         })
@@ -423,22 +529,143 @@ export default {
 }
 
 .table-wrapper { 
-    overflow-x:scroll;
-    overflow-y:visible;
-    margin-left: 115px;
+    overflow-x:auto;
+    overflow-y:auto;
+    margin-left: 50px;
+    margin-top:20px;
+    margin-right: 50px;
+}
+td {
+    text-align: center; /* center checkbox horizontally */
+    vertical-align: middle; /* center checkbox vertically */
+    height: 50px;
+    width: 50px;
 }
 
-td, th {
+/* td, th {
     padding: 5px 20px;
-    width: 100px;
-}
+    width: 50px;
+} */
 
 th:first-child {
-    position: fixed;
-    left: 30px
+    /* position: fixed; */
+    /* left: 30px */
 }
 td:first-child {
-    position: fixed;
-    left: 30px
+    /* position: fixed;
+    left: 30px */
 }
+
+/* new css */
+
+.table {
+  margin: 0 0 40px 0;
+  width: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  display: table;
+}
+@media screen and (max-width: 580px) {
+  .table {
+    display: block;
+  }
+}
+
+.row {
+  display: table-row;
+  background: #f6f6f6;
+}
+.row:nth-of-type(odd) {
+  background: #e9e9e9;
+}
+.row.header {
+  font-weight: 900;
+  color: #ffffff;
+  background: #ea6153;
+}
+.row.green {
+  background: #27ae60;
+}
+.row.blue {
+  background: #2980b9;
+}
+@media screen and (max-width: 580px) {
+  .row {
+    padding: 8px 0;
+    display: block;
+  }
+}
+
+.cell {
+  padding: 6px 12px;
+  display: table-cell;
+}
+@media screen and (max-width: 580px) {
+  .cell {
+    padding: 2px 12px;
+    display: block;
+  }
+}
+
+                            
+.checkbox label:after, 
+.radio label:after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+.checkbox .cr,
+.radio .cr {
+    position: relative;
+    display: inline-block;
+    border: 1px solid #a9a9a9;
+    border-radius: .25em;
+    width: 1.3em;
+    height: 1.3em;
+    float: left;
+    margin-right: 20px;
+
+}
+
+.radio .cr {
+    border-radius: 50%;
+}
+
+.checkbox .cr .cr-icon,
+.radio .cr .cr-icon {
+    position: absolute;
+    font-size: .8em;
+    line-height: 0;
+    top: 50%;
+    left: 15%;
+}
+
+.radio .cr .cr-icon {
+    margin-left: 0.04em;
+}
+
+.checkbox label input[type="checkbox"],
+.radio label input[type="radio"] {
+    display: none;
+}
+
+.checkbox label input[type="checkbox"] + .cr > .cr-icon,
+.radio label input[type="radio"] + .cr > .cr-icon {
+    transform: scale(3) rotateZ(-20deg);
+    opacity: 0;
+    transition: all .3s ease-in;
+}
+
+.checkbox label input[type="checkbox"]:checked + .cr > .cr-icon,
+.radio label input[type="radio"]:checked + .cr > .cr-icon {
+    transform: scale(1) rotateZ(0deg);
+    opacity: 1;
+}
+
+.checkbox label input[type="checkbox"]:disabled + .cr,
+.radio label input[type="radio"]:disabled + .cr {
+    opacity: .5;
+}
+    
+                        
 </style>
