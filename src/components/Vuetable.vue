@@ -2,7 +2,7 @@
     <div>
         <h1 v-model="module" style="text-align: center; font-weight:bold;margin-bottom:10px; margin-top: 15px;">{{ titleCase(module) }}</h1>
             <div class="table-wrapper"> 
-                    <table class="vuetable table-bordered" style="font-size: 115%;">
+                    <table  class="vuetable table-bordered" style="font-size: 115%">
                         <thead class="header">
                          
                         </thead>
@@ -12,11 +12,11 @@
                                     <tr v-if="itemNumber == 0" class="row header blue">
                                             <template v-for="(field, fieldNumber) in fields">
                                                 
-                                                <th v-if="fieldNumber == 0" >
-                                                </th>
-                                                <th  v-else :colspan="maxAction(tableData)"  scope="col" style="text-align: center;padding:10px;border-left: 3px solid #cdd0d4;" :class="field.titleClass">
+                                                <td v-if="fieldNumber == 0" >
+                                                </td>
+                                                <td  v-else  scope="col" style="text-align: center;padding:10px;border-left: 3px solid #cdd0d4;" :class="field.titleClass">
                                                     {{ getTitle(field) }}&nbsp;
-                                                </th>
+                                                </td>
                                             </template>
                                         </tr>
                                 <tr @dblClick="onRowDoubleClicked(item, $event)" class="row" :class="onRowClass(item, itemNumber)">
@@ -24,20 +24,29 @@
                                         <td v-if="fieldNumber ==0" :class="field.dataClass" style="padding:10px;font-weight:bold;border-right: 3px solid #cdd0d4;"  @dblclick="onCellDoubleClicked(item, field, $event)">
                                                 {{ titleCase(item.service) }}
                                         </td>
-                                        <template v-for="n in item.actions" v-else>
-                                                <td :colspan="maxAction(tableData) / Object.keys(n).length" v-for="(key, index) in Object.keys(n)" style="padding:10px;" :style="getSectionBorderClass(Object.keys(n).length,index)">
-                                                     <span style="font-size:12px">{{ titleCase(key) }}</span><br/> <input class="field.dataClass" style="width: 15px;height: 15px;cursor: pointer;" type="checkbox" @click="setAccessPermision(field, item, key,$event)" :checked="getCheckboxValue(field, item, key)" />
-                                                     <!-- {{ titleCase(key) }}
-                                                     <div class="checkbox">
-                                                            <label style="font-size: 0.9em;">
-                                                                    <input  type="checkbox" @click="setAccessPermision(field, item, key,$event)" :checked="getCheckboxValue(field, item, key)" />
-                                                                <span class="cr"><i class="cr-icon fa fa-check"></i></span>
-                                                            </label>
-                                                    </div>   -->
-                                                    
-            
-                                                </td>
-                                        </template>
+                                        <td v-else>
+                                            <table class="table-bordered" style="width:100%">
+                                                <tbody>
+                                                <tr>
+                                                    <template v-for="n in item.actions" >
+                                                        <td v-for="(key, index) in Object.keys(n)" style="padding:10px;">
+                                                             <span style="font-size:12px">{{ titleCase(key) }}</span><br/> <input class="field.dataClass" style="width: 15px;height: 15px;cursor: pointer;" type="checkbox" @click="setAccessPermision(field, item, key,$event)" :checked="getCheckboxValue(field, item, key)" />
+                                                             <!-- {{ titleCase(key) }}
+                                                             <div class="checkbox">
+                                                                    <label style="font-size: 0.9em;">
+                                                                            <input  type="checkbox" @click="setAccessPermision(field, item, key,$event)" :checked="getCheckboxValue(field, item, key)" />
+                                                                        <span class="cr"><i class="cr-icon fa fa-check"></i></span>
+                                                                    </label>
+                                                            </div>   -->
+                                                            
+                    
+                                                        </td>
+                                                </template>
+                                                </tr>
+                                            </tbody>
+                                            </table>
+                                        </td>
+                                        
                                     </template>
                                 </tr>
                             </template>
@@ -49,8 +58,12 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import axios from 'axios'
 import _ from 'lodash'
+import VueWidgets from 'vue-widgets'
+import 'vue-widgets/dist/styles/vue-widgets.css'
+Vue.use(VueWidgets)
      /* eslint-disable*/
      var tableColumns = []
 export default {
@@ -124,11 +137,6 @@ export default {
         },
     },
     methods: {
-        maxAction (item) {
-            return _.chain(item).map((m) => {
-                return Object.keys(m.actions[0]).length
-            }).max().value()
-        },
         countColspan: function(){
             var arraData = []
             for (var tblData in this.tableData){
@@ -221,16 +229,6 @@ export default {
                 return parseInt(permission)
                // return tag_name
             }
-        },
-        getColSpan: function (fieldIndex) {
-            var colSpan = fieldIndex == 0 ? 4 : 1
-        },
-        getSectionBorderClass: function (totalCount, index) {
-            console.log("(totalCount-1) == index:",(totalCount-1) == index);
-            if ((totalCount-1) == index)
-                return "border-right: 3px solid #cdd0d4;"
-                else
-                return ""
         },
         getRoleValue:function(index)
         {
@@ -470,6 +468,9 @@ export default {
             this.normalizeFields()
         }
     },
+    components: {
+            VueWidgets
+        },
     created: function() {
         var self = this
         axios.get('http://api.flowz.com/authldap/getallpermission/todo', {
@@ -666,6 +667,7 @@ td:first-child {
 .radio label input[type="radio"]:disabled + .cr {
     opacity: .5;
 }
+
     
                         
 </style>
