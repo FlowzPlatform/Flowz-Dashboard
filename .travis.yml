@@ -15,7 +15,7 @@ jobs:
     - stage: Flowz-Dashboard-Fronted-Flowz
       script:
       - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-      - docker build -t flowz_dashboard_fronted_flowz:$TRAVIS_BRANCH .
+      - docker build -t flowz_dashboard_fronted_flowz:$TRAVIS_BRANCH --build-arg serverkey="$SERVERKEY" .
       - docker images
       - docker tag flowz_dashboard_fronted_flowz:$TRAVIS_BRANCH $DOCKER_USERNAME/flowz_dashboard_fronted_flowz:$TRAVIS_BRANCH
       - docker push $DOCKER_USERNAME/flowz_dashboard_fronted_flowz:$TRAVIS_BRANCH
