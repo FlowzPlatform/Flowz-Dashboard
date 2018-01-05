@@ -379,5 +379,8 @@ border-radius: 50%;
 border-radius: 50%;
 }
 </style>
+<style>
+    .vjs-control-bar {display:none;}
+</style>
 
 
