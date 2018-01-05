@@ -212,7 +212,7 @@ export default {
   },
 
   created(){
-        console.log('SERVER KEY-->', process.env.serverkey)
+        console.log('SERVER KEY-->', process.env.domainkey)
         // let token = this.$session.get('auth_token');
         // if(token){
         //     this.$router.push('/');

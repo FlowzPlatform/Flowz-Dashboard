@@ -1,6 +1,6 @@
 FROM ubuntu:16.04
 
-ARG serverkey
+ARG domainkey
 
 # install dependencies
 RUN apt-get update \
