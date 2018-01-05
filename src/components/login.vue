@@ -212,7 +212,7 @@ export default {
   },
 
   created(){
-        
+        console.log('SERVER KEY-->', process.env.serverkey)
         // let token = this.$session.get('auth_token');
         // if(token){
         //     this.$router.push('/');
@@ -311,6 +311,7 @@ export default {
                self.$message.warning("Email is not valid");
            }else{
              self.saveFileLoadingLogin = true;
+             console.log('login URL:', config.loginUrl)
              axios.post(this.selectedTabIndex==1? config.loginUrl:config.ldapLoginUrl , {email: self.login.email.trim(),
                     password: self.login.password.trim()})
             .then(function (response) {
