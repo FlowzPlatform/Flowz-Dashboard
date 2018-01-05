@@ -1,13 +1,13 @@
 export default{
     // loginUrl : "http://ec2-54-88-11-110.compute-1.amazonaws.com/api/login",
     // ldapLoginUrl : "http://ec2-54-88-11-110.compute-1.amazonaws.com/api/ldapauth",
-    loginUrl: "http://"+process.env.serverkey+".flowz.com/api/login",
-    ldapLoginUrl: "http://auth.flowz.com/api/ldapauth",
-    registrationUrl : "http://api.flowz.com/serverapi/register",
-    feathersServiceBaseUrl :  "http://api.flowz.com/serverapi/",
-    facebookSuccessCallbackUrl : "http://dashboard.flowzcluster.tk",
-    loginWithFacebookUrl : "http://devauth.flowz.com/auth/facebook",
-    googleSuccessCallbackUrl : "http://dashboard.flowzcluster.tk",
-    loginWithGoogleUrl : "http://devauth.flowz.com/auth/Gplus"
+    loginUrl: "http://auth."+process.env.domainkey+"/api/login",
+    ldapLoginUrl: "http://auth."+process.env.domainkey+"/api/ldapauth",
+    registrationUrl : "http://api."+process.env.domainkey+"/serverapi/register",
+    feathersServiceBaseUrl :  "http://api."+process.env.domainkey+"/serverapi/",
+    facebookSuccessCallbackUrl : "http://dashboard."+process.env.domainkey,
+    loginWithFacebookUrl : "http://auth."+process.env.domainkey+"/auth/facebook",
+    googleSuccessCallbackUrl : "http://dashboard."+process.env.domainkey,
+    loginWithGoogleUrl : "http://auth."+process.env.domainkey+"/auth/Gplus"
     
 }
