@@ -57,7 +57,7 @@
                     </div> -->
                     <div class="lconun">
                         <span class="lthlob">
-                            <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" class="google" @click="submitGoogle()"><icon name="google"></icon></a> - <a href="#" class="linkdin"><icon name="linkedin"></icon></a>
+                            <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" class="google" @click="submitGoogle()"><icon name="google"></icon></a></icon></a>
                         </span>
                     </div>
                    
@@ -114,7 +114,7 @@
                     <div class="lconun" style="margin-top: 10px;">
                         <span class="lthlob">
                             <span class="lthlob">
-                            <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" @click="submitGoogle()" class="google"><icon name="google"></icon></a> - <a href="#" class="linkdin"><icon name="linkedin"></icon></a>
+                            <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" @click="submitGoogle()" class="google"><icon name="google"></icon></a></icon></a>
                         </span>
                         </span>
                     </div>
@@ -212,7 +212,7 @@ export default {
   },
 
   created(){
-        
+        console.log('SERVER KEY-->', process.env.domainkey)
         // let token = this.$session.get('auth_token');
         // if(token){
         //     this.$router.push('/');
@@ -311,6 +311,7 @@ export default {
                self.$message.warning("Email is not valid");
            }else{
              self.saveFileLoadingLogin = true;
+             console.log('login URL:', config.loginUrl)
              axios.post(this.selectedTabIndex==1? config.loginUrl:config.ldapLoginUrl , {email: self.login.email.trim(),
                     password: self.login.password.trim()})
             .then(function (response) {
@@ -377,6 +378,9 @@ border-radius: 50%;
   padding: 12px 12px 3px 10px;
 border-radius: 50%;
 }
+</style>
+<style>
+    .vjs-control-bar {display:none;}
 </style>
 
 
