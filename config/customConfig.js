@@ -9,5 +9,7 @@ export default{
     loginWithFacebookUrl : "http://ec2-54-88-11-110.compute-1.amazonaws.com/auth/facebook",
     googleSuccessCallbackUrl : "http://dashboard.flowz.com",
     loginWithGoogleUrl : "http://ec2-54-88-11-110.compute-1.amazonaws.com/auth/Gplus",
+    getAllPermissionsUrl : "http://api.flowz.com/authldap/getallpermission/",
+    setPermissionUrl : "http://api.flowz.com/authldap/setpermission"
     
 }
