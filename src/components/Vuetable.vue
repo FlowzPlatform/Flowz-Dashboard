@@ -100,7 +100,7 @@
             },
             getRoles: function(){
                 var self = this
-                    axios.get('http://localhost:3050/register-roles', {
+                    axios.get(config.subscriptionUrl+'register-roles', {
                     headers: {
                     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                     },
@@ -130,7 +130,7 @@
             },
             callTaskList: function () {
                 var self = this
-                axios.get('http://localhost:3050/register-resource', {
+                axios.get(config.subscriptionUrl+'register-resource', {
                 headers: {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                 },
