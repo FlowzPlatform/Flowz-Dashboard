@@ -8,6 +8,8 @@ export default{
     facebookSuccessCallbackUrl : "http://dashboard."+process.env.domainkey,
     loginWithFacebookUrl : "http://auth."+process.env.domainkey+"/auth/facebook",
     googleSuccessCallbackUrl : "http://dashboard."+process.env.domainkey,
-    loginWithGoogleUrl : "http://auth."+process.env.domainkey+"/auth/Gplus"
-    
+    loginWithGoogleUrl : "http://auth."+process.env.domainkey+"/auth/Gplus",
+    getAllPermissionsUrl : "http://api."+process.env.domainkey+"/authldap/getallpermission/",
+    setPermissionUrl : "http://api."+process.env.domainkey+"/authldap/setpermission",
+    subscriptionUrl: "http://api."+process.env.domainkey+"/subscription/"
 }
