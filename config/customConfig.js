@@ -4,6 +4,7 @@ export default{
     loginUrl: "http://auth."+process.env.domainkey+"/api/login",
     ldapLoginUrl: "http://auth."+process.env.domainkey+"/api/ldapauth",
     registrationUrl : "http://api."+process.env.domainkey+"/serverapi/register",
+    // registrationUrl : "http://auth."+process.env.domainkey+"/api/setup",
     feathersServiceBaseUrl :  "http://api."+process.env.domainkey+"/serverapi/",
     facebookSuccessCallbackUrl : "http://dashboard."+process.env.domainkey,
     loginWithFacebookUrl : "http://auth."+process.env.domainkey+"/auth/facebook",

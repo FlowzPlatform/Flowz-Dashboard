@@ -104,7 +104,7 @@
                         <div class="lrinp">
                           
                             <el-button type="success" size="small" class="signupButton" @click="loginUser()" @keyup.enter="loginUser()" :loading="saveFileLoadingLogin" >Login</el-button>
-                            <a v-show="this.selectedTabIndex==1" href="javascript:void()" class="lfort">Forgot Password</a>
+                            <a v-show="this.selectedTabIndex==3" href="javascript:void()" class="lfort">Forgot Password</a>
                         </div>
                     </div>
                 </div>
@@ -248,7 +248,7 @@ export default {
        registerUser: async function(){
            let self = this;
            let emailValidator = await this.validateEmail(self.register.email);
-           console.log(emailValidator)
+           console.log('Email Validator', emailValidator)
           
           if(self.register.fname == ""){
                self.$message.warning("First Name is required");
@@ -260,18 +260,19 @@ export default {
                self.$message.warning("Email is not valid");
            }else{
                self.saveFileLoading = true;
+               console.log('Registartion URL', config.registrationUrl)
                axios.post(config.registrationUrl, {
                 firstName: self.register.fname.trim(),
                 lastName: self.register.lname.trim(),
                 email: self.register.email.trim()
             })
             .then(function (response) {
-                console.log(response);
-                if(response.data.code == 200){
+                console.log("Response",response);
+                if(response.status == 201){
                     self.saveFileLoading = false;
                     //alert(response.data.message+", please check your email for password")
                     self.$message({
-                        message : response.data.message+", please check your email for password",
+                        message : " please check your email for password",
                         type: 'success'
                     });
                      $('.lundcon').addClass('sing');
@@ -285,6 +286,7 @@ export default {
                 }
             })
             .catch(function (error) {
+                console.log('Error', error)
                 this.login.password = ''
                 // console.log(error);
                 self.saveFileLoading = false;
