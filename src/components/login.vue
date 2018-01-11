@@ -62,7 +62,7 @@
                     </div> -->
                     <div class="lconun">
                         <span class="lthlob">
-                            <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" class="google" @click="submitGoogle()"><icon name="google"></icon></a> - <a href="#" class="linkdin"><icon name="linkedin"></icon></a>
+                            <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" class="google" @click="submitGoogle()"><icon name="google"></icon></a></icon></a>
                         </span>
                     </div>
                    
@@ -110,7 +110,7 @@
 
                                 <el-button type="success" size="small" class="signupButton"  v-if="showForgotPassword" @click="forgotPasswordSendEmail()" :loading="saveFileLoadingLogin" >Submit</el-button>
 
-                                <a href="javascript:void()" class="lfort" v-if="!showForgotPassword"  v-show="this.selectedTabIndex==1" @click="forgotPassword()">Forgot Password</a>
+                                <a href="javascript:void()" style="display:none" class="lfort" v-if="!showForgotPassword"  v-show="this.selectedTabIndex==1" @click="forgotPassword()">Forgot Password</a>
 
                                 <a href="javascript:void()" class="lfort" v-if="showForgotPassword" v-show="this.selectedTabIndex==1" @click="backtoLogin()">Back to Standard Login</a>
 
@@ -123,7 +123,7 @@
                     <div class="lconun" style="margin-top: 10px;">
                         <span class="lthlob">
                             <span class="lthlob">
-                            <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" @click="submitGoogle()" class="google"><icon name="google"></icon></a> - <a href="#" class="linkdin"><icon name="linkedin"></icon></a>
+                            <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" @click="submitGoogle()" class="google"><icon name="google"></icon></a></icon></a>
                         </span>
                         </span>
                     </div>
@@ -219,7 +219,7 @@ export default {
   },
 
   created(){
-        
+        console.log('SERVER KEY-->', process.env.domainkey)
         // let token = this.$session.get('auth_token');
         // if(token){
         //     this.$router.push('/');
@@ -329,11 +329,10 @@ export default {
            }else if(self.login.password == ""){
                self.$message.warning("password field is required");
            }else{
-               self.saveFileLoadingLogin = true;
-               axios.post(this.selectedTabIndex==1? config.loginUrl:config.ldapLoginUrl , {
-                email: self.login.email.trim(),
-                password: self.login.password.trim()
-            })
+             self.saveFileLoadingLogin = true;
+             console.log('login URL:', config.loginUrl)
+             axios.post(this.selectedTabIndex==1? config.loginUrl:config.ldapLoginUrl , {email: self.login.email.trim(),
+                    password: self.login.password.trim()})
             .then(function (response) {
                console.log(response);
                 self.saveFileLoadingLogin = false;
@@ -442,6 +441,9 @@ border-radius: 50%;
         float: right;
         margin-top: 10px;
 } */
+</style>
+<style>
+    .vjs-control-bar {display:none;}
 </style>
 
 

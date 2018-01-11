@@ -6,6 +6,7 @@ import dashboard from '@/components/dashboard'
 import subscriptionplan from '@/components/subscriptionplan'
 import resetpassword from '@/components/resetPassword'
 
+import Vuetable from '@/components/Vuetable'
 
 Vue.use(Router)
 
@@ -32,7 +33,7 @@ Vue.use(Router)
 
     const routes = [{
       path: '/',
-      name: 'Layout',
+      name: 'MainLayout',
       component: Layout,
       children: [{
         path: '/',
@@ -55,6 +56,10 @@ Vue.use(Router)
       path: '/resetpassword',
       name: 'resetpassword',
       component: resetpassword
+    }, {
+      path: '/acl',
+      name: 'acl',
+      component: Vuetable
     }
   ]
     export default new Router({mode: 'history' , hashbang: false,routes: routes})

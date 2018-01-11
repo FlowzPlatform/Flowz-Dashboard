@@ -13,6 +13,7 @@
     "axios": "^0.17.1",
     "element-ui": "^2.0.5",
     "iview": "^2.7.3",
+    "lodash": "^4.17.4",
     "psl": "^1.1.20",
     "vue": "^2.5.2",
     "vue-awesome": "^2.3.4",
@@ -20,6 +21,7 @@
     "vue-particles": "^1.0.9",
     "vue-router": "^3.0.1",
     "vue-session": "^0.9.10",
+    "vue-widgets": "^1.0.9",
     "wheelnav": "^1.7.1"
   },
   "devDependencies": {
