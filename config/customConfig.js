@@ -11,5 +11,7 @@ export default{
     loginWithGoogleUrl : "http://auth."+process.env.domainkey+"/auth/Gplus",
     getAllPermissionsUrl : "http://api."+process.env.domainkey+"/authldap/getallpermission/",
     setPermissionUrl : "http://api."+process.env.domainkey+"/authldap/setpermission",
-    subscriptionUrl: "http://api."+process.env.domainkey+"/subscription/"
+    subscriptionUrl: "http://api."+process.env.domainkey+"/subscription/",
+    forgotPasswordUrl : "http://ec2-54-88-11-110.compute-1.amazonaws.com/api/forgetpassword",
+    resetpassword : "http://ec2-54-88-11-110.compute-1.amazonaws.com/api/resetpassword",
 }
