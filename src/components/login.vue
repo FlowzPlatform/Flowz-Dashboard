@@ -267,7 +267,7 @@ export default {
                 email: self.register.email.trim()
             })
             .then(function (response) {
-                console.log("Response",response);
+                console.log("Response",response)
                 if(response.status == 201){
                     self.saveFileLoading = false;
                     //alert(response.data.message+", please check your email for password")
