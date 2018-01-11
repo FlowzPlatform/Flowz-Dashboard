@@ -79,7 +79,7 @@
 					<ul class="radial-nav" id="radial-nav1">
 						<li data-content="git"><a href="#"></a></li>
 						<li data-content="css">
-						<a href="#" class="menu2-item " @click="goTosubscriptionplan('http://uploader.flowzcluster.tk')" v-on:mouseover="hoverOnSubmenu('rgba(245, 93, 33, 0.7)', 'right' , 6)"> 
+						<a href="#" class="menu2-item " @click="goTosubscriptionplan('http://uploader.flowzcluster.tk/uploader')" v-on:mouseover="hoverOnSubmenu('rgba(245, 93, 33, 0.7)', 'right' , 6)"> 
 							<div class="dashcub dbetl">
 								<div class="dascutx">
 									<div class="dascufo">
