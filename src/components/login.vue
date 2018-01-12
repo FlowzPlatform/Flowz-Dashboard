@@ -268,7 +268,7 @@ export default {
             })
             .then(function (response) {
                 console.log("Response",response)
-                if(response.status == 201){
+                if(response.status == 200){
                     self.saveFileLoading = false;
                     //alert(response.data.message+", please check your email for password")
                     self.$message({
@@ -286,12 +286,12 @@ export default {
                 }
             })
             .catch(function (error) {
-                console.log('Error', error)
-                this.login.password = ''
+                console.log('Error', error.response.data)
+                // this.login.password = ''
                 // console.log(error);
                 self.saveFileLoading = false;
                 //alert(error);
-                self.$message.error(error);
+                self.$message.error(error.response.data);
             });
            }
 
