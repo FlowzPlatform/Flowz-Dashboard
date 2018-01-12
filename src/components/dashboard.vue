@@ -12,7 +12,7 @@
 			</div>
 
 			<div class="container11">
-			<p style="text-align: justify; font-size:14px; font-family: Lobster, serif" >{{card.desc}} </p>
+			<p style="text-align: justify; font-size:14px; font-family:Arial, Helvetica, sans-serif" >{{card.desc}} </p>
 			</div>
 		</div>
 	</div>
