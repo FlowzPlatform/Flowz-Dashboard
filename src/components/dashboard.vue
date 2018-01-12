@@ -5,7 +5,7 @@
 	<div v-for="card in cards">
 		<div v-if="position == card.position && index == card.index"  v-bind:class= card.class :style="{background : card1}" >
 			<div class="tit">
-				<h4><b>{{card.title}}</b></h4>
+				<h4 style="font-size:25px;"><b>{{card.title}}</b></h4>
 			</div>
 			<div class="img" >
 			<img class="cardimg" :src= card.img >
@@ -464,7 +464,7 @@ body {color: #d1d1d1;}
 .users .dascuico {background-color: #7e51ac;}
 
 
-.overlay {position:  fixed;right: 30px;top: 100px;width: 300px;}
+.overlay {position:  fixed;right: 30px;top: 100px;width: 400px;}
 .overlay .card11.webpart {width: 100%;display: inline-block;border-radius: 20px;padding: 10px;}
 .overlay .card11.webpart .tit {width: 100%;display: inline-block;padding-bottom: 10px; text-align:center; color:#fff;}
 .overlay .card11.webpart .img {width: 100%;display: inline-block;}
