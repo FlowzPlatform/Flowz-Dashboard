@@ -105,7 +105,7 @@
                     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                     },
                 }).then(function (response) {
-                console.log("Get all roles:",_.groupBy(response.data.data, 'module'));
+                //console.log("Get all roles:",_.groupBy(response.data.data, 'module'));
             
                     if(response.data.data.length > 0){
                         var arrRoles = _.groupBy(response.data.data, 'module');
@@ -139,7 +139,7 @@
                     if(response.data.data.length > 0){
                         let arrResources = _.groupBy(response.data.data, 'module');
                         self.tableData = arrResources;
-                        console.log("Table rows:",Object.keys(self.tableData));
+                        //console.log("Table rows:",Object.keys(self.tableData));
                         for (var tblData in arrResources){
                             console.log("arrResources:",tblData)
                             self.getAllPermissions(tblData, Object.keys(self.tableData).length)

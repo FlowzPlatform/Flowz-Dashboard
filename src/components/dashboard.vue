@@ -145,7 +145,7 @@ export default {
       msg: 'Welcome to Dashboard',
       card1: '',
       position: 'left',
-      index : '1',
+      index : 0,
       leftup: 1000,
       topup: 200,
       cards : [],
