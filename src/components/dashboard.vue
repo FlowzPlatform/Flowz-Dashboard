@@ -12,7 +12,7 @@
 			</div>
 
 			<div class="container11">
-			<p style="text-align: justify; font-size:14px; font-family:Arial, Helvetica, sans-serif" >{{card.desc}} </p>
+			<p style="text-align: justify; font-size:14px; font-family:Arial, Helvetica, sans-serif; color:white; padding-top:10px; line-height:17px" >{{card.desc}} </p>
 			</div>
 		</div>
 	</div>
@@ -189,7 +189,7 @@ export default {
               class : "card11 webpart",
               position : "left",
               title :"Web Builder" ,
-              // desc : "Build the website you desire without any knowledge of coding.Flowz Web builder provides all the needed tool to create a stunning website.Just drag and drop the components to your page and publish the website.It is configured with very rich components and partial you can reuse through the process."
+              desc : "Build the website you desire without any knowledge of coding.Flowz Web builder provides all the needed tool to create a stunning website.Just drag and drop the components to your page and publish the website.It is configured with very rich components and partial you can reuse through the process."
           },
           {
               img :"/assets/images/vmail.png" ,
@@ -198,7 +198,7 @@ export default {
               class : "card11 webpart",
               position : "left",
               title : "V-Mail",
-              // desc : "This is a user friendly Vue based email client.It can receives the mail , list it and show the email content. It can also send mail in plain or html format to multiple User in a effective and efficient way."
+              desc : "This is a user friendly Vue based email client.It can receives the mail , list it and show the email content. It can also send mail in plain or html format to multiple User in a effective and efficient way."
           },
           {
               img :"/assets/images/todo.png" ,
@@ -215,7 +215,7 @@ export default {
               class : "card11 crmpart",
               position : "left",
               title : "Accounting",
-              // desc : "It is an user friendly way of listing the tasks, assigning them, to track them, maintain comments or action taken and its status updates of minutes.The user can create subtasks upto any level in real time."
+              desc : "It is an user friendly way of listing the tasks, assigning them, to track them, maintain comments or action taken and its status updates of minutes.The user can create subtasks upto any level in real time."
           },
           {
               img :"/assets/images/databases.jpg" ,
@@ -223,7 +223,7 @@ export default {
               class : "card11 crmpart",
               position : "left",
               title : "Uploader",
-             // desc : "The Compatibility of your databases (both local and remote) are automatically created, configured and updated through the DBETL client. Creating, repairing, deleting and renaming and maintaining multiple databases is much simpler."
+              desc : "The Compatibility of your databases (both local and remote) are automatically created, configured and updated through the DBETL client. Creating, repairing, deleting and renaming and maintaining multiple databases is much simpler."
           },
           {
               img :"/assets/images/web-builder-img.png" ,
