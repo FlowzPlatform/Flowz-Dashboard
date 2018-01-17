@@ -1,5 +1,5 @@
 <template>
-    <Menu mode="horizontal" theme="primary" style="background:#c5cee77e;">
+    <Menu mode="horizontal" theme="primary" style="background:#c5cee74b;">
         <Row type="flex">
             <!-- <Col :span="1">
             <Row type="flex" justify="end" align="middle">
