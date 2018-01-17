@@ -4,12 +4,9 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import 'vue-awesome/icons/flag'
-
 import 'vue-awesome/icons'
-
-
-
 import Icon from 'vue-awesome/components/Icon'
+import store from './store'
 
 Vue.component('icon', Icon)
 
@@ -31,6 +28,7 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   router,
+  store: store,
   template: '<App/>',
   components: { App }
 })

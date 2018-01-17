@@ -67,43 +67,43 @@
 
                   
                     <div>
-                        <Tabs class="lconun" type="card" value="1" @on-click=tabsClicked>
-                                <TabPane label="Standard" name="1">
+                        <el-tabs class="lconun" v-model="activeName" type="card" value="1" @tab-click="tabsClicked">
+                                <el-tab-pane label="Standard" name="1" >
 
                                     <div class="lconun">
                                         <div class="lrinp">
-                                            <label>Email</label>
-                                            <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) ">
+                                            <label style="margin-left: -18px; margin-top: 2px;">Email</label>
+                                            <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) " style="margin-left: -18px; margin-top: 2px;">
                                         </div>
                                     </div>
                                     <div class="lconun">
                                         <div class="lrinp">
-                                            <label>Password</label>
-                                            <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) ">
+                                            <label style="margin-left: -18px; margin-top: 2px;">Password</label>
+                                            <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) " @keyup.enter="loginUser()" style="margin-left: -18px; margin-top: 2px;">
                                         </div>
                                     </div>
-                                </TabPane>
-                                <TabPane label="LDAP" name="2">
+                                </el-tab-pane>
+                                <el-tab-pane label="LDAP" name="2">
                                     <div class="lconun">
                                         <div class="lrinp">
-                                            <label>Email</label>
-                                            <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) ">
+                                            <label style="margin-left: -18px; margin-top: 2px;">Email</label>
+                                            <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) " style="margin-left: -18px; margin-top: 2px;">
                                         </div>
                                     </div>
                                     <div class="lconun">
                                         <div class="lrinp">
-                                            <label>Password</label>
-                                            <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) ">
+                                            <label style="margin-left: -18px; margin-top: 2px;">Password</label>
+                                            <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) " @keyup.enter="loginUser()" style="margin-left: -18px; margin-top: 2px;">
                                         </div>
                                     </div>
-                                </TabPane>
-                        </Tabs>
+                                </el-tab-pane>
+                            </el-tabs>
                         </div>
                    
                     <div class="lconun">
                         <div class="lrinp">
                           
-                            <el-button type="success" size="small" class="signupButton" @click="loginUser()" @keyup.enter="loginUser()" :loading="saveFileLoadingLogin" >Login</el-button>
+                            <el-button type="success" size="small"  class="signupButton" @click="loginUser()" :loading="saveFileLoadingLogin" >Login</el-button>
                             <a v-show="this.selectedTabIndex==3" href="javascript:void()" class="lfort">Forgot Password</a>
                         </div>
                     </div>
@@ -184,8 +184,7 @@ let facebookSuccessCallbackUrl = config.facebookSuccessCallbackUrl;
 
 
 let location = psl.parse(window.location.hostname)
-
-
+location = location.domain === null ? location.input : location.domain ;
 
 export default {
   name: 'login',
@@ -206,7 +205,8 @@ export default {
           email:"",
           password:""
       },
-      selectedTabIndex:1,
+      selectedTabIndex:0,
+      activeName: '1',
       
     }
   },
@@ -230,8 +230,9 @@ export default {
     tabsClicked(val){
                 this.login.email = ''
                 this.login.password = ''
-                console.log('value is:',val);
-                this.selectedTabIndex = val;},
+                console.log('value is:',val.index);
+                this.selectedTabIndex = val.index;
+        },
        showLogin : async function(targetName, action){
            $('.lundcon').addClass('sing');
        },
@@ -293,17 +294,14 @@ export default {
                 //alert(error);
                 self.$message.error(error.response.data);
             });
-           }
-
-
-           
+           }  
        },
 
       
        loginUser: async function(){
            let self = this;
            let emailValidator = await this.validateEmail(self.login.email);
-           console.log(emailValidator);
+           console.log('emailvalidator', emailValidator);
 
            if(self.login.email == ""){
                self.$message.warning("email field is required");
@@ -314,27 +312,34 @@ export default {
            }else{
              self.saveFileLoadingLogin = true;
              console.log('login URL:', config.loginUrl)
-             axios.post(this.selectedTabIndex==1? config.loginUrl:config.ldapLoginUrl , {email: self.login.email.trim(),
+             axios.post(this.selectedTabIndex==0? config.loginUrl:config.ldapLoginUrl , {email: self.login.email.trim(),
                     password: self.login.password.trim()})
             .then(function (response) {
-               console.log(response);
-                self.saveFileLoadingLogin = false;
+               console.log('Login response:',response);
+               
+               let email = self.login.email.trim().split('@');
+               console.log('Email',email);
+               self.$store.state.loginUser = email[0]
+               self.saveFileLoadingLogin = false;
                 //self.$session.set('auth_token', response.data.logintoken)
                 //             let location = psl.parse(window.location.hostname)
                 //   location = location.domain === null ? location.input : location.domain
                 //   console.log('Cookie :', Vue.cookie)
                 //   Vue.cookie.set('auth_token', token, {expires: 1, domain: location});
-                
-                location = location.domain === null ? location.input : location.domain ;
+                console.log('domain', location.domain);
+                // location = location.domain === null ? location.input : location.domain ;
                 self.$cookie.set('auth_token', response.data.logintoken, {expires: 1, domain: location});
 
-                
+                console.log('before call dashboard');
                 self.$router.push('/');
             })
             .catch(function (error) {
-                console.log("error-->",error)
+                console.log("error-->",error.response)
                 self.saveFileLoadingLogin = false;
-                 self.$message.error("email or password is incorrect");
+                if(!error.response || error.response != undefined)
+                    self.$message.error(error.response.data)
+                else
+                    self.$message.error("email or password is incorrect");
             });
            }
        },
@@ -380,6 +385,7 @@ border-radius: 50%;
   padding: 12px 12px 3px 10px;
 border-radius: 50%;
 }
+
 </style>
 <style>
     .vjs-control-bar {display:none;}
