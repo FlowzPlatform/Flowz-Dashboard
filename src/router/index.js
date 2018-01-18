@@ -8,6 +8,7 @@ import createPlan from '@/components/create-plan'
 import subscriptionList from '@/components/subscription-list'
 import checkout from '@/components/checkout'
 import planDetails from '@/components/plan-details'
+import Vuetable from '@/components/Vuetable'
 
 Vue.use(Router)
 
@@ -37,6 +38,12 @@ export default new Router({
           name: 'subscriptionList',
           component: subscriptionList,
           meta: { requiresAuth: true }
+        }, 
+        {
+          // path: 'subscriptionplan/:id',
+          path: 'subscriptionplan',
+          component: subscriptionplan,
+          name: 'subscriptionplan',
         },
         {
             path: '/checkout/:id',
@@ -60,6 +67,10 @@ export default new Router({
         path: '/login',
         name: 'login',
         component: login
-      }
+      }, {
+      path: '/acl',
+      name: 'acl',
+      component: Vuetable
+    }
   ]
 })

@@ -9,9 +9,7 @@ import { sync } from 'vuex-router-sync'
 
 // import config from '@/config'
 import 'vue-awesome/icons/flag'
-
 import 'vue-awesome/icons'
-
 // Include and set up feathers client
 const Feathers = require('feathers/client')
 const hooks = require('feathers-hooks')
@@ -127,7 +125,7 @@ sync(store,router)
 new Vue({
   el: '#app',
   router,
-  store:store,
+  store: store,
   template: '<App/>',
   components: { App }
 })

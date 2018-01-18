@@ -8,19 +8,48 @@ services:
 branches:
   only:
   - master
+  - develop
+  - QA
 
 jobs:
   include:
     - stage: Flowz-Dashboard-Fronted-Flowz
       script:
-      - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-      - docker build -t flowz_dashboard_fronted_flowz:"$DOCKER_IMAGE_TAG" .
-      - docker images
-      - docker tag flowz_dashboard_fronted_flowz:"$DOCKER_IMAGE_TAG" $DOCKER_USERNAME/flowz_dashboard_fronted_flowz:"$DOCKER_IMAGE_TAG"
-      - docker push $DOCKER_USERNAME/flowz_dashboard_fronted_flowz:"$DOCKER_IMAGE_TAG"
+      - 'if [ ${TRAVIS_BRANCH} = "master" ]; then
+            docker login -u="$DOCKER_USERNAME_FLOWZ" -p="$DOCKER_PASSWORD_FLOWZ";
+            docker build -t flowz_dashboard_fronted_flowz:latest --build-arg domainkey="$DOMAINKEY_MASTER" .;
+            docker images;
+            docker tag flowz_dashboard_fronted_flowz:latest $DOCKER_USERNAME_FLOWZ/flowz_dashboard_fronted_flowz:latest;
+            docker push $DOCKER_USERNAME_FLOWZ/flowz_dashboard_fronted_flowz:latest;
+        elif [ ${TRAVIS_BRANCH} = "develop" ]; then
+            docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+            docker build -t flowz_dashboard_fronted_flowz:dev --build-arg domainkey="$DOMAINKEY_DEVELOP" .;
+            docker images;
+            docker tag flowz_dashboard_fronted_flowz:dev $DOCKER_USERNAME/flowz_dashboard_fronted_flowz:dev;
+            docker push $DOCKER_USERNAME/flowz_dashboard_fronted_flowz:dev;
+        else
+            docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+            docker build -t flowz_dashboard_fronted_flowz:qa --build-arg domainkey="$DOMAINKEY_QA" .;
+            docker images;
+            docker tag flowz_dashboard_fronted_flowz:qa $DOCKER_USERNAME/flowz_dashboard_fronted_flowz:qa;
+            docker push $DOCKER_USERNAME/flowz_dashboard_fronted_flowz:qa;
+        fi'
     - stage: Upgrade Rancher Service
       script:
       - bash ./upgrade.sh
     - stage: Finish Rancher Service
       script:
       - bash ./finish.sh
+
+
+notifications:
+  email:
+    recipients:
+      - arpitap@officebeacon.com
+      - kaushalm@officebrain.com
+      - anuj@officebrain.com
+      - naveeng@officebrain.com
+      - uhirani@officebrain.com
+      - igandhi@officebrain.com
+    on_success: always
+    on_failure: always
