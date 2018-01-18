@@ -227,11 +227,11 @@ export default {
 
 
    methods: {
-    tabsClicked(val){
-                this.login.email = ''
-                this.login.password = ''
-                console.log('value is:',val.index);
-                this.selectedTabIndex = val.index;
+        tabsClicked(val){
+            this.login.email = ''
+            this.login.password = ''
+            console.log('value is:',val.index);
+            this.selectedTabIndex = val.index;
         },
        showLogin : async function(targetName, action){
            $('.lundcon').addClass('sing');
@@ -321,8 +321,8 @@ export default {
                self.$store.state.loginUser = email[0]
                self.saveFileLoadingLogin = false;
                 //self.$session.set('auth_token', response.data.logintoken)
-                            let location = psl.parse(window.location.hostname)
-                //   location = location.domain === null ? location.input : location.domain
+                let location = psl.parse(window.location.hostname)
+                location = location.domain === null ? location.input : location.domain
                 //   console.log('Cookie :', Vue.cookie)
                 //   Vue.cookie.set('auth_token', token, {expires: 1, domain: location});
                 console.log('domain', location.domain);

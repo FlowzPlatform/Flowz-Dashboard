@@ -56,20 +56,17 @@
 
         },
         methods: {
-              logout () {
+            logout () {
                 console.log("called....")
-                    // this.$session.destroy('auth_token');
-                    // this.$router.push('/login');
-                    let location = psl.parse(window.location.hostname)
-                    location = location.domain === null ? location.input : location.domain
-                    this.$cookie.delete('auth_token', {domain: location});
-                    this.$store.commit('SET_TOKEN', null)
-                    this.$store.commit('SET_USER', null)
-                    this.$router.push('login')
-               }
+                // this.$session.destroy('auth_token');
+                // this.$router.push('/login');
+                let location = psl.parse(window.location.hostname)
+                location = location.domain === null ? location.input : location.domain
+                this.$store.commit('SET_TOKEN', null)
+                this.$store.commit('SET_USER', null)
+                // this.$router.push('login')
                 this.$cookie.delete('auth_token', { domain: location });
                 this.$router.push('/login');
-
             },
             settings: function () {
                 //this.$session.destroy('auth_token');
