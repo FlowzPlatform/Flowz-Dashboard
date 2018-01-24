@@ -207,7 +207,6 @@ export default {
       },
       selectedTabIndex:0,
       activeName: '1',
-      
     }
   },
 
@@ -239,10 +238,11 @@ export default {
            $('.lundcon').removeClass('sing');
        },
        submitFb : function(){
+            this.$store.state.isFacebookLogin = true;
            $("#form-facebook").submit();           
        },
        submitGoogle : function(){
-          
+           this.$store.state.isGooleLogin = true;
            $("#form-google").submit();
         },
        registerUser: async function(){

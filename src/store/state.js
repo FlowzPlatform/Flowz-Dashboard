@@ -1,3 +1,5 @@
 export default {
-    loginUser:  ''
+    loginUser:  '',
+    isGooleLogin: false,
+    isFacebookLogin: false
 }
