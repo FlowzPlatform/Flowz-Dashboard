@@ -171,6 +171,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 import VueSession from 'vue-session'
 import config from '../../config/customConfig'
+// import { mapMutations } from "vuex";
 var psl = require('psl');
 
 
@@ -185,6 +186,7 @@ let facebookSuccessCallbackUrl = config.facebookSuccessCallbackUrl;
 
 let location = psl.parse(window.location.hostname)
 location = location.domain === null ? location.input : location.domain ;
+
 
 export default {
   name: 'login',
@@ -238,11 +240,11 @@ export default {
            $('.lundcon').removeClass('sing');
        },
        submitFb : function(){
-            this.$store.state.isFacebookLogin = true;
+            this.$store.commit("FB_SIGN_IN",true)
            $("#form-facebook").submit();           
        },
        submitGoogle : function(){
-           this.$store.state.isGooleLogin = true;
+           this.$store.commit("GOOGLE_SIGN_IN",true)
            $("#form-google").submit();
         },
        registerUser: async function(){
@@ -325,7 +327,7 @@ export default {
                 //   location = location.domain === null ? location.input : location.domain
                 //   console.log('Cookie :', Vue.cookie)
                 //   Vue.cookie.set('auth_token', token, {expires: 1, domain: location});
-                console.log('domain', location.domain);
+                // console.log('domain', location.domain);
                 // location = location.domain === null ? location.input : location.domain ;
                 self.$cookie.set('auth_token', response.data.logintoken, {expires: 1, domain: location});
 

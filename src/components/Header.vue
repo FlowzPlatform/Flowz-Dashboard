@@ -20,12 +20,12 @@
                                 <Icon type="person" :size="16"></Icon>
                                 {{email}}
                             </template>
-                            <!-- <MenuItem name="1-1">
+                            <MenuItem name="1-1">
                                 <a @click="settings()">
                                     <Icon type="ios-locked-settings" :size="16"></Icon>
                                     ACL
                                 </a>
-                                </MenuItem> -->
+                                </MenuItem>
                             <MenuItem name="1-2">
                             <a @click="logout()">
                                 <Icon type="ios-locked-outline" :size="16"></Icon>
@@ -62,7 +62,8 @@
 
             logout: function () {
                 //this.$session.destroy('auth_token');
-
+                this.$store.commit("FB_SIGN_IN",false);
+                this.$store.commit("GOOGLE_SIGN_IN",false);
                 this.$cookie.delete('auth_token', { domain: location });
                 this.$router.push('/login');
 

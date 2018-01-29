@@ -155,7 +155,6 @@ export default {
     }
   },
   created() {
-
     $(document).ready(function() {
       
 	
@@ -248,8 +247,15 @@ export default {
     
     mounted(){
       let token = this.$cookie.get('auth_token') ;
-      if(token == null || token == undefined || token == '' || !this.$store.state.isGooleLogin || !this.$store.state.isFacebookLogin){
-        this.$router.push('/Login');
+      console.log('Token::::::', token)
+      console.log('this.$store.state.isGooleLogin::::::', this.$store.state.isGooleLogin)
+      console.log('this.$store.state.isFacebookLogin::::::', this.$store.state.isFacebookLogin)
+      console.log('Gmail and FB login', (this.$store.state.isGooleLogin || this.$store.state.isFacebookLogin))
+      if(token == null || token == undefined || token == '' )
+      {
+        if(!(this.$store.state.isGooleLogin || this.$store.state.isFacebookLogin)){
+          this.$router.push('/login');
+        }
       }
     },
 

@@ -106,7 +106,7 @@
                     },
                 }).then(function (response) {
                 //console.log("Get all roles:",_.groupBy(response.data.data, 'module'));
-            
+                    console.log("all roles:",response);
                     if(response.data.data.length > 0){
                         var arrRoles = _.groupBy(response.data.data, 'module');
                         for (var tblData in arrRoles){
