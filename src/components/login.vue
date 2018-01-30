@@ -320,7 +320,7 @@ export default {
                
                let email = self.login.email.trim().split('@');
                console.log('Email',email);
-               self.$store.state.loginUser = email[0]
+               self.$store.commit('SET_LOGIN_USER', email[0]);
                self.saveFileLoadingLogin = false;
                 //self.$session.set('auth_token', response.data.logintoken)
                 //             let location = psl.parse(window.location.hostname)

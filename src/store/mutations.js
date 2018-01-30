@@ -4,5 +4,8 @@ export default {
     },
     FB_SIGN_IN (state, object) {
         state.isFacebookLogin = object
+    },
+    SET_LOGIN_USER (state, object) {
+        state.loginUser = object
     }
 }

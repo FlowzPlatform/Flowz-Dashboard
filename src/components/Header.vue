@@ -64,6 +64,7 @@
                 //this.$session.destroy('auth_token');
                 this.$store.commit("FB_SIGN_IN",false);
                 this.$store.commit("GOOGLE_SIGN_IN",false);
+                this.$store.commit('SET_LOGIN_USER', "");
                 this.$cookie.delete('auth_token', { domain: location });
                 this.$router.push('/login');
 
