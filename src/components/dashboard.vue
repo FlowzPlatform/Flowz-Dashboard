@@ -39,9 +39,9 @@
 									<div class="dascufo">
 										<span class="tit">V-Mail </span>
 										<span class="tex">This is a user 
-											friendly Vue based 
-											email client.It can 
-											receives the mail</span>
+											friendly (vue based) 
+											email client. It can 
+											receives the email.</span>
 									</div>   
 								</div>
 							   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-3.png"> </div></div>
@@ -99,10 +99,11 @@
 								<div class="dascutx">
 									<div class="dascufo">
 										<span class="tit">Accounting / Users</span>
-										<span class="tex">It is an user friendly
-						way of listing the tasks,
-						assigning them</span>
-									</div>   
+										<span class="tex">It is a complete suite of 
+            managing invoices,
+            listing all transactions.
+						</span>
+                  </div>   
 								</div>
 							   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-5.png"> </div></div>
 							</div>
@@ -154,7 +155,6 @@ export default {
     }
   },
   created() {
-
     $(document).ready(function() {
       
 	
@@ -189,7 +189,7 @@ export default {
               class : "card11 webpart",
               position : "left",
               title :"Web Builder" ,
-              desc : "Build the website you desire without any knowledge of coding.Flowz Web builder provides all the needed tool to create a stunning website.Just drag and drop the components to your page and publish the website.It is configured with very rich components and partial you can reuse through the process."
+              desc : "Build the website you desire without any knowledge of coding. Flowz web builder provides all the needed tool to create a stunning website. Just drag and drop the components to your page and publish the website. It is configured with very rich components and partial you can reuse through the process."
           },
           {
               img :"/assets/images/vmail.png" ,
@@ -198,7 +198,7 @@ export default {
               class : "card11 webpart",
               position : "left",
               title : "V-Mail",
-              desc : "This is a user friendly Vue based email client.It can receives the mail , list it and show the email content. It can also send mail in plain or html format to multiple User in a effective and efficient way."
+              desc : " This is a user friendly (vue based) email client. It can receive the email, list it and show the content. It can also send mail in plain or html format to multiple users in an effective and efficient way."
           },
           {
               img :"/assets/images/todo.png" ,
@@ -215,7 +215,7 @@ export default {
               class : "card11 crmpart",
               position : "left",
               title : "Accounting",
-              desc : "It is an user friendly way of listing the tasks, assigning them, to track them, maintain comments or action taken and its status updates of minutes.The user can create subtasks upto any level in real time."
+              desc : "Flowz Accounting system is a complete suite of managing invoices, listing all transactions, customer relationship, managing contacts and many more in one place. Its ability to make payments for due invoices and notifying clients through email makes it more effective in terms of your business."
           },
           {
               img :"/assets/images/databases.jpg" ,
@@ -247,9 +247,16 @@ export default {
 
     mounted(){
       let token = this.$cookie.get('auth_token') ;
-        if(token == null || token == undefined || token == ''){
-            this.$router.push('/Login');
+      console.log('Token::::::', token)
+      console.log('this.$store.state.isGooleLogin::::::', this.$store.state.isGooleLogin)
+      console.log('this.$store.state.isFacebookLogin::::::', this.$store.state.isFacebookLogin)
+      console.log('Gmail and FB login', (this.$store.state.isGooleLogin || this.$store.state.isFacebookLogin))
+      if(token == null || token == undefined || token == '' )
+      {
+        if(!(this.$store.state.isGooleLogin || this.$store.state.isFacebookLogin)){
+          this.$router.push('/login');
         }
+      }
     },
 
   methods :{

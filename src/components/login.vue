@@ -171,6 +171,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 import VueSession from 'vue-session'
 import config from '../../config/customConfig'
+// import { mapMutations } from "vuex";
 var psl = require('psl');
 
 
@@ -185,6 +186,7 @@ let facebookSuccessCallbackUrl = config.facebookSuccessCallbackUrl;
 
 let location = psl.parse(window.location.hostname)
 location = location.domain === null ? location.input : location.domain ;
+
 
 export default {
   name: 'login',
@@ -207,12 +209,10 @@ export default {
       },
       selectedTabIndex:0,
       activeName: '1',
-      
     }
   },
 
   created(){
-        console.log('SERVER KEY-->', process.env.domainkey)
         // let token = this.$session.get('auth_token');
         // if(token){
         //     this.$router.push('/');
@@ -240,10 +240,11 @@ export default {
            $('.lundcon').removeClass('sing');
        },
        submitFb : function(){
-           $("#form-facebook").submit();
+            this.$store.commit("FB_SIGN_IN",true)
+           $("#form-facebook").submit();           
        },
        submitGoogle : function(){
-
+           this.$store.commit("GOOGLE_SIGN_IN",true)
            $("#form-google").submit();
         },
        registerUser: async function(){
@@ -318,14 +319,14 @@ export default {
                
                let email = self.login.email.trim().split('@');
                console.log('Email',email);
-               self.$store.state.loginUser = email[0]
+               self.$store.commit('SET_LOGIN_USER', email[0]);
                self.saveFileLoadingLogin = false;
                 //self.$session.set('auth_token', response.data.logintoken)
                             let location = psl.parse(window.location.hostname)
                 //   location = location.domain === null ? location.input : location.domain
                 //   console.log('Cookie :', Vue.cookie)
                 //   Vue.cookie.set('auth_token', token, {expires: 1, domain: location});
-                console.log('domain', location.domain);
+                // console.log('domain', location.domain);
                 // location = location.domain === null ? location.input : location.domain ;
                 self.$cookie.set('auth_token', response.data.logintoken, {expires: 1, domain: location});
                 self.$router.push({path: '/dashboard'})
