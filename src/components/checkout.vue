@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<Header></Header>
+		<!--<Header></Header>-->
 	<div class="checkout">
     <div class="container">
       <div class="row">

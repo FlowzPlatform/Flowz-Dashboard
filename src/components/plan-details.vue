@@ -2,39 +2,24 @@
   <Card>
     <!-- <h3>Thank You for Subscribing...!</h3> -->
     <div style="font-size: x-large;">Your Plan Details are:-</div><br>
-    <Table class='dataTable' :columns="columns1" :data="data2"></Table>
+    <Table :loading="loading" class='dataTable' :columns="planDetails" :data="planList"></Table>
   </Card>
 </template>
 <script>
 /*eslint-disable*/
-import planHistory from './plan_history.vue';
-let axios = require("axios")
+import getUserDetails from '@/api/userdetails';
+import userSubscription from '@/api/user-subscription'
+import _ from 'lodash'
 var moment = require('moment');
 moment().format();
 // import Emitter from '@/mixins/emitter'
 let index
 export default {
     name: 'planDetails',
-    components: {planHistory},
     data () {
         return {
-            columns1: [
-                {
-                    type: 'expand',
-                    width: 25,
-                    render: (h, params) => {
-                      return h('thead', {
-                                style: {
-                                    fontSize: '16px'
-                                }
-                            }),
-                        h(planHistory, {
-                            props: {
-                                row: params.row
-                            }
-                        })
-                    }
-                },
+            loading: true,
+            planDetails: [
                 {
                     title: 'Plan',
                     key: 'name'
@@ -52,7 +37,7 @@ export default {
                     key: 'expiredOn'
                 }
             ],
-            data2: [],
+            planList: [],
             moment : moment
         }
     },
@@ -60,27 +45,36 @@ export default {
 
     },
     mounted(){
+        let self = this
         this.$Message.success('Thank You for Subscribing...!');
         let auth_token = this.$cookie.get('auth_token')
         let response
-        axios({
-                method:'get',
-                url:"http://auth.flowz.com/api/userdetails",
-                headers: {'authorization': auth_token},
-              }).then(response => {
-                console.log("response.....",response.data.data)
-                response = response.data.data
-                this.data2.push({"name":response.package.name,"price":response.package.price,"validity":response.package.validity,"expiredOn":moment(response.package.expiredOn).format("DD-MM-YYYY"),"package_history":response.package_history.reverse()})
-                // console.log("this.data2...",this.data2)
 
-        })
-        .catch(function (error) {
-          console.log("**********",error)
-          self.$Notice.error({
+        let packages, pkgId
+        getUserDetails.get(auth_token).then(res => {
+            packages = res.data.data.package
+            _.forEach(packages, function (item) {
+                userSubscription.get(item.subscriptionId).then(res => {
+                    res.data.expiredOn = moment(res.data.expiredOn).format("DD-MM-YYYY")
+                    self.planList.push(res.data)
+                    if(self.planList.length > 0) {
+                        self.loading = false
+                    }
+                })
+                .catch(err => {
+                    self.$Notice.error({
+                    duration: 5,
+                    title: 'Package not found'
+                    })
+                })
+            })
+        }).catch(err => {
+            self.$Notice.error({
               duration: 5,
-              title: 'Please check...some error'
-          });
-        });
+              title: 'Error while gettings user details',
+              desc: err
+            })
+        })
     }
 }
 </script>
