@@ -155,9 +155,9 @@
             },
             getCheckboxValue: function(role, resources, action, appName){
                let resID = resources.id+"_"+action
-                let index = _.findIndex(this.permissionsAll[appName], function(d) { return (d.roleId === role.id) && (d.resourceId === resID) })
+                let index = _.findIndex(this.permissionsAll, function(d) { return (d.roleId === role.id) && (d.resourceId === resID) })
                 if (index > -1) {
-                    let permission = this.permissionsAll[appName][index].access_value
+                    let permission = this.permissionsAll[index].access_value
                     return parseInt(permission)
                 }
             },
@@ -205,6 +205,9 @@
             },
         created: function() {
             this.getRoles();
+        },
+        mounted(){
+            $("#big-video-wrap").css("width","0px");
         }
     }
     </script>
