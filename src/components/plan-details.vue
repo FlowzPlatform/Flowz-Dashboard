@@ -1,7 +1,7 @@
 <template>
   <Card>
     <!-- <h3>Thank You for Subscribing...!</h3> -->
-    <div style="font-size: x-large;">Your Plan Details are:-</div><br>
+    <div style="font-size: x-large;">Your Plan Details are:</div><br>
     <Table :loading="loading" class='dataTable' :columns="planDetails" :data="planList"></Table>
   </Card>
 </template>
@@ -9,6 +9,7 @@
 /*eslint-disable*/
 import getUserDetails from '@/api/userdetails';
 import userSubscription from '@/api/user-subscription'
+import Cookies from 'js-cookie'
 import _ from 'lodash'
 var moment = require('moment');
 moment().format();
@@ -46,10 +47,12 @@ export default {
     },
     mounted(){
         let self = this
-        this.$Message.success('Thank You for Subscribing...!');
+        if(Cookies.get('welcomeMsg')) {
+            this.$Message.success(Cookies.get('welcomeMsg'));
+            Cookies.remove('welcomeMsg')
+        }
         let auth_token = this.$cookie.get('auth_token')
         let response
-
         let packages, pkgId
         getUserDetails.get(auth_token).then(res => {
             packages = res.data.data.package

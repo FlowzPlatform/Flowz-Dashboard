@@ -1,6 +1,5 @@
 <template>
 	<div>
-		<!--<Header></Header>-->
 	<div class="checkout">
     <div class="container">
       <div class="row">
@@ -66,6 +65,9 @@
                       </div>
                   </div>
               </div>
+              <div v-if="paying" :class="payInfo.class">
+                <strong>{{payInfo.msgType}}</strong> {{payInfo.msg}}.
+              </div>
           </div>
       </div>
     </div>
@@ -74,16 +76,12 @@
 </div>
 </template>
 <script>
-
-import axios from 'axios'
-import Header from './Header.vue'
-
+// import axios from 'axios'
+import checkout from '@/api/checkout'
+import Cookies from 'js-cookie'
 
 export default {
   name: 'checkout',
-  components: {
-		Header
-  },
   data () {
     return {
       payDetail: {
@@ -96,6 +94,7 @@ export default {
       sub_id: '',
       login_token: '',
       payDone: false,
+      paying: false,
       payInfo: {
         msgType: '',
         msg: '',
@@ -108,45 +107,72 @@ export default {
   },
   methods: {
     backFunction () {
-      this.$router.push('/')
+      this.$router.push('/subscription-list')
     },
     payFunction () {
 		let self = this
+    this.paying = true
+    this.payInfo.class = 'alert alert-warning'
+    this.payInfo.msgType = 'Processing payment..!'
+    this.payInfo.msg = 'Please do not refresh page or do not go back.'
 		let auth_token = this.$cookie.get('auth_token')
-			// console.log("++++++++++++",this.$cookie.get('auth_token'));
       var sObj = {
         sub_id: this.sub_id,
         login_token: this.login_token,
         payDetail: this.payDetail
       }
 
-			axios({
-							method:'post',
-							url:"http://localhost:3030/checkout",
-							headers: {'authorization': auth_token},
-							data:sObj
-						}).then(res => {
-							console.log("response.....",res)
-							this.payDone = true
-			        if (res.data.hasOwnProperty('error')) {
-			          this.payInfo.class = 'alert alert-danger'
-			          this.payInfo.msgType = 'Error!'
-			          this.payInfo.msg = 'Payment Not Done.'
-			        } else {
-			          this.payInfo.class = 'alert alert-success'
-			          this.payInfo.msgType = 'Success!'
-			          this.payInfo.msg = 'Payment successfully Done.'
-								this.$router.push('/plan-details/' + this.sub_id)
-			        }
-
-					 })
-					 .catch(function (error) {
-						 console.log("**********",error)
-						 self.$Notice.error({
-								 duration: 5,
-								 title: 'Please check...some error'
-						 });
-					 });
+      checkout.post(sObj, {headers: {'authorization': auth_token}}).then(res => {
+        this.payDone = true
+        if (res.data.hasOwnProperty('error')) {
+          this.payInfo.class = 'alert alert-danger'
+          this.payInfo.msgType = 'Error!'
+          this.payInfo.msg = 'Payment Not Done.'
+        } else {
+          this.payInfo.class = 'alert alert-success'
+          this.payInfo.msgType = 'Success!'
+          this.payInfo.msg = 'Payment successfully Done.'
+          Cookies.set('welcomeMsg', 'Thank You for Subscribing...!')
+          this.$router.push('/plan-details/' + this.sub_id)
+        }
+        self.paying = false
+      })
+      .catch(err => {
+        self.$Notice.error({
+          duration: 5,
+          title: 'Payment fail..!',
+          desc: 'Please try again or after some time.'
+        })
+        self.paying = false
+      })
+			// axios({
+			// 				method:'post',
+			// 				url:"http://localhost:3030/checkout",
+			// 				headers: {'authorization': auth_token},
+			// 				data:sObj
+			// 			}).then(res => {
+			// 				console.log("response.....",res)
+			// 				this.payDone = true
+			//         if (res.data.hasOwnProperty('error')) {
+			//           this.payInfo.class = 'alert alert-danger'
+			//           this.payInfo.msgType = 'Error!'
+			//           this.payInfo.msg = 'Payment Not Done.'
+			//         } else {
+			//           this.payInfo.class = 'alert alert-success'
+			//           this.payInfo.msgType = 'Success!'
+			//           this.payInfo.msg = 'Payment successfully Done.'
+			// 					this.$router.push('/plan-details/' + this.sub_id)
+			//         }
+      //         self.paying = false
+			// 		 })
+			// 		 .catch(function (error) {
+			// 			 self.$Notice.error({
+			// 					 duration: 5,
+			// 					 title: 'Payment fail..!',
+      //            desc: 'Please try again or after some time.'
+			// 			 });
+      //        self.paying = false
+			// 		 });
     }
   },
   'watch': {

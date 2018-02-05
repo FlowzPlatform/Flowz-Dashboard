@@ -92,7 +92,7 @@ router.beforeEach((to, from, next) => {
   } else {
     if (to.matched.some(record => record.meta.requiresAuth)) {
       store.dispatch('authenticate', token).then(response => {
-        console.log("Set User called from mainjs")
+        // console.log("Set User called from mainjs")
         store.commit('SET_USER', response)
         next()
       }).catch(error => {
@@ -108,7 +108,6 @@ router.beforeEach((to, from, next) => {
       })
     } else {
       if (to.path === '/login' && token) {
-        console.log("called+++++++++++++ /dashboard")
         next({
           path: '/dashboard'
         })

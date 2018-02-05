@@ -1,6 +1,5 @@
 <template>
 	<div>
-		<!-- <Header></Header> -->
 	<div class="subscriptionList">
 		<div class="container">
       <div class="row">
@@ -34,14 +33,11 @@
 </template>
 <script>
 // import defaultSubscription from '@/api/default-subscription'
-import axios from 'axios'
-import Header from './Header.vue'
+// import axios from 'axios'
+import subscriptionPlans from '@/api/subscription-plans'
 
   export default {
     name: 'subscriptionList',
-		components: {
-	    Header
-	  },
     data () {
       return {
         mainData: []
@@ -49,23 +45,31 @@ import Header from './Header.vue'
     },
     methods: {
       init () {
-				let self = this
-				  axios({
-									method:'get',
-									url:"http://localhost:3030/subscription-plans"
-								}).then(response => {
-									console.log("response.....",response)
-									for(let i=0;i<response.data.data.length;i++){
-									  this.mainData.push(response.data.data[i])
-								 }
-							 })
-							 .catch(function (error) {
-								 console.log("**********",error)
-								 self.$Notice.error({
-										 duration: 5,
-										 title: 'Please check...some error'
-								 });
-							 });
+        let self = this
+        subscriptionPlans.get().then(res => {
+            self.mainData = res.data.data
+        }).catch(err => {
+            self.$Notice.error({
+                duration: 5,
+                title: 'Fetching subscription plans',
+                desc: err
+            });
+        })
+        // axios({ method:'get',
+        //     url:"http://localhost:3030/subscription-plans"
+        // }).then(response => {
+        //     console.log("response.....",response)
+        //     for(let i=0;i<response.data.data.length;i++){
+        //         this.mainData.push(response.data.data[i])
+        //     }
+        // })
+        // .catch(function (error) {
+        //     console.log("**********",error)
+        //     self.$Notice.error({
+        //         duration: 5,
+        //         title: 'Please check...some error'
+        //     });
+        // });
       },
       checkoutFunction (sub_id) {
         this.$router.push('/checkout/' + sub_id)
