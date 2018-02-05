@@ -246,6 +246,9 @@ export default {
     },
     
     mounted(){
+      console.log('Mounted called...')
+      $("#big-video-wrap").css("width","100%");
+
       let token = this.$cookie.get('auth_token') ;
       console.log('Token::::::', token)
       console.log('this.$store.state.isGooleLogin::::::', this.$store.state.isGooleLogin)
