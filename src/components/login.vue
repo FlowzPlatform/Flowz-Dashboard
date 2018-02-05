@@ -67,44 +67,44 @@
 
                   
                     <div>
-                        <Tabs class="lconun" type="card" value="1" @on-click=tabsClicked>
-                                <TabPane label="Standard" name="1">
+                        <el-tabs class="lconun" v-model="activeName" type="card" value="1" @tab-click="tabsClicked">
+                                <el-tab-pane label="Standard" name="1" >
 
                                     <div class="lconun">
                                         <div class="lrinp">
-                                            <label>Email</label>
-                                            <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) ">
+                                            <label style="margin-left: -18px; margin-top: 2px;">Email</label>
+                                            <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) " style="margin-left: -18px; margin-top: 2px;">
                                         </div>
                                     </div>
                                     <div class="lconun">
                                         <div class="lrinp">
-                                            <label>Password</label>
-                                            <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) ">
+                                            <label style="margin-left: -18px; margin-top: 2px;">Password</label>
+                                            <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) " @keyup.enter="loginUser()" style="margin-left: -18px; margin-top: 2px;">
                                         </div>
                                     </div>
-                                </TabPane>
-                                <TabPane label="LDAP" name="2">
+                                </el-tab-pane>
+                                <el-tab-pane label="LDAP" name="2">
                                     <div class="lconun">
                                         <div class="lrinp">
-                                            <label>Email</label>
-                                            <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) ">
+                                            <label style="margin-left: -18px; margin-top: 2px;">Email</label>
+                                            <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) " style="margin-left: -18px; margin-top: 2px;">
                                         </div>
                                     </div>
                                     <div class="lconun">
                                         <div class="lrinp">
-                                            <label>Password</label>
-                                            <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) ">
+                                            <label style="margin-left: -18px; margin-top: 2px;">Password</label>
+                                            <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) " @keyup.enter="loginUser()" style="margin-left: -18px; margin-top: 2px;">
                                         </div>
                                     </div>
-                                </TabPane>
-                        </Tabs>
+                                </el-tab-pane>
+                            </el-tabs>
                         </div>
                    
                     <div class="lconun">
                         <div class="lrinp">
                           
-                            <el-button type="success" size="small" class="signupButton" @click="loginUser()" @keyup.enter="loginUser()" :loading="saveFileLoadingLogin" >Login</el-button>
-                            <a v-show="this.selectedTabIndex==1" href="javascript:void()" class="lfort">Forgot Password</a>
+                            <el-button type="success" size="small"  class="signupButton" @click="loginUser()" :loading="saveFileLoadingLogin" >Login</el-button>
+                            <a v-show="this.selectedTabIndex==3" href="javascript:void()" class="lfort">Forgot Password</a>
                         </div>
                     </div>
                 </div>
@@ -171,6 +171,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 import VueSession from 'vue-session'
 import config from '../../config/customConfig'
+// import { mapMutations } from "vuex";
 var psl = require('psl');
 
 
@@ -184,7 +185,7 @@ let facebookSuccessCallbackUrl = config.facebookSuccessCallbackUrl;
 
 
 let location = psl.parse(window.location.hostname)
-
+location = location.domain === null ? location.input : location.domain ;
 
 
 export default {
@@ -206,13 +207,12 @@ export default {
           email:"",
           password:""
       },
-      selectedTabIndex:1,
-      
+      selectedTabIndex:0,
+      activeName: '1',
     }
   },
 
   created(){
-        console.log('SERVER KEY-->', process.env.domainkey)
         // let token = this.$session.get('auth_token');
         // if(token){
         //     this.$router.push('/');
@@ -230,8 +230,9 @@ export default {
     tabsClicked(val){
                 this.login.email = ''
                 this.login.password = ''
-                console.log('value is:',val);
-                this.selectedTabIndex = val;},
+                console.log('value is:',val.index);
+                this.selectedTabIndex = val.index;
+        },
        showLogin : async function(targetName, action){
            $('.lundcon').addClass('sing');
        },
@@ -239,16 +240,17 @@ export default {
            $('.lundcon').removeClass('sing');
        },
        submitFb : function(){
+            this.$store.commit("FB_SIGN_IN",true)
            $("#form-facebook").submit();           
        },
        submitGoogle : function(){
-          
+           this.$store.commit("GOOGLE_SIGN_IN",true)
            $("#form-google").submit();
         },
        registerUser: async function(){
            let self = this;
            let emailValidator = await this.validateEmail(self.register.email);
-           console.log(emailValidator)
+           console.log('Email Validator', emailValidator)
           
           if(self.register.fname == ""){
                self.$message.warning("First Name is required");
@@ -260,18 +262,19 @@ export default {
                self.$message.warning("Email is not valid");
            }else{
                self.saveFileLoading = true;
+               console.log('Registartion URL', config.registrationUrl)
                axios.post(config.registrationUrl, {
                 firstName: self.register.fname.trim(),
                 lastName: self.register.lname.trim(),
                 email: self.register.email.trim()
             })
             .then(function (response) {
-                console.log(response);
-                if(response.data.code == 200){
+                console.log("Response",response)
+                if(response.status == 200){
                     self.saveFileLoading = false;
                     //alert(response.data.message+", please check your email for password")
                     self.$message({
-                        message : response.data.message+", please check your email for password",
+                        message : " please check your email for password",
                         type: 'success'
                     });
                      $('.lundcon').addClass('sing');
@@ -285,23 +288,21 @@ export default {
                 }
             })
             .catch(function (error) {
-                this.login.password = ''
+                console.log('Error', error.response.data)
+                // this.login.password = ''
                 // console.log(error);
                 self.saveFileLoading = false;
                 //alert(error);
-                self.$message.error(error);
+                self.$message.error(error.response.data);
             });
-           }
-
-
-           
+           }  
        },
 
       
        loginUser: async function(){
            let self = this;
            let emailValidator = await this.validateEmail(self.login.email);
-           console.log(emailValidator);
+           console.log('emailvalidator', emailValidator);
 
            if(self.login.email == ""){
                self.$message.warning("email field is required");
@@ -312,27 +313,34 @@ export default {
            }else{
              self.saveFileLoadingLogin = true;
              console.log('login URL:', config.loginUrl)
-             axios.post(this.selectedTabIndex==1? config.loginUrl:config.ldapLoginUrl , {email: self.login.email.trim(),
+             axios.post(this.selectedTabIndex==0? config.loginUrl:config.ldapLoginUrl , {email: self.login.email.trim(),
                     password: self.login.password.trim()})
             .then(function (response) {
-               console.log(response);
-                self.saveFileLoadingLogin = false;
+               console.log('Login response:',response);
+               
+               let email = self.login.email.trim().split('@');
+               console.log('Email',email);
+               self.$store.commit('SET_LOGIN_USER', email[0]);
+               self.saveFileLoadingLogin = false;
                 //self.$session.set('auth_token', response.data.logintoken)
                 //             let location = psl.parse(window.location.hostname)
                 //   location = location.domain === null ? location.input : location.domain
                 //   console.log('Cookie :', Vue.cookie)
                 //   Vue.cookie.set('auth_token', token, {expires: 1, domain: location});
-                
-                location = location.domain === null ? location.input : location.domain ;
+                // console.log('domain', location.domain);
+                // location = location.domain === null ? location.input : location.domain ;
                 self.$cookie.set('auth_token', response.data.logintoken, {expires: 1, domain: location});
 
-                
+                console.log('before call dashboard');
                 self.$router.push('/');
             })
             .catch(function (error) {
-                console.log("error-->",error)
+                console.log("error-->",error.response)
                 self.saveFileLoadingLogin = false;
-                 self.$message.error("email or password is incorrect");
+                if(!error.response || error.response != undefined)
+                    self.$message.error(error.response.data)
+                else
+                    self.$message.error("email or password is incorrect");
             });
            }
        },
@@ -378,6 +386,7 @@ border-radius: 50%;
   padding: 12px 12px 3px 10px;
 border-radius: 50%;
 }
+
 </style>
 <style>
     .vjs-control-bar {display:none;}

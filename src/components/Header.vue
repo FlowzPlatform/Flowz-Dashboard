@@ -1,5 +1,5 @@
 <template>
-    <Menu mode="horizontal" theme="primary" style="background:#ffffff00;">
+    <Menu mode="horizontal" theme="primary" style="background:#c5cee74b;">
         <Row type="flex">
             <!-- <Col :span="1">
             <Row type="flex" justify="end" align="middle">
@@ -16,11 +16,17 @@
                 <Row type="flex" justify="end">
                     <div class="layout-nav">
                         <Submenu name="3">
-                            <template slot="title">
+                            <template slot="title" >
                                 <Icon type="person" :size="16"></Icon>
                                 {{email}}
                             </template>
                             <MenuItem name="1-1">
+                                <a @click="settings()">
+                                    <Icon type="ios-locked-settings" :size="16"></Icon>
+                                    ACL
+                                </a>
+                                </MenuItem>
+                            <MenuItem name="1-2">
                             <a @click="logout()">
                                 <Icon type="ios-locked-outline" :size="16"></Icon>
                                 Logout
@@ -41,7 +47,7 @@
     export default {
         data() {
             return {
-                email: 'User'
+                email: this.$store.state.loginUser ? this.$store.state.loginUser : 'User'
             }
         },
         computed: {
@@ -56,10 +62,16 @@
 
             logout: function () {
                 //this.$session.destroy('auth_token');
-
+                this.$store.commit("FB_SIGN_IN",false);
+                this.$store.commit("GOOGLE_SIGN_IN",false);
+                this.$store.commit('SET_LOGIN_USER', "");
                 this.$cookie.delete('auth_token', { domain: location });
                 this.$router.push('/login');
 
+            },
+            settings: function () {
+                //this.$session.destroy('auth_token');
+                this.$router.push('/acl');
             },
         }
     }
