@@ -65,10 +65,11 @@
                 <div class="row">
                   <Tooltip content="Save" placement="top">
                     <div class="col-xs-3 pointer" v-if="plan.validity >= 10 && plan.price >= 50" @click="update(pIndex, true)">
-                      <Icon type="upload" size="30"></Icon>
+                      <icon name="save" scale="1.5"></icon>
+                  <!-- <Icon type="upload" size="30"></Icon> -->
                     </div>
                     <div class="col-xs-3 pointerX" v-else>
-                      <Icon type="upload" size="30"></Icon>
+                      <icon name="save" scale="1.5"></icon>
                     </div>
                   </Tooltip>
                   <Tooltip content="Delete plan" placement="top">
@@ -94,7 +95,7 @@
                       <Tooltip content="Expand" placement="top"><Icon type="arrow-up-b" scale="1.4"></Icon></Tooltip>
                     </div>
                   </Tooltip>
-                  <!-- <div class="col-xs-6">
+                  <!--  <div class="col-xs-6">
                   <Icon type="ios-copy" size=>
                   </div> -->
                 </div>
@@ -106,10 +107,20 @@
         <div :id="'plan_'+pIndex" class="outer-toggle">
           <Card>
           <!-- <Tree :data="plan.obj"></Tree> -->
+          <div class="container">
+            <div class="row">
+              <div class="col-xs-2" style="margin-top:6px;" >
+                <h5>Description:</h5>
+              </div>
+              <div class="col-md-6 no-margin" >
+                <textarea :on-change="update(pIndex, false)" v-model="plan.description" class="description" rows="2" cols="25"></textarea>
+              </div>
+            </div>
+          </div>
           <div class="schema-form ivu-table-wrapper">
           <div class="ivu-table ivu-table-border">
-                  <div class="ivu-table-body">
-                      <table cellspacing="0" cellpadding="0" border="0" style="width: 100%;">
+                  <div class="ivu-table-body" style="max-height:450px;">
+                      <table cellspacing="0" cellpadding="0" border="0" style="width: 100%;overflow-y:auto;">
                           <colgroup>
                               <col width="20">
                                   <col width="20">
@@ -376,6 +387,7 @@ export default {
 
         self.plans.push({
          name: '',
+         description: '',
          validity:'10',
          price:'55',
          time_unit: 'days',
@@ -570,6 +582,11 @@ export default {
   }
 
   input.description {
+    width: 100%;
+    margin-top: -2px;
+  }
+
+  textarea.description {
     width: 100%;
     margin-top: -2px;
   }

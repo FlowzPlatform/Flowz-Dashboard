@@ -51,10 +51,9 @@ export default {
             this.$Message.success(Cookies.get('welcomeMsg'));
             Cookies.remove('welcomeMsg')
         }
-        let auth_token = this.$cookie.get('auth_token')
         let response
         let packages, pkgId
-        getUserDetails.get(auth_token).then(res => {
+        getUserDetails.get().then(res => {
             packages = res.data.data.package
             _.forEach(packages, function (item) {
                 userSubscription.get(item.subscriptionId).then(res => {

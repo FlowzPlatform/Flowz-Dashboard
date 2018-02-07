@@ -5,7 +5,7 @@ export default {
     get: () => {
         return api.request('get', '/' + model)
     },
-    post: (data, headers) => {
-        return api.request('post', '/' + model, data, headers)
+    post: (data) => {
+        return api.request('post', '/' + model, data)
     }
 }
