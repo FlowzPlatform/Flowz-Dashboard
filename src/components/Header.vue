@@ -3,7 +3,7 @@
         <Row type="flex">
             <!-- <Col :span="1">
             <Row type="flex" justify="end" align="middle">
-              
+
             </Row>
         </Col> -->
             <i-col :span="5">
@@ -31,6 +31,7 @@
                                 <Icon type="ios-locked-outline" :size="16"></Icon>
                                 Logout
                             </a>
+                              <!-- <p>csdcsscd</p> -->
                             </MenuItem>
                         </Submenu>
                     </div>
@@ -80,7 +81,7 @@
     .user.background--light {
         color: #be2828;
       }
-      
+
     .user.background--dark {
         color: rgb(32, 136, 63);
       }
