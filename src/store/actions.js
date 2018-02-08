@@ -1,27 +1,6 @@
-// import api from '../api'
-import _ from 'lodash'
-import axios from 'axios'
-import config from '@/config'
 export default {
-  setUser ({ commit }, authToken) {
-    // console.log("setUser called")
-    commit('SET_USER', authToken)
-  },
-  authenticate ({ commit }, authToken) {
-    return axios({
-      method: 'get',
-      url: config.microURI + '/userdetails',
-      headers: {
-        'authorization': authToken
-      }
-    })
-    .then(response => {
-      // console.log("response...",response)
-      if (response) {
-        return response.data.data
-      } else {
-        return
-      }
-    })
-  }
+    // sampleMethod ({ commit }, object) {
+    //     //do API call or logical task here
+    //     // call mutation from here  commit('SAMPLE_METHOD', object)
+    // }
 }
