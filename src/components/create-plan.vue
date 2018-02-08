@@ -222,22 +222,13 @@
 <script>
 import subscriptionPlans from '@/api/subscription-plans'
 import registerResource from '@/api/register-resource'
-import Vue from 'vue';
-import BootstrapVue from 'bootstrap-vue';
-import vSelect from "vue-select";
-import feathers from 'feathers/client';
-// import socketio from 'feathers-socketio/client';
-// import io from 'socket.io-client';
-import 'vue-awesome/icons';
 import Icon from 'vue-awesome/components/Icon';
-import vueJsonEditor from 'vue-json-editor'
-Vue.use(BootstrapVue);
-// import 'bootstrap/dist/css/bootstrap.css'
-// import 'bootstrap-vue/dist/bootstrap-vue.css'
+import BootstrapVue from 'bootstrap-vue';
+import Vue from 'vue';
 import _ from 'lodash'
-// let baseUrl = process.env.baseUrl;
+import 'vue-awesome/icons';
+Vue.use(BootstrapVue);
 
-// import axios from 'axios'
 import iView from 'iview'
 import locale from 'iview/dist/locale/en-US'
 import 'iview/dist/styles/iview.css' // CSS
@@ -249,7 +240,6 @@ import $ from 'jquery'
 Vue.component('icon', Icon)
 export default {
   name: 'createPlan',
-  components: {vSelect},
   data(){
     return {
       services: [],
