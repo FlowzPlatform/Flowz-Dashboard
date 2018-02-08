@@ -31,7 +31,6 @@
     "vue-feathers": "^0.1.0",
     "vue-json-editor": "^1.2.1",
     "vue-router": "^3.0.1",
-    "vue-select": "github:sagalbot/vue-select",
     "vue-session": "^0.9.10",
     "vue-widgets": "^1.0.9",
     "vuex": "^3.0.1",
