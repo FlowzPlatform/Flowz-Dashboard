@@ -1,13 +1,13 @@
 <template>
   <div class="login">
-    
+
     <div class="lhed">
         <a href="#"><img src="../assets/images/logo.png"> </a>
-    </div> 
-   
+    </div>
+
     <div class="lcontended">
         <div class="lundcon">
-            
+
             <div class="lrpt" >
                 <div class="lsrpt" @click="showLogin">
                     <span>Have you an <br> account?</span>
@@ -18,12 +18,12 @@
                     <a href="javascript:void(0)">Register</a>
                 </div>
             </div>
-            
+
             <div class="lrconpt">
 
                 <form id="form-facebook" name="form-facebook" :action=loginWithFacebookUrl method="post">
                             <input type="hidden" name="success_url" :value=facebookSuccessCallbackUrl>
-                            
+
                 </form>
 
                 <form id="form-google" name="form-google"
@@ -32,13 +32,13 @@
                 </form>
 
                 <div class="lconpt">
-                    
+
                     <!-- <div class="lconun">
                         <span class="lthlob">
                             <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" class="google" @click="submitGoogle()"><icon name="google"></icon></a> - <a href="#" class="linkdin"><icon name="linkedin"></icon></a>
                         </span>
                     </div>
-                   
+
                     <div class="lconun" >
                         <div class="lther" style="margin-top:20px"><span>Or login with</span></div>
                     </div>
@@ -60,12 +60,12 @@
                             <span  @click="submitFb()" class="fb"><icon name="facebook"></icon></span> - <a href="#" class="google" @click="submitGoogle()"><icon name="google"></icon></a></icon></a>
                         </span>
                     </div>
-                   
+
                     <div class="lconun" >
                         <div class="lther" style="margin-top:20px"><span>Or login with</span></div>
                     </div>
 
-                  
+
                     <div>
                         <el-tabs class="lconun" v-model="activeName" type="card" value="1" @tab-click="tabsClicked">
                                 <el-tab-pane label="Standard" name="1" >
@@ -99,7 +99,7 @@
                                 </el-tab-pane>
                             </el-tabs>
                         </div>
-                   
+
                     <div class="lconun">
                         <div class="lrinp">
                           
@@ -110,7 +110,7 @@
                 </div>
                 <div class="rconpt">
 
-                    
+
                     <div class="lconun" style="margin-top: 10px;">
                         <span class="lthlob">
                             <span class="lthlob">
@@ -142,20 +142,20 @@
                             <input type="text" class="" v-model="register.email" placeholder="Enter Your Email Id (Required) ">
                         </div>
                     </div>
-                    
+
                     <div class="lconun">
                         <!-- <div class="lrinp">
                             <input type="button" value="Sign Up" @click="registerUser()" class="lbtn"> -->
                             <el-button type="success" size="small" class="signupButton" @click="registerUser()" :loading="saveFileLoading" >Sign Up</el-button>
-                            
+
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
     </div>
-    
+
   </div>
 </template>
 
@@ -219,13 +219,13 @@ export default {
         // }
         let token = this.$cookie.get('auth_token') ;
         if(token || token != null){
-            this.$router.push('/');
+            // this.$router.push('/');
         }
-        
+
   },
-  
-    
-  
+
+
+
    methods: {
     tabsClicked(val){
                 this.login.email = ''
@@ -251,7 +251,6 @@ export default {
            let self = this;
            let emailValidator = await this.validateEmail(self.register.email);
            console.log('Email Validator', emailValidator)
-          
           if(self.register.fname == ""){
                self.$message.warning("First Name is required");
            }else if(self.register.lname == ""){
@@ -298,7 +297,7 @@ export default {
            }  
        },
 
-      
+
        loginUser: async function(){
            let self = this;
            let emailValidator = await this.validateEmail(self.login.email);
@@ -323,13 +322,15 @@ export default {
                self.$store.commit('SET_LOGIN_USER', email[0]);
                self.saveFileLoadingLogin = false;
                 //self.$session.set('auth_token', response.data.logintoken)
-                //             let location = psl.parse(window.location.hostname)
+                            let location = psl.parse(window.location.hostname)
                 //   location = location.domain === null ? location.input : location.domain
                 //   console.log('Cookie :', Vue.cookie)
                 //   Vue.cookie.set('auth_token', token, {expires: 1, domain: location});
                 // console.log('domain', location.domain);
                 // location = location.domain === null ? location.input : location.domain ;
                 self.$cookie.set('auth_token', response.data.logintoken, {expires: 1, domain: location});
+                self.$router.push({path: '/dashboard'})
+
 
                 console.log('before call dashboard');
                 self.$router.push('/');
@@ -360,10 +361,10 @@ background-color: #337ab7;
 color: #fff  !important;
 padding: 12px 12px 3px 10px;
 border-radius: 50%;
-} 
+}
 
 .signupButton {
-    
+
     background: #8ec622;
     /* line-height: 21px; */
     color: #fff;
@@ -391,5 +392,3 @@ border-radius: 50%;
 <style>
     .vjs-control-bar {display:none;}
 </style>
-
-
