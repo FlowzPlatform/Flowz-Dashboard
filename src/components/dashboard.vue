@@ -246,14 +246,14 @@ export default {
     },
 
     mounted(){
-      console.log('Mounted called...')
+      // console.log('Mounted called...')
       $("#big-video-wrap").css("width","100%");
 
       let token = this.$cookie.get('auth_token') ;
-      console.log('Token::::::', token)
-      console.log('this.$store.state.isGooleLogin::::::', this.$store.state.isGooleLogin)
-      console.log('this.$store.state.isFacebookLogin::::::', this.$store.state.isFacebookLogin)
-      console.log('Gmail and FB login', (this.$store.state.isGooleLogin || this.$store.state.isFacebookLogin))
+      // console.log('Token::::::', token)
+      // console.log('this.$store.state.isGooleLogin::::::', this.$store.state.isGooleLogin)
+      // console.log('this.$store.state.isFacebookLogin::::::', this.$store.state.isFacebookLogin)
+      // console.log('Gmail and FB login', (this.$store.state.isGooleLogin || this.$store.state.isFacebookLogin))
       if(token == null || token == undefined || token == '' )
       {
         if(!(this.$store.state.isGooleLogin || this.$store.state.isFacebookLogin)){
@@ -289,7 +289,7 @@ export default {
 	  
 		  $('#radial-nav').toggleClass('expanded');
 		  
-		  console.log(this)
+		  // console.log(this)
 		  $('.overlay').css({'opacity': '0'})
 		if($('#radial-nav').hasClass('expanded')){
 			$('#radial-nav1').removeClass('expanded');
@@ -302,7 +302,7 @@ export default {
 	   
 		  $('#radial-nav1').toggleClass('expanded');
 		 $('.overlay').css({'opacity': '0'})
-		  console.log(this)
+		  // console.log(this)
 		if($('#radial-nav1').hasClass('expanded')){
 			$('#radial-nav').removeClass('expanded');
         }

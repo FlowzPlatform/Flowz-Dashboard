@@ -162,6 +162,7 @@
 <script>
 
 import Vue from 'vue'
+import Cookie from 'js-cookie'
 //import VueSession from 'vue-session'
 //Vue.use(VueSession)
 
@@ -301,7 +302,7 @@ export default {
        loginUser: async function(){
            let self = this;
            let emailValidator = await this.validateEmail(self.login.email);
-           console.log('emailvalidator', emailValidator);
+        //    console.log('emailvalidator', emailValidator);
 
            if(self.login.email == ""){
                self.$message.warning("email field is required");
@@ -311,29 +312,31 @@ export default {
                self.$message.warning("Email is not valid");
            }else{
              self.saveFileLoadingLogin = true;
-             console.log('login URL:', config.loginUrl)
+            //  console.log('login URL:', config.loginUrl)
              axios.post(this.selectedTabIndex==0? config.loginUrl:config.ldapLoginUrl , {email: self.login.email.trim(),
                     password: self.login.password.trim()})
             .then(function (response) {
-               console.log('Login response:',response);
+            //    console.log('Login response:',response);
                
                let email = self.login.email.trim().split('@');
-               console.log('Email',email);
+            //    console.log('Email',email);
                self.$store.commit('SET_LOGIN_USER', email[0]);
                self.saveFileLoadingLogin = false;
                 //self.$session.set('auth_token', response.data.logintoken)
-                            let location = psl.parse(window.location.hostname)
+                let location = psl.parse(window.location.hostname)
                 //   location = location.domain === null ? location.input : location.domain
                 //   console.log('Cookie :', Vue.cookie)
                 //   Vue.cookie.set('auth_token', token, {expires: 1, domain: location});
                 // console.log('domain', location.domain);
                 // location = location.domain === null ? location.input : location.domain ;
-                self.$cookie.set('auth_token', response.data.logintoken, {expires: 1, domain: location});
+                // alert(response.data.logintoken)
+                Cookie.set('auth_token', response.data.logintoken, { expires: 1})
+                // Cookie.set('auth_token', response.data.logintoken, {expires: 1, domain: location});
                 self.$router.push({path: '/dashboard'})
 
 
-                console.log('before call dashboard');
-                self.$router.push('/');
+                // console.log('before call dashboard');
+                // self.$router.push('/');
             })
             .catch(function (error) {
                 console.log("error-->",error.response)

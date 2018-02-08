@@ -93,7 +93,7 @@ router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
       store.dispatch('authenticate', token).then(response => {
         // console.log("Set User called from mainjs")
-        store.commit('SET_USER', response)
+        // store.commit('SET_USER', response)
         next()
       }).catch(error => {
         console.log(error.message)
