@@ -9,7 +9,7 @@
             <i-col :span="5">
                 <div class="f-logo">
                     <a href="#">
-                        <img src="../assets/images/logo.png"> </a>
+                        <img src="../assets/images/logo.png"/> </a>
                 </div>
             </i-col>
             <i-col :span="18">

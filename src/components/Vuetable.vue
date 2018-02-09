@@ -102,7 +102,7 @@
                 var self = this
                     axios.get(config.subscriptionUrl+'register-roles', {
                     headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    'Content-Type': 'application/x-www-form-urlencoded;'
                     },
                 }).then(function (response) {
                 //console.log("Get all roles:",_.groupBy(response.data.data, 'module'));
