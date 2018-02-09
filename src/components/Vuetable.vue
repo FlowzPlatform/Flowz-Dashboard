@@ -33,7 +33,7 @@
                                                     <tr>
                                                         <template v-for="n in item.actions" >
                                                             <td v-for="(key, index) in Object.keys(n)" style="padding:10px;">
-                                                                 <span style="font-size:12px">{{ titleCase(key) }}</span><br/> <input class="field.dataClass" style="width: 15px;height: 15px;cursor: pointer;" type="checkbox" @click="setAccessPermision(field, item, key,$event,moduleName)" :checked="getCheckboxValue(field, item, key,moduleName)" />
+                                                                <span style="font-size:12px">{{ titleCase(key) }}</span><br/> <input class="field.dataClass" style="width: 15px;height: 15px;cursor: pointer;" type="checkbox" @click="setAccessPermision(field, item, key,$event,moduleName)" :checked="getCheckboxValue(field, item, key,moduleName)" />
                                                             </td>
                                                     </template>
                                                     </tr>
@@ -213,6 +213,9 @@
     </script>
     
     <style>
+    #big-video-wrap {
+        display: none;
+    }
     .ui.table {
         font-size: 1em;
         display: inline-table;
