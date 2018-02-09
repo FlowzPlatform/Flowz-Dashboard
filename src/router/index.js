@@ -60,17 +60,18 @@ export default new Router({
            name: 'planDetails',
            component: planDetails,
            meta: { requiresAuth: true }
-         }
+         }, {
+            path: '/acl',
+            name: 'acl',
+            component: Vuetable,
+            meta: { requiresAuth: true }
+        }
       ]
     },
       {
         path: '/login',
         name: 'login',
         component: login
-      }, {
-      path: '/acl',
-      name: 'acl',
-      component: Vuetable
-    }
+      }
   ]
 })
