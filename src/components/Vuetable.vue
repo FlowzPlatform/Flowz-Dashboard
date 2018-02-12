@@ -33,7 +33,7 @@
                                                     <tr>
                                                         <template v-for="n in item.actions" >
                                                             <td v-for="(key, index) in Object.keys(n)" style="padding:10px;">
-                                                                 <span style="font-size:12px">{{ titleCase(key) }}</span><br/> <input class="field.dataClass" style="width: 15px;height: 15px;cursor: pointer;" type="checkbox" @click="setAccessPermision(field, item, key,$event,moduleName)" :checked="getCheckboxValue(field, item, key,moduleName)" />
+                                                                <span style="font-size:12px">{{ titleCase(key) }}</span><br/> <input class="field.dataClass" style="width: 15px;height: 15px;cursor: pointer;" type="checkbox" @click="setAccessPermision(field, item, key,$event,moduleName)" :checked="getCheckboxValue(field, item, key,moduleName)" />
                                                             </td>
                                                     </template>
                                                     </tr>
@@ -102,11 +102,11 @@
                 var self = this
                     axios.get(config.subscriptionUrl+'register-roles', {
                     headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    'Content-Type': 'application/x-www-form-urlencoded;'
                     },
                 }).then(function (response) {
                 //console.log("Get all roles:",_.groupBy(response.data.data, 'module'));
-            
+                    console.log("all roles:",response);
                     if(response.data.data.length > 0){
                         var arrRoles = _.groupBy(response.data.data, 'module');
                         for (var tblData in arrRoles){
@@ -155,9 +155,9 @@
             },
             getCheckboxValue: function(role, resources, action, appName){
                let resID = resources.id+"_"+action
-                let index = _.findIndex(this.permissionsAll[appName], function(d) { return (d.roleId === role.id) && (d.resourceId === resID) })
+                let index = _.findIndex(this.permissionsAll, function(d) { return (d.roleId === role.id) && (d.resourceId === resID) })
                 if (index > -1) {
-                    let permission = this.permissionsAll[appName][index].access_value
+                    let permission = this.permissionsAll[index].access_value
                     return parseInt(permission)
                 }
             },
@@ -205,11 +205,17 @@
             },
         created: function() {
             this.getRoles();
+        },
+        mounted(){
+            $("#big-video-wrap").css("width","0px");
         }
     }
     </script>
     
     <style>
+    #big-video-wrap {
+        display: none;
+    }
     .ui.table {
         font-size: 1em;
         display: inline-table;

@@ -3,13 +3,13 @@
         <Row type="flex">
             <!-- <Col :span="1">
             <Row type="flex" justify="end" align="middle">
-              
+
             </Row>
         </Col> -->
             <i-col :span="5">
                 <div class="f-logo">
                     <a href="#">
-                        <img src="../assets/images/logo.png"> </a>
+                        <img src="../assets/images/logo.png"/> </a>
                 </div>
             </i-col>
             <i-col :span="18">
@@ -20,17 +20,18 @@
                                 <Icon type="person" :size="16"></Icon>
                                 {{email}}
                             </template>
-                            <!-- <MenuItem name="1-1">
+                            <MenuItem name="1-1">
                                 <a @click="settings()">
                                     <Icon type="ios-locked-settings" :size="16"></Icon>
                                     ACL
                                 </a>
-                                </MenuItem> -->
+                                </MenuItem>
                             <MenuItem name="1-2">
                             <a @click="logout()">
                                 <Icon type="ios-locked-outline" :size="16"></Icon>
                                 Logout
                             </a>
+                              <!-- <p>csdcsscd</p> -->
                             </MenuItem>
                         </Submenu>
                     </div>
@@ -62,7 +63,9 @@
 
             logout: function () {
                 //this.$session.destroy('auth_token');
-
+                this.$store.commit("FB_SIGN_IN",false);
+                this.$store.commit("GOOGLE_SIGN_IN",false);
+                this.$store.commit('SET_LOGIN_USER', "");
                 this.$cookie.delete('auth_token', { domain: location });
                 this.$router.push('/login');
 
@@ -78,7 +81,7 @@
     .user.background--light {
         color: #be2828;
       }
-      
+
     .user.background--dark {
         color: rgb(32, 136, 63);
       }
