@@ -1,9 +1,9 @@
 <template>
   <div class="login">
 
-    <div class="lhed">
-        <a href="#"><img src="../assets/images/logo.png"> </a>
-    </div>
+    <!-- <div class="lhed">
+        <a href="#"><img src="../assets/images/flowz_digital_logo2.png" style="height: 50px;"> </a>
+    </div> -->
 
     <div class="lcontended">
         <div class="lundcon">

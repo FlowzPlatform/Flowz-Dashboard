@@ -9,7 +9,7 @@
             <i-col :span="5">
                 <div class="f-logo">
                     <a href="#">
-                        <img src="../assets/images/logo.png"/> </a>
+                        <img src="../assets/images/flowz_digital_logo2.png" style="height: 50px; margin-left: 10px;"/> </a>
                 </div>
             </i-col>
             <i-col :span="18">
