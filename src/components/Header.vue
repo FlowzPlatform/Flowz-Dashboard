@@ -21,7 +21,7 @@
                                 {{email}}
                             </template>
                             <MenuItem name="1-1">
-                                <a @click="settings()">
+                                <a @click="settings()"> 
                                     <Icon type="ios-locked-settings" :size="16"></Icon>
                                     ACL
                                 </a>
@@ -42,13 +42,13 @@
 </template>
 <script>
     /*eslint-disable*/
-
+    import Cookie from 'js-cookie'
     let location = psl.parse(window.location.hostname)
     location = location.domain === null ? location.input : location.domain
     export default {
         data() {
             return {
-                email: this.$store.state.loginUser ? this.$store.state.loginUser : 'User'
+                email: Cookie.get('user') ? Cookie.get('user') : 'User'
             }
         },
         computed: {
@@ -63,10 +63,13 @@
 
             logout: function () {
                 //this.$session.destroy('auth_token');
+                
                 this.$store.commit("FB_SIGN_IN",false);
                 this.$store.commit("GOOGLE_SIGN_IN",false);
                 this.$store.commit('SET_LOGIN_USER', "");
-                this.$cookie.delete('auth_token', { domain: location });
+                this.$cookie.delete('auth_token');
+                Cookie.remove('auth_token' ,{domain: location}) 
+                Cookie.remove('user' ,{domain: location}) 
                 this.$router.push('/login');
 
             },
@@ -74,6 +77,13 @@
                 //this.$session.destroy('auth_token');
                 this.$router.push('/acl');
             },
+        },
+
+        mounted (){
+            setTimeout(function() {
+            this.email = Cookie.get('user') ? Cookie.get('user') : 'User' 
+            }, 1000);
+            
         }
     }
 </script>

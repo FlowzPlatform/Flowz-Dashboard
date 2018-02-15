@@ -9,6 +9,8 @@ import subscriptionList from '@/components/subscription-list'
 import checkout from '@/components/checkout'
 import planDetails from '@/components/plan-details'
 import Vuetable from '@/components/Vuetable'
+import resetpassword from '@/components/reset-password'
+
 
 Vue.use(Router)
 
@@ -22,7 +24,7 @@ export default new Router({
       meta: { requiresAuth: true },
       children:[
         {
-          path: 'dashboard',
+          path: '',
           name: 'dashboard',
           component: dashboard,
           meta: { requiresAuth: true }
@@ -72,6 +74,11 @@ export default new Router({
         path: '/login',
         name: 'login',
         component: login
+      },
+      {
+        path: '/reset-password',
+        name: 'reset-password',
+        component: resetpassword
       }
   ]
 })

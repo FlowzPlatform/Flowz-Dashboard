@@ -13,6 +13,7 @@ import 'vue-awesome/icons'
 // Include and set up feathers client
 const Feathers = require('feathers/client')
 const hooks = require('feathers-hooks')
+import Cookie from 'js-cookie'
   // const authentication = require('feathers-authentication/client')
 // const socketio = require('feathers-socketio/client')
 // const io = require('socket.io-client')
@@ -24,6 +25,7 @@ const feathers = Feathers()
   // .configure(authentication({storage: window.localStorage}))
   // Include it as a CommonJS module
 const vueFeathers = require('vue-feathers')
+import config1 from '../config/customConfig'
   // And plug it in
 Vue.use(vueFeathers, feathers)
 
@@ -74,13 +76,27 @@ router.beforeEach((to, from, next) => {
     // set token in axios
   if (token) {
     axios.defaults.headers.common['authorization'] = token
+    axios({
+      method: 'get',
+      url: config1.userDetail,
+     // headers: {'Authorization': response.data.logintoken}
+  })
+  .then(function(result) {
+      console.log(result)
+      let location = psl.parse(window.location.hostname)
+      location = location.domain === null ? location.input : location.domain
+      Cookie.set('user',  result.data.data.email  , {domain: location});
+  })
+  .catch(function(error){
+  console.log(error.response)
+  })
   } else {
     delete axios.defaults.headers.common['authorization']
   }
   if (to.matched.some(record => record.meta.requiresAuth) && obId) {
     window.console.log('ob_id obtained')
     next({
-      path: '/dashboard',
+      path: '/login',
       query: { ob_id: obId }
     })
   } else if (to.matched.some(record => record.meta.requiresAuth) && (!token || token === 'null')) {
@@ -109,7 +125,7 @@ router.beforeEach((to, from, next) => {
     } else {
       if (to.path === '/login' && token) {
         next({
-          path: '/dashboard'
+          path: '/'
         })
       } else {
         next()
