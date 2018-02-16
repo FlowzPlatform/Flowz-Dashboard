@@ -1,6 +1,6 @@
 
-let frontEndUrl = 'https://localhost:8082';
-//let frontEndUrl = 'https://crm.'+process.env.domainkey+'/#/login';
+//let frontEndUrl = 'https://localhost:8082';
+let frontEndUrl = 'https://dashboard.'+process.env.domainkey+'/';
 
 export default{
     // loginUrl : "http://ec2-54-88-11-110.compute-1.amazonaws.com/api/login",
