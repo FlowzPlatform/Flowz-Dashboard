@@ -19,11 +19,18 @@ export default{
     githubSuccessCallbackUrl: frontEndUrl,
     linkedInSuccessCallbackUrl: frontEndUrl,
 
-    loginWithGoogleUrl : "https://auth."+process.env.domainkey+"/auth/Gplus",
-    loginWithFacebookUrl : "https://auth."+process.env.domainkey+"/auth/facebook",
-    loginWithTwitterUrl : "https://auth."+process.env.domainkey+"/auth/twitter",
-    loginWithGithubUrl : "https://auth."+process.env.domainkey+"/auth/github",
-    loginWithLinkedInUrl : "https://auth."+process.env.domainkey+"/auth/linkedin",
+    // loginWithGoogleUrl : "https://auth."+process.env.domainkey+"/auth/Gplus",
+    // loginWithFacebookUrl : "https://auth."+process.env.domainkey+"/auth/facebook",
+    // loginWithTwitterUrl : "https://auth."+process.env.domainkey+"/auth/twitter",
+    // loginWithGithubUrl : "https://auth."+process.env.domainkey+"/auth/github",
+    // loginWithLinkedInUrl : "https://auth."+process.env.domainkey+"/auth/linkedin",
+
+
+     loginWithFacebookUrl : 'https://auth.flowzservice.tk/auth/facebook',
+     loginWithGoogleUrl : 'https://auth.flowzservice.tk/auth//Gplus',
+     loginWithTwitterUrl : 'https://auth.flowzservice.tk/auth//twitter',
+     loginWithGithubUrl : 'https://auth.flowzservice.tk/auth//github',
+      loginWithLinkedInUrl : 'https://auth.flowzservice.tk/auth//linkedin',
     
     userDetail:             "https://api."+process.env.domainkey+"/auth/api/userdetails",
     varifyEmailUrl :         "https://api."+process.env.domainkey+"/auth/api/verifyemail",
