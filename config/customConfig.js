@@ -27,10 +27,10 @@ export default{
 
 
      loginWithFacebookUrl : 'https://auth.flowzservice.tk/auth/facebook',
-     loginWithGoogleUrl : 'https://auth.flowzservice.tk/auth//Gplus',
-     loginWithTwitterUrl : 'https://auth.flowzservice.tk/auth//twitter',
-     loginWithGithubUrl : 'https://auth.flowzservice.tk/auth//github',
-      loginWithLinkedInUrl : 'https://auth.flowzservice.tk/auth//linkedin',
+     loginWithGoogleUrl : 'https://auth.flowzservice.tk/auth/Gplus',
+     loginWithTwitterUrl : 'https://auth.flowzservice.tk/auth/twitter',
+     loginWithGithubUrl : 'https://auth.flowzservice.tk/auth/github',
+      loginWithLinkedInUrl : 'https://auth.flowzservice.tk/auth/linkedin',
     
     userDetail:             "https://api."+process.env.domainkey+"/auth/api/userdetails",
     varifyEmailUrl :         "https://api."+process.env.domainkey+"/auth/api/verifyemail",
