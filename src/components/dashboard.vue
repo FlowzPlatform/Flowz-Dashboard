@@ -329,7 +329,8 @@ export default {
       // },
       goTosubscriptionplan : function(data){
           //this.$router.push('subscriptionplan/');
-          window.location =data
+         // window.location =data
+         window.open(data, '_blank');
       },
       // goToMoM : function(data){
       //   console.log('Redirect to MOM')
