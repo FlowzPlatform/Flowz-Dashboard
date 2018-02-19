@@ -734,6 +734,8 @@ border-radius: 50%;
     border-color: #05a;
   }
 
+   .lconpt {height: -webkit-fill-available}
+
 </style>
 <style>
     .vjs-control-bar {display:none;}
