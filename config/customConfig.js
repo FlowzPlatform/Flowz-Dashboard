@@ -19,6 +19,7 @@ export default{
     githubSuccessCallbackUrl: frontEndUrl,
     linkedInSuccessCallbackUrl: frontEndUrl,
 
+
     
 
         loginWithFacebookUrl : 'http://auth.flowzservice.tk/auth/facebook',
@@ -26,6 +27,7 @@ export default{
     loginWithTwitterUrl : 'http://auth.flowzservice.tk/auth//twitter',
         loginWithGithubUrl : 'http://auth.flowzservice.tk/auth//github',
         loginWithLinkedInUrl : 'http://auth.flowzservice.tk/auth//linkedin',
+
     
     userDetail:             "https://api."+process.env.domainkey+"/auth/api/userdetails",
     varifyEmailUrl :         "https://api."+process.env.domainkey+"/auth/api/verifyemail",
