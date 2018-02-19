@@ -33,7 +33,7 @@
 					<li data-content="gulp"><a href="#"></a></li>
 					<li data-content="git"><a href="#"></a></li>
 					<li>
-						<a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan('http://vmail.flowzcluster.tk')" v-on:mouseover="hoverOnSubmenu('rgba(94, 193, 182, 0.7)', 'left' ,3)">
+						<a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan(flowzVmailUrl)" v-on:mouseover="hoverOnSubmenu('rgba(94, 193, 182, 0.7)', 'left' ,3)">
 							<div class="dashcub v-mail">
 								<div class="dascutx">
 									<div class="dascufo">
@@ -49,7 +49,7 @@
 						</a>
 					</li>
 					<li data-content="yo">
-						<a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan('http://webbuilder.flowzcluster.tk')" v-on:mouseover="hoverOnSubmenu('rgba(109, 198, 77, 0.7)', 'left' ,2)">
+						<a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan(flowzBuilderUrl)" v-on:mouseover="hoverOnSubmenu('rgba(109, 198, 77, 0.7)', 'left' ,2)">
 							<div class="dashcub web-builder">
 								<div class="dascutx">
 									<div class="dascufo">
@@ -79,7 +79,7 @@
 					<ul class="radial-nav" id="radial-nav1">
 						<li data-content="git"><a href="#"></a></li>
 						<li data-content="css">
-						<a href="#" class="menu2-item " @click="goTosubscriptionplan('http://uploader.flowzcluster.tk/uploader')" v-on:mouseover="hoverOnSubmenu('rgba(245, 93, 33, 0.7)', 'right' , 6)"> 
+						<a href="#" class="menu2-item " @click="goTosubscriptionplan(flowzUploaderUrl)" v-on:mouseover="hoverOnSubmenu('rgba(245, 93, 33, 0.7)', 'right' , 6)"> 
 							<div class="dashcub dbetl">
 								<div class="dascutx">
 									<div class="dascufo">
@@ -94,7 +94,7 @@
 							</div>
 						</a></li>
 						<li data-content="js">
-						<a href="#" class="menu2-item " @click="goTosubscriptionplan('http://crm.flowzcluster.tk')" v-on:mouseover="hoverOnSubmenu('rgba(242, 168, 46, 0.7)', 'right' , 5)">
+						<a href="#" class="menu2-item " @click="goTosubscriptionplan(flowzcrmUrl)" v-on:mouseover="hoverOnSubmenu('rgba(242, 168, 46, 0.7)', 'right' , 5)">
 							<div class="dashcub accounting">
 								<div class="dascutx">
 									<div class="dascufo">
@@ -151,7 +151,12 @@ export default {
       topup: 200,
       cards : [],
       active1:false,
-      active2:false
+      active2:false,
+      flowzDashboardUrl: 'https://dashboard.' + process.env.domainkey,
+      flowzBuilderUrl: 'https://webbuilder.' + process.env.domainkey,
+      flowzVmailUrl: 'https://vmail.' + process.env.domainkey,
+      flowzUploaderUrl: 'https://uploader.' + process.env.domainkey,
+      flowzcrmUrl: 'https://crm.' + process.env.domainkey,
     }
   },
   created() {
