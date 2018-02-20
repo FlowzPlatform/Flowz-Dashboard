@@ -1,7 +1,7 @@
 <template>
   <Card>
     <!-- <h3>Thank You for Subscribing...!</h3> -->
-    <div style="font-size: x-large;">Your Plan Details are:</div><br>
+    <div style="font-size: x-large;">Subscribed List</div><br>
     <Table :loading="loading" class='dataTable' :columns="planDetails" :data="planList"></Table>
   </Card>
 </template>

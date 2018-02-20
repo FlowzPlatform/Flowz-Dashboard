@@ -21,12 +21,24 @@
                                 {{email}}
                             </template>
                             <MenuItem name="1-1">
-                                <a @click="settings()"> 
+                                <a @click="settings()">
                                     <Icon type="ios-locked-settings" :size="16"></Icon>
                                     ACL
                                 </a>
                                 </MenuItem>
                             <MenuItem name="1-2">
+                                <a @click="subscriptionList()">
+                                    <Icon type="ios-locked-settings" :size="16"></Icon>
+                                    Subscription List
+                                </a>
+                            </MenuItem>
+                            <MenuItem name="1-3">
+                                <a @click="planList()">
+                                    <Icon type="ios-locked-settings" :size="16"></Icon>
+                                    Subscribed List
+                                </a>
+                            </MenuItem>
+                            <MenuItem name="1-4">
                             <a @click="logout()">
                                 <Icon type="ios-locked-outline" :size="16"></Icon>
                                 Logout
@@ -63,13 +75,13 @@
 
             logout: function () {
                 //this.$session.destroy('auth_token');
-                
+
                 this.$store.commit("FB_SIGN_IN",false);
                 this.$store.commit("GOOGLE_SIGN_IN",false);
                 this.$store.commit('SET_LOGIN_USER', "");
                 this.$cookie.delete('auth_token');
-                Cookie.remove('auth_token' ,{domain: location}) 
-                Cookie.remove('user' ,{domain: location}) 
+                Cookie.remove('auth_token' ,{domain: location})
+                Cookie.remove('user' ,{domain: location})
                 this.$router.push('/login');
 
             },
@@ -77,13 +89,19 @@
                 //this.$session.destroy('auth_token');
                 this.$router.push('/acl');
             },
+            subscriptionList: function () {
+                this.$router.push('/subscription-list');
+            },
+            planList: function () {
+                this.$router.push('/plan-details');
+            },
         },
 
         mounted (){
             setTimeout(function() {
-            this.email = Cookie.get('user') ? Cookie.get('user') : 'User' 
+            this.email = Cookie.get('user') ? Cookie.get('user') : 'User'
             }, 1000);
-            
+
         }
     }
 </script>
