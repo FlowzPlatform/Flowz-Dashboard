@@ -17,65 +17,54 @@
       <div v-for="(plan, pIndex) in plans" :id="'plans_'+pIndex">
         <div class="container">
           <hr>
-          <div class="col-xs-9" style="margin-top:10px">
-            <div class="row">
-              <div class="col-xs-7">
+          <div class="col-md-12" style="margin-top:10px">
+            <div class="row" style="margin-top:10px">
+              <div class="col-md-4" style="margin-top:10px">
                 <div class="row">
                   <div class="col-xs-4 no-margin" >
                     <h4>Plan Name:</h4>
                   </div>
-                  <div class="col-xs-8 no-margin">
+                  <div class="col-xs-7 no-margin">
                     <h4><input type="text" class="description" v-model="plan.name" placeholder="______________________"></h4>
                   </div>
                 </div>
               </div>
-              <div class="col-xs-5">
+              <div class="col-md-3">
                 <div class="row">
-                  <div class="col-xs-4 no-margin">
+                  <div class="col-md-3 no-margin">
                     <h4>Validity: </h4>
                   </div>
-                  <div class="col-xs-3 no-margin">
+                  <div class="col-md-2 no-margin">
                     <h4><input type="number" title="Validity" class="description" v-model="plan.validity" @input="validateValidity(plan.validity,pIndex)" min=1 placeholder="____________________"></input></h4>
                   </div>
-                  <div class="col-xs-5 no-margin" align="left">
+                  <div class="col-md-2 no-margin">
                     <h4>Days</h4>
                   </div>
                   <div id="validateErr"></div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div class="col-xs-3" style="margin-top:10px">
-            <div class="row">
-              <div class="col-xs-3 no-margin" >
-                <h4>Price:</h4>
-              </div>
-              <div class="col-xs-5 no-margin">
-                <div class="row no-margin">
-                  <div class="col-xs-2 no-margin">
-                    <h4>$</h4>
+              <div class="col-md-4">
+                <div class="row">
+                  <div class="col-md-3 no-margin">
+                    <h4>Price: $</h4>
                   </div>
-                  <div class="col-xs-8 no-margin">
+                  <div class="col-md-2 no-margin">
                     <h4><input type="number" class="description" v-model="plan.price"  @input="validatePrice(plan.price,pIndex)" placeholder="______________________"></input></h4>
                   </div>
-                </div>
-              </div>
-
-              <div class="col-xs-4 main-option">
-                <div class="row">
+                  <div class="col-md-3 no-margin"></div>
+                  <div class="col-md-1 pointer" v-if="plan.validity >= 10 && plan.price >= 50" @click="update(pIndex, true)">
                   <Tooltip content="Save" placement="top">
-                    <div class="col-xs-3 pointer" v-if="plan.validity >= 10 && plan.price >= 50" @click="update(pIndex, true)">
                       <icon name="save" scale="1.5"></icon>
-                  <!-- <Icon type="upload" size="30"></Icon> -->
-                    </div>
-                    <div class="col-xs-3 pointerX" v-else>
-                      <icon name="save" scale="1.5"></icon>
-                    </div>
                   </Tooltip>
+                </div>
+                <div class="col-md-1 pointerX" v-else>
+                  <Tooltip content="Save" placement="top">
+                      <icon name="save" scale="1.5"></icon>
+                  </Tooltip>
+                </div>
+                <div class="col-md-1 pointer" @click="confirmDelete = true, deleteIndex = pIndex, loading = true">
                   <Tooltip content="Delete plan" placement="top">
-                    <div class="col-xs-4 pointer" @click="confirmDelete = true, deleteIndex = pIndex, loading = true">
                       <Icon type="trash-a" size="30"></Icon>
-                    </div>
                   </Tooltip>
                   <Modal
                       v-model="confirmDelete"
@@ -84,23 +73,33 @@
                       @on-ok="deletePlan(deleteIndex)">
                       <p>After you click ok, this plan will be delete permanently.</p>
                   </Modal>
-                  <Tooltip content="Expand" placement="top">
-                    <div class="col-xs-3 pointer" v-if="plan.validity >= 10 && plan.price >= 50 && checkOpen(pIndex)" @click="expand(pIndex)">
-                      <Icon type="arrow-down-b" size="30"></Icon>
-                    </div>
-                    <div class="col-xs-3 pointerX" v-else>
-                      <Icon type="arrow-down-b" size="30"></Icon>
-                    </div>
-                    <div class="col-xs-3 pointer" v-else @click="expand(pIndex)">
-                      <Tooltip content="Expand" placement="top"><Icon type="arrow-up-b" scale="1.4"></Icon></Tooltip>
-                    </div>
+                </div>
+                <div class="col-md-1 pointer" v-if="plan.validity >= 10 && plan.price >= 50">
+                  <Tooltip content="Enable" placement="top">
+                    <i-switch size="small" v-model="plan.status"></i-switch>
                   </Tooltip>
-                  <!--  <div class="col-xs-6">
-                  <Icon type="ios-copy" size=>
-                  </div> -->
+                </div>
+                <div class="col-md-1 pointerX" v-else>
+                  <Tooltip content="Enable" placement="top">
+                    <i-switch size="small" disabled v-model="plan.status"></i-switch>
+                  </Tooltip>
+                </div>
+                <div class="col-md-1 pointer" v-if="plan.validity >= 10 && plan.price >= 50 && checkOpen(pIndex)" @click="expand(pIndex)">
+                  <Tooltip content="Expand" placement="top">
+                    <Icon type="arrow-down-b" size="30"></Icon>
+                  </Tooltip>
+                </div>
+                <div class="col-md-1 pointerX" v-else>
+                  <Tooltip content="Expand" placement="top">
+                    <Icon type="arrow-down-b" size="30"></Icon>
+                  </Tooltip>
+                </div>
+                
                 </div>
               </div>
-                <div id="priceErr"></div>
+              <!--<div class="col-md-5">
+                
+              </div>-->
             </div>
           </div>
         </div>
@@ -445,7 +444,8 @@ export default {
             })
           })
         }
-      } else if (dataObj.price < 50) {
+      } 
+      /*else if (dataObj.price < 50) {
         this.$Notice.error({
           duration: 5,
           title: 'Price Validation Error',
@@ -457,7 +457,7 @@ export default {
           title: 'Validity Validation Error',
           desc: 'Validity should be greater than 10 days'
         })
-      }
+      }*/
       // this.process.cursor = ''
       // let obj1 = []
       // axios({
