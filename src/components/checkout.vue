@@ -162,6 +162,9 @@ export default {
             title: 'Payment fail..!',
             desc: 'Please try again or after some time.'
           })
+          self.payInfo.class = 'alert alert-danger'
+          self.payInfo.msgType = 'Error!'
+          self.payInfo.msg = 'Payment Not Done.'
           self.paying = false
         })
         // axios({
