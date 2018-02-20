@@ -40,7 +40,7 @@ export default new Router({
           name: 'subscriptionList',
           component: subscriptionList,
           meta: { requiresAuth: true }
-        }, 
+        },
         {
           // path: 'subscriptionplan/:id',
           path: 'subscriptionplan',
@@ -58,7 +58,7 @@ export default new Router({
             meta: { requiresAuth: true }
         },
         {
-           path: '/plan-details/:id',
+           path: '/plan-details',
            name: 'planDetails',
            component: planDetails,
            meta: { requiresAuth: true }
