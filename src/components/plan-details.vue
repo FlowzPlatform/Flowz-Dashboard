@@ -1,7 +1,7 @@
 <template>
   <Card>
     <!-- <h3>Thank You for Subscribing...!</h3> -->
-    <div style="font-size: x-large;">Your Plan Details are:</div><br>
+    <div style="font-size: x-large;">Subscribed List</div><br>
     <Table :loading="loading" class='dataTable' :columns="planDetails" :data="planList"></Table>
   </Card>
 </template>
@@ -34,8 +34,9 @@ export default {
                     key: 'validity'
                 },
                 {
-                    title: 'Expired on',
-                    key: 'expiredOn'
+                    title: 'Expiry Date',
+                    key: 'expiredOn',
+                    sortable: true
                 }
             ],
             planList: [],
@@ -57,7 +58,7 @@ export default {
             packages = res.data.data.package
             _.forEach(packages, function (item) {
                 userSubscription.get(item.subscriptionId).then(res => {
-                    res.data.expiredOn = moment(res.data.expiredOn).format("DD-MM-YYYY")
+                    res.data.expiredOn = moment(res.data.expiredOn).format("DD-MMM-YYYY")
                     self.planList.push(res.data)
                     if(self.planList.length > 0) {
                         self.loading = false
