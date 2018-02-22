@@ -76,12 +76,13 @@
         methods: {
             getAllPermissions: function(appName, totalApps){
             var self = this
+            //console.log('getAllPerm:', config.getAllPermissionsUrl+appName)
             axios.get(config.getAllPermissionsUrl+appName, {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
             },
           }).then(function (response) {
-             // console.log("Get all permissions:",response.data.data.values());
+                console.log("Get all permissions:",response.data.data.values());
               if(response.data.data.length > 0){
                     self.count++
                     console.log("Count:",self.count, totalApps);
@@ -100,7 +101,7 @@
             },
             getRoles: function(){
                 var self = this
-                    axios.get(config.subscriptionUrl+'register-roles', {
+                    axios.get(config.subscriptionUrl+'roles', {
                     headers: {
                     'Content-Type': 'application/x-www-form-urlencoded;'
                     },
@@ -130,6 +131,24 @@
             },
             callTaskList: function () {
                 var self = this
+                
+                let resourceList
+                _.forEach(Object.keys(this.fields), function(value) {
+                    console.log('field value:::',(value));
+                    axios.get(config.subscriptionUrl+'register-resource', {
+                        params: {
+                            module: value
+                        },
+                        headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                        }).then(function (response) {
+                            resourceList = response.data.data
+                            console.log('response::', resourceList)
+                            
+                        })
+
+                });
                 axios.get(config.subscriptionUrl+'register-resource', {
                 headers: {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
