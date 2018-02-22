@@ -3,15 +3,19 @@ FROM ubuntu:16.04
 ARG domainkey
 
 # install dependencies
-RUN apt-get update \
-	&& apt-get install -y --no-install-recommends \
-		apache2 \
-	&& rm -r /var/lib/apt/lists/*
+#RUN apt-get update \
+#	&& apt-get install -y --no-install-recommends \
+#		apache2 \
+#	&& rm -r /var/lib/apt/lists/*
+
+RUN apt-get update
+RUN apt-get install -y apache2
 
 RUN apt install -y software-properties-common
 RUN LC_ALL=C.UTF-8  add-apt-repository -y ppa:ondrej/apache2
 RUN apt update
 RUN apt install -y  apache2
+
 
 
 # Default command
