@@ -1,12 +1,22 @@
 <template>
         <div>
+                <div v-if="loading" class="loadingbar">
+                        <img class="project-loading" src="../assets/images/activity.svg" style="margin-left: 10px; width:80px; height:100px;"/>
+                        <p style="margin-left:20px;color:gray">Populating data...</p>
+                        <!-- <span style="margin-left:0px;position: absolute;bottom:10px">
+                          <img src="../assets/images/flowz_digital_logo2.png"></img>
+                        </span> -->
+                </div> 
             <!-- <h1 v-model="module" style="text-align: center; font-weight:bold;margin-bottom:10px; margin-top: 15px;">{{ titleCase(module) }}</h1> -->
-                <div class="table-wrapper"> 
+                <div v-else class="table-wrapper"> 
                         <table  class="table-bordered" style="font-size: 115%">
                             <thead class="header">
                              
                             </thead>
                             <tbody v-cloak class="results">
+                        
+                            <template>
+                                
                             <template v-for="(moduleName, index) in Object.keys(tableData)">
                             <Widget>
                                 <WidgetHeading :id="1" :Title="'Todo'" style="text-align:center;font-weight:bold;font-size:20px" :TextColor="false" :DeleteButton="false" :ColorBox="false" :Expand="false" :Collapse="true"
@@ -44,8 +54,9 @@
                                     </tr>
                                 </template>
                             
-                            </WidgetBody>
-                        </Widget>
+                                </WidgetBody>
+                            </Widget>
+                        </template>
                     </template>
                     </tbody>
                 </table>
@@ -61,46 +72,55 @@
     import VueWidgets from 'vue-widgets'
     import 'vue-widgets/dist/styles/vue-widgets.css'
     import config from '../../config/customConfig'
+    import iView from 'iview';
+    import 'iview/dist/styles/iview.css';
+
+    Vue.use(iView);
     
     Vue.use(VueWidgets)
          /* eslint-disable*/
     export default {
         data: function() {
             return {
-                tableData: [],
+                loading: true,
+                tableData: {},
                 fields: [],
                 permissionsAll:[],
                 count: 0
             }
         },
         methods: {
-            getAllPermissions: function(appName, totalApps){
+            getAllPermissions:async function(appName, totalApps){
+            
             var self = this
-            axios.get(config.getAllPermissionsUrl+appName, {
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-            },
+            //console.log('getAllPerm:', config.getAllPermissionsUrl+appName)
+            await axios.get(config.getAllPermissionsUrl+appName, {
+            // headers: {
+            //   'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            // },
           }).then(function (response) {
-             // console.log("Get all permissions:",response.data.data.values());
+
               if(response.data.data.length > 0){
                     self.count++
                     console.log("Count:",self.count, totalApps);
                     self.permissionsAll = _.union(self.permissionsAll, response.data.data);
                     self.permissionsAll = _.map(self.permissionsAll, o => _.extend({app: appName}, o));
-                    if(totalApps == self.count){
-                        self.permissionsAll = _.groupBy(self.permissionsAll, 'app');
-                    }
+                    
+                    // To resolve check/uncheck issue
+                    // if(totalApps == self.count){
+                    //     self.permissionsAll = _.groupBy(self.permissionsAll, 'app');
+                    // }
               }
               return response.data.data
             })
             .catch(function (error) {
-              console.log("Get all roles error:",error);
+              console.log("Get all permission error:",error);
               console.log(error);
             })
             },
-            getRoles: function(){
+            getRoles:async  function(){
                 var self = this
-                    axios.get(config.subscriptionUrl+'register-roles', {
+                    await axios.get(config.subscriptionUrl+'roles', {
                     headers: {
                     'Content-Type': 'application/x-www-form-urlencoded;'
                     },
@@ -125,32 +145,64 @@
             })
             .catch(function (error) {
               console.log("Get all roles error:",error);
-              console.log(error);
+              console.log(error.response.status);
+              if(error.response.status == 403){
+                self.$Modal.warning({
+                            title: "Warning",
+                            content: "You are not authorized to see Roles",
+                            onOk: () => {
+                                self.$router.go(-1);
+                            }
+                        });
+              }
             })
             },
-            callTaskList: function () {
+            callTaskList: async function () {
                 var self = this
-                axios.get(config.subscriptionUrl+'register-resource', {
-                headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                },
-                 }).then(function (response) {
-                    console.log("Get resources:",response.data.data);
-                    if(response.data.data.length > 0){
-                        let arrResources = _.groupBy(response.data.data, 'module');
-                        self.tableData = arrResources;
-                        //console.log("Table rows:",Object.keys(self.tableData));
-                        for (var tblData in arrResources){
-                            console.log("arrResources:",tblData)
-                            self.getAllPermissions(tblData, Object.keys(self.tableData).length)
-                        }
+                
+                for(let value of Object.keys(this.fields)) {
+                    // console.log('field value:::',(value));
+                    await axios.get(config.subscriptionUrl+'register-resource', {
+                        params: {
+                            module: value
+                        },
+                        headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                        }).then(function (response) {
+                            let arrResources = _.groupBy(response.data.data, 'module');
+                            self.tableData = _.extend(self.tableData, arrResources);
+                        }).catch(function (error) {
+                            console.log("Get role permissions error:",error);
+                            console.log(error);
+                        })
                 }
-                return response.data.data
-                })
-                    .catch(function (error) {
-                    console.log("Get role permissions error:",error);
-                    console.log(error);
-                })
+                    self.loading = false
+                    for (var tblData in self.tableData){
+                       await self.getAllPermissions(tblData, Object.keys(self.tableData).length)
+                    }    
+                
+                // axios.get(config.subscriptionUrl+'register-resource', {
+                // headers: {
+                // 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                // },
+                //  }).then(function (response) {
+                //     console.log("Get resources:",response.data.data);
+                //     if(response.data.data.length > 0){
+                //         let arrResources = _.groupBy(response.data.data, 'module');
+                //         self.tableData = arrResources;
+                //         //console.log("Table rows:",Object.keys(self.tableData));
+                //         for (var tblData in arrResources){
+                //             console.log("arrResources:",tblData)
+                //             self.getAllPermissions(tblData, Object.keys(self.tableData).length)
+                //         }
+                // }
+                // return response.data.data
+                // })
+                //     .catch(function (error) {
+                //     console.log("Get role permissions error:",error);
+                //     console.log(error);
+                // })
                    
             },
             getCheckboxValue: function(role, resources, action, appName){
@@ -302,6 +354,11 @@
         display: block;
       }
     }
-                        
+    .loadingbar{
+        text-align: center;
+        position: absolute;
+        top: 40%;
+        left: 45%;
+    }                
     </style>
     

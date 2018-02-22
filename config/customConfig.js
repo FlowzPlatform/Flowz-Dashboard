@@ -37,5 +37,7 @@ export default{
 
     getAllPermissionsUrl : "https://api."+process.env.domainkey+"/authldap/getallpermission/",
     setPermissionUrl : "https://api."+process.env.domainkey+"/authldap/setpermission",
+    // getAllPermissionsUrl : "https://172.16.160.32:8000/authldap/getallpermission/",
+    // setPermissionUrl : "https://172.16.160.32:8000/authldap/setpermission",
     subscriptionUrl: "https://api."+process.env.domainkey+"/subscription/"
 }
