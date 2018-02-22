@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 ARG domainkey
 
@@ -46,6 +46,7 @@ RUN cp /opt/app/vhost_ssl_qa.conf /etc/apache2/sites-enabled/
 RUN rm -rf /opt/app/*
 RUN a2enmod rewrite
 RUN a2enmod ssl
+RUN a2enmod http2
 #RUN service apache2ctl restart
 #RUN service apache2 startssl
 RUN service apache2 restart
