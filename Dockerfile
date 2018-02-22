@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:16.04
 
 ARG domainkey
 
@@ -8,13 +8,19 @@ RUN apt-get update \
 		apache2 \
 	&& rm -r /var/lib/apt/lists/*
 
+RUN apt install -y software-properties-common
+RUN LC_ALL=C.UTF-8  add-apt-repository -y ppa:ondrej/apache2
+RUN apt update
+RUN apt install -y  apache2
+
+
 # Default command
 CMD ["apachectl", "-D", "FOREGROUND"]
 
 # Install Node.js
 RUN apt-get update \
 	&& apt-get install --yes curl
-#RUN curl --silent --location https://deb.nodesource.com/setup_7.x | bash -
+RUN curl --silent --location https://deb.nodesource.com/setup_7.x | bash -
 RUN apt-get install --yes nodejs
 RUN apt-get install --yes build-essential
 
