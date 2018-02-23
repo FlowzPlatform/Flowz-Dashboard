@@ -1,11 +1,9 @@
 <template>
         <div>
-                <div v-if="loading" class="loadingbar">
+        
+                <div v-if="loading" class="loadingbar hidden">
                         <img class="project-loading" src="../assets/images/activity.svg" style="margin-left: 10px; width:80px; height:100px;"/>
                         <p style="margin-left:20px;color:gray">Populating data...</p>
-                        <!-- <span style="margin-left:0px;position: absolute;bottom:10px">
-                          <img src="../assets/images/flowz_digital_logo2.png"></img>
-                        </span> -->
                 </div> 
             <!-- <h1 v-model="module" style="text-align: center; font-weight:bold;margin-bottom:10px; margin-top: 15px;">{{ titleCase(module) }}</h1> -->
                 <div v-else class="table-wrapper"> 
@@ -61,6 +59,9 @@
                     </tbody>
                 </table>
             </div>
+            <div id="overlay" v-show="showOverlay">
+                    <img class="project-loading" src="../assets/images/indicator.svg" style="margin-left: 10px; width:80px; height:100px;"/>
+            </div>
         </div>
       
     </template>
@@ -86,7 +87,8 @@
                 tableData: {},
                 fields: [],
                 permissionsAll:[],
-                count: 0
+                count: 0,
+                showOverlay: false
             }
         },
         methods: {
@@ -106,6 +108,7 @@
                     self.permissionsAll = _.union(self.permissionsAll, response.data.data);
                     self.permissionsAll = _.map(self.permissionsAll, o => _.extend({app: appName}, o));
                     
+                    console.log("Permision all cunt:--",self.permissionsAll.length)
                     // To resolve check/uncheck issue
                     // if(totalApps == self.count){
                     //     self.permissionsAll = _.groupBy(self.permissionsAll, 'app');
@@ -211,30 +214,66 @@
                 if (index > -1) {
                     let permission = this.permissionsAll[index].access_value
                     return parseInt(permission)
+                }else{
+                    return parseInt(0)
                 }
             },
             setAccessPermision: function(roleField, item, action, event, moduleName) {
                 var accessVal = 0
+                this.showOverlay = true
+                let self = this
                 if(event.target.checked) {
                     accessVal = 1
                 }
-                console.log("Set permission params 1:",moduleName);
-                console.log("Set permission params: 2",item.id+'_'+action);
-                return axios.post(config.setPermissionUrl, {
+                console.log("Set permission params 1:",event.target.checked);
+                
+                let updateValue={
                     resourceId:  item.id+'_'+action , //resourceid_action
                     roleId:  roleField.id ,
                     taskType:  'global', // scope
                     accessValue: accessVal,
                     app: moduleName
-                }, {
+                };
+
+                console.log("Set permission params: 2",item);
+                 axios.post(config.setPermissionUrl, updateValue, {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                     }
                     })
                     .then(function (response) {
                     console.log("Set permission response:",response);
+
+                    let resID = item.id+"_"+action
+                    let index = _.findIndex(self.permissionsAll, function(d) { return (d.roleId === roleField.id) && (d.resourceId === resID) })
+                    console.log("Set permission response index:",index);
+                    if (index > -1) {
+                        if(self.permissionsAll[index].access_value==='1')
+                            self.permissionsAll.splice(index,1)
+                        else{
+                            self.permissionsAll[index].access_value='1'
+                        }
+                    // self.permissionsAll[index].access_value=accessVal
+                        // return parseInt(permission)
+                        // console.log("Permiision update:--",self.permissionsAll[index].access_value)
+                    }
+                    else{
+                      
+                        let pValue={
+                            resourceId:  updateValue.resourceId , //resourceid_action
+                            roleId:  updateValue.roleId ,
+                            taskType:  updateValue.taskType, // scope
+                            access_value: updateValue.accessValue,
+                            app: updateValue.app
+                        };
+                        // console.log("Per Obj:--",pValue)
+                        self.permissionsAll.push(pValue)
+                    }
+                    self.showOverlay = false
+                    
                     })
                     .catch(function (error) {
+                        self.showOverlay = false
                     console.log("Set permission error:",error);
                     console.log(error);
                     });
@@ -359,6 +398,20 @@
         position: absolute;
         top: 40%;
         left: 45%;
-    }                
+    }
+    #overlay {
+        position: fixed;
+        width: 100%;
+        height: 100vh;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 2;
+        cursor: pointer;
+        padding-left: 50%;
+        padding-top: 25%;
+    }              
     </style>
     
