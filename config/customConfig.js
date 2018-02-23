@@ -22,11 +22,11 @@ export default{
 
     
 
-        loginWithFacebookUrl : 'http://auth.flowzservice.tk/auth/facebook',
-        loginWithGoogleUrl : 'http://auth.flowzservice.tk/auth//Gplus',
-    loginWithTwitterUrl : 'http://auth.flowzservice.tk/auth//twitter',
-        loginWithGithubUrl : 'http://auth.flowzservice.tk/auth//github',
-        loginWithLinkedInUrl : 'http://auth.flowzservice.tk/auth//linkedin',
+        loginWithFacebookUrl : 'https://auth.'+process.env.domainkey+'/auth/facebook',
+        loginWithGoogleUrl : 'https://auth.'+process.env.domainkey+'/auth/Gplus',
+    loginWithTwitterUrl : 'https://auth.'+process.env.domainkey+'/auth/twitter',
+        loginWithGithubUrl : 'https://auth.'+process.env.domainkey+'/auth/github',
+        loginWithLinkedInUrl : 'https://auth.'+process.env.domainkey+'/auth/linkedin',
 
     
     userDetail:             "https://api."+process.env.domainkey+"/auth/api/userdetails",
