@@ -35,25 +35,32 @@
             <div class="lconpt">
                <div class="lconun">
                   <span class="lthlob">
+                      <Tooltip content="Login with facebook">
                      <span  @click="submitFb()" class="fb">
                         <icon name="facebook"></icon>
                      </span>
+                     </Tooltip>
                      - 
+                     <Tooltip content="Login with google">
                      <span class="google" @click="submitGoogle()">
                         <icon name="google"></icon>
                       </span>
+                      </Tooltip>
                       -
+                      <Tooltip content="Login with twitter">
                       <span class="twitter" @click="submitTwitter()">
                         <icon name="twitter"></icon>
                       </span>
+                      </Tooltip>
                       -
                       <!-- <span class="linkedin" @click="submitLinkedin()">
                         <icon name="linkedin"></icon>
                       </span> -->
-                      
+                      <Tooltip content="Login with github">
                       <span class="github" @click="submitGithub()">
                         <icon name="github"></icon>
                       </span>
+                      </Tooltip>
 
                   </span>
                </div>
@@ -116,26 +123,33 @@
                   <span class="lthlob">
                      <span class="lthlob">
                         
+                        <Tooltip content="Login with facebook">
                         <span  @click="submitFb()" class="fb">
                            <icon name="facebook"></icon>
                         </span>
+                        </Tooltip>
                         - 
+                        <Tooltip content="Login with google">
                          <span  @click="submitGoogle()" class="google">
                            <icon name="google"></icon>
                         </span>
-
+                        </Tooltip>
                         -
+                        <Tooltip content="Login with twitter">
                       <span class="twitter" @click="submitTwitter()">
                         <icon name="twitter"></icon>
                       </span>
+                      </Tooltip>
                       <!-- -
                       <span class="linkedin" @click="submitLinkedin()">
                         <icon name="linkedin"></icon>
                       </span> -->
                       -
+                      <Tooltip content="Login with github">
                       <span class="github" @click="submitGithub()">
                         <icon name="github"></icon>
                       </span>
+                      </Tooltip>
 
                      </span>
                   </span>
@@ -498,6 +512,9 @@ export default {
                         message : response.data.message,
                         type: 'success'
                     });
+                    self.signup.email = '';
+                    self.signup.password = "";
+                    self.signup.username = "";
                     
                      $('.lundcon').addClass('sing');
                 }else{
@@ -610,6 +627,7 @@ background-color: #337ab7;
 color: #fff  !important;
 padding: 12px 12px 3px 10px;
 border-radius: 50%;
+cursor: pointer;
 }
 
 .signupButton {
@@ -628,6 +646,7 @@ border-radius: 50%;
   color: white;
   padding: 12px 12px 3px 10px;
 border-radius: 50%;
+cursor: pointer;
 }
 
 .linkedin {
@@ -635,6 +654,7 @@ border-radius: 50%;
   color: white;
   padding: 12px 12px 3px 10px;
 border-radius: 50%;
+cursor: pointer;
 }
 
 .twitter {
@@ -642,6 +662,7 @@ border-radius: 50%;
   color: white;
   padding: 12px 12px 3px 10px;
 border-radius: 50%;
+cursor: pointer;
 }
 
 .github {
@@ -649,6 +670,7 @@ border-radius: 50%;
   color: white;
   padding: 12px 12px 3px 10px;
 border-radius: 50%;
+cursor: pointer;
 }
 
 .login2 {
