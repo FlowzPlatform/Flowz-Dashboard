@@ -28,7 +28,7 @@
                                 <option name="RuPay" value="RuPay">RuPay</option>
                                 <option name="Maestro" value="Maestro">Maestro</option>
                                 <option name="American Express" value="American Express">American Express</option>
-                            </select> 
+                            </select>
                         </div> -->
                         <FormItem prop="cardNumber" label="CARD NUMBER">
                           <Input v-model="payDetail.cardNumber" type="text" id="cardNumber" placeholder="Valid Card Number"></Input>
@@ -121,7 +121,7 @@ export default {
     getMMYYYY (expriry) {
       let splited = expriry.split('-')
       this.payDetail.expiryYY = splited[0]
-      this.payDetail.expiryMM = splited[1]      
+      this.payDetail.expiryMM = splited[1]
     },
     backFunction () {
       this.$router.push('/subscription-list')
@@ -152,7 +152,7 @@ export default {
             this.payInfo.msgType = 'Success!'
             this.payInfo.msg = 'Payment successfully Done.'
             Cookies.set('welcomeMsg', 'Thank You for Subscribing...!')
-            this.$router.push('/plan-details/' + this.sub_id)
+            this.$router.push('/plan-details/')
           }
           // self.paying = false
         })
