@@ -2,14 +2,7 @@
 	<div>
 	<div class="checkout">
     <div class="container">
-      <div class="row">
-          <div class="col-md-2"></div>
-          <div class="col-md-8">
-              <div class="page-header">
-              </div>
-          </div>
-      </div>
-      <div class="row">
+      <div class="tablePadding">
           <div class="col-md-2"></div>
           <div class="col-md-8">
               <div v-if="payDone" :class="payInfo.class">
@@ -215,4 +208,11 @@ export default {
     background-color: #000044;
     border-color: #000044;
   }
+	#big-video-wrap {
+		display:none
+	}
+	.tablePadding {
+		padding-top: 10px;
+		width: 50%;
+	}
 </style>
