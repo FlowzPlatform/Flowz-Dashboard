@@ -83,17 +83,24 @@
                 Cookie.remove('auth_token' ,{domain: location})
                 Cookie.remove('user' ,{domain: location})
                 this.$router.push('/login');
+                this.$Message.success({content:'You have Succesfully Logged Out',duration:3})
 
             },
             settings: function () {
                 //this.$session.destroy('auth_token');
-                this.$router.push('/acl');
+                //his.$router.push('/acl');
+                let routeData = this.$router.resolve({name: 'acl'});
+                window.open(routeData.href, '_blank');
             },
             subscriptionList: function () {
-                this.$router.push('/subscription-list');
+                //this.$router.push('/subscription-list');
+                let routeData = this.$router.resolve({name: 'subscriptionList'});
+                window.open(routeData.href, '_blank');
             },
             planList: function () {
-                this.$router.push('/plan-details');
+                //this.$router.push('/plan-details');
+                let routeData = this.$router.resolve({name: 'planDetails'});
+                window.open(routeData.href, '_blank');
             },
         },
 
