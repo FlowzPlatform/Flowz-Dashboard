@@ -6,15 +6,15 @@
                         <p style="margin-left:20px;color:gray">Populating data...</p>
                 </div> 
             <!-- <h1 v-model="module" style="text-align: center; font-weight:bold;margin-bottom:10px; margin-top: 15px;">{{ titleCase(module) }}</h1> -->
-                <div v-else class="table-wrapper"> 
+                <div v-else class="table-wrapper">
                         <table  class="table-bordered" style="font-size: 115%">
                             <thead class="header">
-                             
+
                             </thead>
                             <tbody v-cloak class="results">
-                        
+
                             <template>
-                                
+
                             <template v-for="(moduleName, index) in Object.keys(tableData)">
                             <Widget>
                                 <WidgetHeading :id="1" :Title="'Todo'" style="text-align:center;font-weight:bold;font-size:20px" :TextColor="false" :DeleteButton="false" :ColorBox="false" :Expand="false" :Collapse="true"
@@ -51,7 +51,7 @@
                                         </template>
                                     </tr>
                                 </template>
-                            
+
                                 </WidgetBody>
                             </Widget>
                         </template>
@@ -63,9 +63,9 @@
                     <img class="project-loading" src="../assets/images/indicator.svg" style="margin-left: 10px; width:80px; height:100px;"/>
             </div>
         </div>
-      
+
     </template>
-    
+
     <script>
     import Vue from 'vue'
     import axios from 'axios'
@@ -77,7 +77,7 @@
     import 'iview/dist/styles/iview.css';
 
     Vue.use(iView);
-    
+
     Vue.use(VueWidgets)
          /* eslint-disable*/
     export default {
@@ -93,7 +93,7 @@
         },
         methods: {
             getAllPermissions:async function(appName, totalApps){
-            
+
             var self = this
             //console.log('getAllPerm:', config.getAllPermissionsUrl+appName)
             await axios.get(config.getAllPermissionsUrl+appName, {
@@ -107,8 +107,7 @@
                     console.log("Count:",self.count, totalApps);
                     self.permissionsAll = _.union(self.permissionsAll, response.data.data);
                     self.permissionsAll = _.map(self.permissionsAll, o => _.extend({app: appName}, o));
-                    
-                    console.log("Permision all cunt:--",self.permissionsAll.length)
+
                     // To resolve check/uncheck issue
                     // if(totalApps == self.count){
                     //     self.permissionsAll = _.groupBy(self.permissionsAll, 'app');
@@ -162,7 +161,7 @@
             },
             callTaskList: async function () {
                 var self = this
-                
+
                 for(let value of Object.keys(this.fields)) {
                     // console.log('field value:::',(value));
                     await axios.get(config.subscriptionUrl+'register-resource', {
@@ -183,8 +182,8 @@
                     self.loading = false
                     for (var tblData in self.tableData){
                        await self.getAllPermissions(tblData, Object.keys(self.tableData).length)
-                    }    
-                
+                    }
+
                 // axios.get(config.subscriptionUrl+'register-resource', {
                 // headers: {
                 // 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -206,7 +205,7 @@
                 //     console.log("Get role permissions error:",error);
                 //     console.log(error);
                 // })
-                   
+
             },
             getCheckboxValue: function(role, resources, action, appName){
                let resID = resources.id+"_"+action
@@ -302,11 +301,9 @@
         }
     }
     </script>
-    
+
     <style>
-    #big-video-wrap {
-        display: none;
-    }
+
     .ui.table {
         font-size: 1em;
         display: inline-table;
@@ -324,8 +321,8 @@
         overflow-x:scroll;
         width: 500px;
     } */
-    
-    .table-wrapper { 
+
+    .table-wrapper {
         overflow-x:auto;
         overflow-y:auto;
         margin-left: 100px;
@@ -338,12 +335,12 @@
         height: 50px;
         width: 50px;
     }
-    
+
     /* td, th {
         padding: 5px 20px;
         width: 50px;
     } */
-    
+
     th:first-child {
         /* position: fixed; */
         /* left: 30px */
@@ -352,7 +349,7 @@
         /* position: fixed;
         left: 30px */
     }
-    
+
     @media screen and (max-width: 580px) {
       .table {
         display: block;
@@ -382,7 +379,7 @@
         display: block;
       }
     }
-    
+
     .cell {
       padding: 6px 12px;
       display: table-cell;
@@ -414,4 +411,3 @@
         padding-top: 25%;
     }              
     </style>
-    

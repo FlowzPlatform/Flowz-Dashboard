@@ -86,6 +86,11 @@ router.beforeEach((to, from, next) => {
       let location = psl.parse(window.location.hostname)
       location = location.domain === null ? location.input : location.domain
       Cookie.set('user',  result.data.data.email  , {domain: location});
+      if(result.data.data.package !== undefined) {
+        self.$router.push('/');
+      } else {
+        self.$router.push('/subscription-list');
+      }
   })
   .catch(function(error){
   console.log(error.response)
