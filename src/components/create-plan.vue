@@ -378,8 +378,8 @@ export default {
         self.plans.push({
          name: '',
          description: '',
-         validity:'10',
-         price:'55',
+         validity:'365',
+         price:'999',
          time_unit: 'days',
          details:data5
        })
