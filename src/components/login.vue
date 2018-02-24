@@ -102,7 +102,7 @@
                </div>
                <div class="lconun">
                   <div class="lrinp">
-                       <div class="row">
+                       <div>
                            <div class="col-md-6">
                                <el-button type="success" v-if="!showForgotPassword" size="small"  class="signupButton" @click="loginUser()" :loading="saveFileLoadingLogin" style="margin-left:18px">Login</el-button>
                               <el-button type="success" size="small" class="signupButton"  v-if="showForgotPassword" @click="forgotPasswordSendEmail()" :loading="saveFileLoadingLogin" style="margin-left:18px" >Submit</el-button>
