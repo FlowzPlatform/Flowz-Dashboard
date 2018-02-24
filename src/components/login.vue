@@ -73,28 +73,28 @@
                      <el-tab-pane label="Standard" name="1" >
                         <div class="lconun">
                            <div class="lrinp">
-                              <label style="margin-left: -18px; margin-top: 2px;">Email</label>
-                              <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) " style="margin-left: -18px; margin-top: 2px;">
+                              <label style="margin-left: 0px; margin-top: 2px;">Email</label>
+                              <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) " style="margin-left: 0px; margin-top: 2px;">
                            </div>
                         </div>
                         <div class="lconun" v-if="!showForgotPassword">
                            <div class="lrinp">
-                              <label style="margin-left: -18px; margin-top: 2px;">Password</label>
-                              <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) " @keyup.enter="loginUser()" style="margin-left: -18px; margin-top: 2px;">
+                              <label style="margin-left: 0px; margin-top: 2px;">Password</label>
+                              <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) " @keyup.enter="loginUser()" style="margin-left: 0px; margin-top: 2px;">
                            </div>
                         </div>
                      </el-tab-pane>
                      <el-tab-pane v-if="!showForgotPassword" label="LDAP" name="2">
                         <div class="lconun">
                            <div class="lrinp">
-                              <label style="margin-left: -18px; margin-top: 2px;">Email</label>
-                              <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) " style="margin-left: -18px; margin-top: 2px;">
+                              <label style="margin-left: 0px; margin-top: 2px;">Email</label>
+                              <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) " style="margin-left: 0px; margin-top: 2px;">
                            </div>
                         </div>
                         <div class="lconun">
                            <div class="lrinp">
-                              <label style="margin-left: -18px; margin-top: 2px;">Password</label>
-                              <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) " @keyup.enter="loginUser()" style="margin-left: -18px; margin-top: 2px;">
+                              <label style="margin-left: 0px; margin-top: 2px;">Password</label>
+                              <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) " @keyup.enter="loginUser()" style="margin-left: 0px; margin-top: 2px;">
                            </div>
                         </div>
                      </el-tab-pane>
@@ -104,12 +104,12 @@
                   <div class="lrinp">
                        <div class="row">
                            <div class="col-md-6">
-                               <el-button type="success" v-if="!showForgotPassword" size="small"  class="signupButton" @click="loginUser()" :loading="saveFileLoadingLogin" >Login</el-button>
-                              <el-button type="success" size="small" class="signupButton"  v-if="showForgotPassword" @click="forgotPasswordSendEmail()" :loading="saveFileLoadingLogin" >Submit</el-button>
+                               <el-button type="success" v-if="!showForgotPassword" size="small"  class="signupButton" @click="loginUser()" :loading="saveFileLoadingLogin" style="margin-left:18px">Login</el-button>
+                              <el-button type="success" size="small" class="signupButton"  v-if="showForgotPassword" @click="forgotPasswordSendEmail()" :loading="saveFileLoadingLogin" style="margin-left:18px" >Submit</el-button>
                            </div>
                            <div class="col-md-6" style="top: 9px;">
-                              <a href="javascript:void()" class="lfort" v-if="!showForgotPassword"  v-show="this.selectedTabIndex==0" @click="forgotPassword()">Forgot Password</a>
-                              <a href="javascript:void()" class="lfort" v-if="showForgotPassword" v-show="this.selectedTabIndex==0" @click="backtoLogin()">Back to Login</a>
+                              <a href="javascript:void()" class="lfort" v-if="!showForgotPassword"  v-show="this.selectedTabIndex==0" @click="forgotPassword()" style="margin-right:18px">Forgot Password</a>
+                              <a href="javascript:void()" class="lfort" v-if="showForgotPassword" v-show="this.selectedTabIndex==0" @click="backtoLogin()" style="margin-right:18px">Back to Login</a>
                            </div>
                         </div>
 
