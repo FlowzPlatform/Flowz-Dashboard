@@ -31,14 +31,14 @@
             <form id="form-github" name="form-github" :action="loginWithGithubUrl" method="post">
                <input type="hidden" name="success_url" :value="githubSuccessCallbackUrl">
             </form>
-            
+
             <div class="lconpt">
                <div class="lconun">
                   <span class="lthlob">
                      <span  @click="submitFb()" class="fb">
                         <icon name="facebook"></icon>
                      </span>
-                     - 
+                     -
                      <span class="google" @click="submitGoogle()">
                         <icon name="google"></icon>
                       </span>
@@ -50,7 +50,7 @@
                       <!-- <span class="linkedin" @click="submitLinkedin()">
                         <icon name="linkedin"></icon>
                       </span> -->
-                      
+
                       <span class="github" @click="submitGithub()">
                         <icon name="github"></icon>
                       </span>
@@ -107,7 +107,7 @@
                         </div>
 
 
-                     
+
                   </div>
                </div>
             </div>
@@ -115,11 +115,11 @@
                <div class="lconun" style="margin-top: 10px;">
                   <span class="lthlob">
                      <span class="lthlob">
-                        
+
                         <span  @click="submitFb()" class="fb">
                            <icon name="facebook"></icon>
                         </span>
-                        - 
+                        -
                          <span  @click="submitGoogle()" class="google">
                            <icon name="google"></icon>
                         </span>
@@ -161,7 +161,7 @@
                   </form>
                   <el-button type="success" size="medium" class="signupButton"  @click="signupUser()" :loading="saveFileLoadingLogin" >Sign Up</el-button>
                </div>
-               
+
                <!-- <div class="lconun">
                   <div class="lrinp">
                      <label>First Name</label>
@@ -181,7 +181,7 @@
                   </div>
                </div>
                <div class="lconun">
-                 
+
                   <el-button type="success" size="small" class="signupButton" @click="registerUser()" :loading="saveFileLoading" >Sign Up</el-button>
                </div> -->
             </div>
@@ -190,7 +190,7 @@
       <div v-else class="lundcon">
            <div class="login2">
              <div class="login2-triangle"></div>
-            
+
              <h2 class="login2-header">Email</h2>
 
              <div class="login2-container">
@@ -279,19 +279,19 @@ export default {
         let self = this;
        var configObj = {};
        console.log(window.location.search)
-        
+
        var url = new URL(window.location.href);
        var ob_id = url.searchParams.get("ob_id");
        console.log(ob_id);
-    
-        
 
-       
+
+
+
         if(ob_id  && ob_id != undefined)
         {
             this.obId = ob_id;
             self.isSocialLogin = true;
-            
+
         }
 
   },
@@ -336,7 +336,7 @@ export default {
                     .catch(function(error) {
                         console.log("error-->", error.response)
                         self.saveFileLoadingLogin = false;
-                        
+
                         self.$message.error(error.response.data);
 
                     });
@@ -361,7 +361,7 @@ export default {
                         self.emailLoading = false ;
                         console.log(response)
                         self.saveFileLoadingLogin = false;
-                        
+
                         axios({
                             method: 'get',
                             url: config.userDetail,
@@ -373,9 +373,14 @@ export default {
                             location = location.domain === null ? location.input : location.domain
                              Cookie.set('user',  result.data.data.email  , {domain: location});
                               Cookie.set('auth_token', response.data.logintoken , {domain: location});
-                        
-                           
-                            self.$router.push('/');
+
+                            if(response.data.data.package !== undefined) {
+                              self.$router.push('/');
+                            } else {
+                              self.$router.push('/subscription-list');
+                            }
+
+
                         })
                     }).catch(function(error){
                         self.emailLoading = false ;
@@ -385,8 +390,8 @@ export default {
                         }
                     })
                 }
-                
-            
+
+
         },
     tabsClicked(val){
                 this.login.email = ''
@@ -402,22 +407,22 @@ export default {
        },
        submitFb : function(){
             this.$store.commit("FB_SIGN_IN",true)
-           $("#form-facebook").submit();           
+           $("#form-facebook").submit();
        },
        submitGoogle : function(){
            this.$store.commit("GOOGLE_SIGN_IN",true)
            $("#form-google").submit();
         },
         submitTwitter : function(){
-           
+
            $("#form-twitter").submit();
         },
         submitLinkedin : function(){
-           
+
            $("#form-linkedin").submit();
         },
         submitGithub : function(){
-           
+
            $("#form-github").submit();
         },
     //    registerUser: async function(){
@@ -467,7 +472,7 @@ export default {
     //             //alert(error);
     //             self.$message.error(error.response.data);
     //         });
-    //        }  
+    //        }
     //    },
 
           signupUser:async function(){
@@ -498,7 +503,7 @@ export default {
                         message : response.data.message,
                         type: 'success'
                     });
-                    
+
                      $('.lundcon').addClass('sing');
                 }else{
                    self.saveFileLoading = false;
@@ -513,11 +518,11 @@ export default {
                  console.log(error.response);
                 //self.saveFileLoading = false;
                 //alert(error);
-                
+
                 if(error.response.status == 409){
                     self.$message.error(error.response.data);
                 }else{
-                    self.$message.error("Something went wrong , Please try again later");   
+                    self.$message.error("Something went wrong , Please try again later");
                 }
 
             });
@@ -553,13 +558,18 @@ export default {
                             location = location.domain === null ? location.input : location.domain
                             Cookie.set('user',  result.data.data.email  , {domain: location});
                             Cookie.set('auth_token', response.data.logintoken , {domain: location});
-                        
-                            self.$router.push('/');
+
+                            if(result.data.data.package !== undefined) {
+                              self.$router.push('/');
+                            } else {
+                              self.$router.push('/subscription-list');
+                            }
+                            // self.$router.push('/');
                         })
 
 
             // //    console.log('Login response:',response);
-               
+
             //    let email = self.login.email.trim().split('@');
             // //    console.log('Email',email);
             //    self.$store.commit('SET_LOGIN_USER', email[0]);
@@ -573,7 +583,7 @@ export default {
             //     // console.log('domain', location.domain);
             //     // location = location.domain === null ? location.input : location.domain ;
             //      alert(response.data.logintoken)
-                
+
             //     Cookies.set('auth_token', response.data.logintoken , {domain: location});
             //     // Cookie.set('auth_token', response.data.logintoken, {expires: 1, domain: location});
             //     self.$router.push({path: '/dashboard'})
@@ -590,7 +600,7 @@ export default {
                 }else{
                     self.$message.error("email or password is incorrect");
                 }
-                    
+
             });
            }
        },
@@ -656,14 +666,14 @@ border-radius: 50%;
     margin: 16px auto;
     font-size: 16px;
   }
-  
+
   /* Reset top and bottom margins from certain elements */
   .login2-header,
   .login2 p {
     margin-top: 0;
     margin-bottom: 0;
   }
-  
+
   /* The triangle form is achieved by a CSS hack */
   .login2-triangle {
     width: 0;
@@ -672,7 +682,7 @@ border-radius: 50%;
     border: 12px solid transparent;
     border-bottom-color: #28d;
   }
-  
+
   .login2-header {
     background: #28d;
     padding: 20px;
@@ -682,17 +692,17 @@ border-radius: 50%;
     text-transform: uppercase;
     color: #fff;
   }
-  
+
   .login2-container {
     background: #ebebeb;
     padding: 12px;
   }
-  
+
   /* Every row inside .login-container is defined with p tags */
   .login2 p {
     padding: 12px;
   }
-  
+
   .login2 input {
     box-sizing: border-box;
     display: block;
@@ -704,31 +714,31 @@ border-radius: 50%;
     font-family: inherit;
     font-size: 0.95em;
   }
-  
+
   .login2 input[type="email"],
   .login2 input[type="password"] {
     background: #fff;
     border-color: #bbb;
     color: #555;
   }
-  
+
   /* Text fields' focus effect */
   .login2 input[type="email"]:focus,
   .login2 input[type="password"]:focus {
     border-color: #888;
   }
-  
+
   .login2 input[type="submit"] {
     background: #28d;
     border-color: transparent;
     color: #fff;
     cursor: pointer;
   }
-  
+
   .login2 input[type="submit"]:hover {
     background: #17c;
   }
-  
+
   /* Buttons' focus effect */
   .login2 input[type="submit"]:focus {
     border-color: #05a;

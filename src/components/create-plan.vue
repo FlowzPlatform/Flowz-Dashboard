@@ -94,11 +94,11 @@
                     <Icon type="arrow-down-b" size="30"></Icon>
                   </Tooltip>
                 </div>
-                
+
                 </div>
               </div>
               <!--<div class="col-md-5">
-                
+
               </div>-->
             </div>
           </div>
@@ -181,7 +181,7 @@
                                   <!-- <td class="">
                                     <div class="ivu-table-cell">
                                       {{item.url}}
-                                         <Input type="text" v-model="item.url" placeholder="Module" size="small" class="schema-form-input"></Input> 
+                                         <Input type="text" v-model="item.url" placeholder="Module" size="small" class="schema-form-input"></Input>
                                     </div>
                                   </td> -->
                                   <td class="">
@@ -337,14 +337,15 @@ export default {
       let self = this
       let data5 = []
       let keys = []
-      
+      let modules = ['crm','uploader','webbuilder','subscription']
       registerResource.get().then(res => {
         // console.log("res.....",res.data.data,res.data.data[0])
         _.forEach(res.data.data, function(data, key) {
+          if(modules.includes(data.module)) {
             for(let action in data.actions[0]) {
               data5.push({"module":data.module,"service":data.service,"action":action,"value":0})
             }
-          })
+          }})
       }).catch(function (error) {
           self.$Notice.error({
             duration: 5,
@@ -444,7 +445,7 @@ export default {
             })
           })
         }
-      } 
+      }
       /*else if (dataObj.price < 50) {
         this.$Notice.error({
           duration: 5,
