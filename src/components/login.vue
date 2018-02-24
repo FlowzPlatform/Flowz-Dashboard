@@ -96,12 +96,12 @@
                <div class="lconun">
                   <div class="lrinp">
                        <div class="row">
-                           <div class="col-md-6">
+                           <div class="col-md-4">
                                <el-button type="success" v-if="!showForgotPassword" size="small"  class="signupButton" @click="loginUser()" :loading="saveFileLoadingLogin" >Login</el-button>
                               <el-button type="success" size="small" class="signupButton"  v-if="showForgotPassword" @click="forgotPasswordSendEmail()" :loading="saveFileLoadingLogin" >Submit</el-button>
                            </div>
-                           <div class="col-md-6" style="top: 9px;">
-                              <a href="javascript:void()" class="lfort" v-if="!showForgotPassword"  v-show="this.selectedTabIndex==0" @click="forgotPassword()">Forgot Password</a>
+                           <div class="col-md-8" style="top: 0px;">
+                              <a href="javascript:void()" class="lfort" v-if="!showForgotPassword"  v-show="this.selectedTabIndex==0" @click="forgotPassword()">Forgot Password?</a>
                               <a href="javascript:void()" class="lfort" v-if="showForgotPassword" v-show="this.selectedTabIndex==0" @click="backtoLogin()">Back to Login</a>
                            </div>
                         </div>
