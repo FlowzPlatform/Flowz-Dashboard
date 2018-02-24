@@ -35,25 +35,35 @@
             <div class="lconpt">
                <div class="lconun">
                   <span class="lthlob">
+                      <Tooltip content="Login with facebook">
                      <span  @click="submitFb()" class="fb">
                         <icon name="facebook"></icon>
                      </span>
-                     -
+
+                     </Tooltip>
+                     - 
+                     <Tooltip content="Login with google">
                      <span class="google" @click="submitGoogle()">
                         <icon name="google"></icon>
                       </span>
+                      </Tooltip>
                       -
+                      <Tooltip content="Login with twitter">
                       <span class="twitter" @click="submitTwitter()">
                         <icon name="twitter"></icon>
                       </span>
+                      </Tooltip>
                       -
                       <!-- <span class="linkedin" @click="submitLinkedin()">
                         <icon name="linkedin"></icon>
                       </span> -->
 
+                      <Tooltip content="Login with github">
+
                       <span class="github" @click="submitGithub()">
                         <icon name="github"></icon>
                       </span>
+                      </Tooltip>
 
                   </span>
                </div>
@@ -66,28 +76,28 @@
                      <el-tab-pane label="Standard" name="1" >
                         <div class="lconun">
                            <div class="lrinp">
-                              <label style="margin-left: -18px; margin-top: 2px;">Email</label>
-                              <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) " style="margin-left: -18px; margin-top: 2px;">
+                              <label style="margin-left: 0px; margin-top: 2px;">Email</label>
+                              <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) " style="margin-left: 0px; margin-top: 2px;">
                            </div>
                         </div>
                         <div class="lconun" v-if="!showForgotPassword">
                            <div class="lrinp">
-                              <label style="margin-left: -18px; margin-top: 2px;">Password</label>
-                              <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) " @keyup.enter="loginUser()" style="margin-left: -18px; margin-top: 2px;">
+                              <label style="margin-left: 0px; margin-top: 2px;">Password</label>
+                              <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) " @keyup.enter="loginUser()" style="margin-left: 0px; margin-top: 2px;">
                            </div>
                         </div>
                      </el-tab-pane>
                      <el-tab-pane v-if="!showForgotPassword" label="LDAP" name="2">
                         <div class="lconun">
                            <div class="lrinp">
-                              <label style="margin-left: -18px; margin-top: 2px;">Email</label>
-                              <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) " style="margin-left: -18px; margin-top: 2px;">
+                              <label style="margin-left: 0px; margin-top: 2px;">Email</label>
+                              <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) " style="margin-left: 0px; margin-top: 2px;">
                            </div>
                         </div>
                         <div class="lconun">
                            <div class="lrinp">
-                              <label style="margin-left: -18px; margin-top: 2px;">Password</label>
-                              <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) " @keyup.enter="loginUser()" style="margin-left: -18px; margin-top: 2px;">
+                              <label style="margin-left: 0px; margin-top: 2px;">Password</label>
+                              <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) " @keyup.enter="loginUser()" style="margin-left: 0px; margin-top: 2px;">
                            </div>
                         </div>
                      </el-tab-pane>
@@ -95,14 +105,16 @@
                </div>
                <div class="lconun">
                   <div class="lrinp">
-                       <div class="row">
-                           <div class="col-md-4">
-                               <el-button type="success" v-if="!showForgotPassword" size="small"  class="signupButton" @click="loginUser()" :loading="saveFileLoadingLogin" >Login</el-button>
-                              <el-button type="success" size="small" class="signupButton"  v-if="showForgotPassword" @click="forgotPasswordSendEmail()" :loading="saveFileLoadingLogin" >Submit</el-button>
+
+                       <div>
+                           <div class="col-md-6">
+                               <el-button type="success" v-if="!showForgotPassword" size="small"  class="signupButton" @click="loginUser()" :loading="saveFileLoadingLogin" style="margin-left:18px">Login</el-button>
+                              <el-button type="success" size="small" class="signupButton"  v-if="showForgotPassword" @click="forgotPasswordSendEmail()" :loading="saveFileLoadingLogin" style="margin-left:18px" >Submit</el-button>
                            </div>
-                           <div class="col-md-8" style="top: 0px;">
-                              <a href="javascript:void()" class="lfort" v-if="!showForgotPassword"  v-show="this.selectedTabIndex==0" @click="forgotPassword()">Forgot Password?</a>
-                              <a href="javascript:void()" class="lfort" v-if="showForgotPassword" v-show="this.selectedTabIndex==0" @click="backtoLogin()">Back to Login</a>
+                           <div class="col-md-6" style="top: 9px;">
+                              <a href="javascript:void()" class="lfort" v-if="!showForgotPassword"  v-show="this.selectedTabIndex==0" @click="forgotPassword()" style="margin-right:18px">Forgot Password</a>
+                              <a href="javascript:void()" class="lfort" v-if="showForgotPassword" v-show="this.selectedTabIndex==0" @click="backtoLogin()" style="margin-right:18px">Back to Login</a>
+
                            </div>
                         </div>
 
@@ -116,26 +128,35 @@
                   <span class="lthlob">
                      <span class="lthlob">
 
+                        
+                        <Tooltip content="Login with facebook">
                         <span  @click="submitFb()" class="fb">
                            <icon name="facebook"></icon>
                         </span>
-                        -
+                        </Tooltip>
+                        - 
+                        <Tooltip content="Login with google">
+
                          <span  @click="submitGoogle()" class="google">
                            <icon name="google"></icon>
                         </span>
-
+                        </Tooltip>
                         -
+                        <Tooltip content="Login with twitter">
                       <span class="twitter" @click="submitTwitter()">
                         <icon name="twitter"></icon>
                       </span>
+                      </Tooltip>
                       <!-- -
                       <span class="linkedin" @click="submitLinkedin()">
                         <icon name="linkedin"></icon>
                       </span> -->
                       -
+                      <Tooltip content="Login with github">
                       <span class="github" @click="submitGithub()">
                         <icon name="github"></icon>
                       </span>
+                      </Tooltip>
 
                      </span>
                   </span>
@@ -504,6 +525,10 @@ export default {
                         type: 'success'
                     });
 
+                    self.signup.email = '';
+                    self.signup.password = "";
+                    self.signup.username = "";
+                    
                      $('.lundcon').addClass('sing');
                 }else{
                    self.saveFileLoading = false;
@@ -620,6 +645,7 @@ background-color: #337ab7;
 color: #fff  !important;
 padding: 12px 12px 3px 10px;
 border-radius: 50%;
+cursor: pointer;
 }
 
 .signupButton {
@@ -638,6 +664,7 @@ border-radius: 50%;
   color: white;
   padding: 12px 12px 3px 10px;
 border-radius: 50%;
+cursor: pointer;
 }
 
 .linkedin {
@@ -645,6 +672,7 @@ border-radius: 50%;
   color: white;
   padding: 12px 12px 3px 10px;
 border-radius: 50%;
+cursor: pointer;
 }
 
 .twitter {
@@ -652,6 +680,7 @@ border-radius: 50%;
   color: white;
   padding: 12px 12px 3px 10px;
 border-radius: 50%;
+cursor: pointer;
 }
 
 .github {
@@ -659,6 +688,7 @@ border-radius: 50%;
   color: white;
   padding: 12px 12px 3px 10px;
 border-radius: 50%;
+cursor: pointer;
 }
 
 .login2 {

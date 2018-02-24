@@ -152,11 +152,11 @@ export default {
       cards : [],
       active1:false,
       active2:false,
-      flowzDashboardUrl: 'https://dashboard.' + process.env.domainkey,
-      flowzBuilderUrl: 'https://webbuilder.' + process.env.domainkey,
-      flowzVmailUrl: 'https://vmail.' + process.env.domainkey,
-      flowzUploaderUrl: 'https://uploader.' + process.env.domainkey,
-      flowzcrmUrl: 'https://crm.' + process.env.domainkey,
+      flowzDashboardUrl: 'https://www.dashboard.' + process.env.domainkey,
+      flowzBuilderUrl: 'https://www.webbuilder.' + process.env.domainkey,
+      flowzVmailUrl: 'https://www.vmail.' + process.env.domainkey,
+      flowzUploaderUrl: 'https://www.uploader.' + process.env.domainkey,
+      flowzcrmUrl: 'https://www.crm.' + process.env.domainkey,
     }
   },
   created() {
