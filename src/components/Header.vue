@@ -8,7 +8,7 @@
         </Col> -->
             <i-col :span="5">
                 <div class="f-logo">
-                    <a href="#">
+                    <a @click="mainPage()">
                         <img src="../assets/images/flowz_digital_logo2.png" style="height: 50px; margin-left: 10px;"/> </a>
                 </div>
             </i-col>
@@ -20,12 +20,12 @@
                                 <Icon type="person" :size="16"></Icon>
                                 {{email}}
                             </template>
-                            <MenuItem name="1-1">
+                            <!-- MenuItem name="1-1">
                                 <a @click="settings()">
                                     <Icon type="ios-locked-settings" :size="16"></Icon>
                                     ACL
                                 </a>
-                                </MenuItem>
+                                </MenuItem -->
                             <MenuItem name="1-2">
                                 <a @click="subscriptionList()">
                                     <Icon type="ios-locked-settings" :size="16"></Icon>
@@ -102,6 +102,9 @@
                 let routeData = this.$router.resolve({name: 'planDetails'});
                 window.open(routeData.href, '_blank');
             },
+            mainPage: function () {
+                this.$router.push('/');
+            }
         },
 
         mounted (){
