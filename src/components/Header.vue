@@ -35,7 +35,7 @@
                             <MenuItem name="1-3">
                                 <a @click="planList()">
                                     <Icon type="ios-locked-settings" :size="16"></Icon>
-                                    Subscribed List
+                                    My Plan
                                 </a>
                             </MenuItem>
                             <MenuItem name="1-4">
