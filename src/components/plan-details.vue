@@ -1,7 +1,7 @@
 <template>
   <Card>
     <!-- <h3>Thank You for Subscribing...!</h3> -->
-    <div style="font-size: x-large;">Subscribed List</div><br>
+    <div style="font-size: x-large;">My Plan</div><br>
     <Table :loading="loading" class='dataTable' :columns="planDetails" :data="planList"></Table>
   </Card>
 </template>
@@ -56,10 +56,17 @@ export default {
         let packages, pkgId
         getUserDetails.get().then(res => {
             packages = res.data.data.package
+
             _.forEach(packages, function (item) {
                 userSubscription.get(item.subscriptionId).then(res => {
                     res.data.expiredOn = moment(res.data.expiredOn).format("DD-MMM-YYYY")
                     self.planList.push(res.data)
+                    self.planList.sort(function(a, b)
+                    {
+                      a.createdAt = a.createdAt === undefined ? 0 : a.createdAt
+                      b.createdAt = b.createdAt === undefined ? 0 : b.createdAt
+                      return  new Date(a.createdAt) < new Date(b.createdAt)
+                    });
                     if(self.planList.length > 0) {
                         self.loading = false
                     }
@@ -81,7 +88,7 @@ export default {
     }
 }
 </script>
-<style>
+<style scoped>
 h3 {
     font-size: 30px;
     text-align: center;
