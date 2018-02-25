@@ -497,7 +497,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 #validateErr {
    font-size: 16px;
    color: red;
