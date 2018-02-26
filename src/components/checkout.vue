@@ -42,7 +42,7 @@
                   </div>
                   <div class="panel-footer">
 										<Row :gutter="16">
-												<Col span="12">
+												<Col span="10">
 														<Button class="pull-right" type="primary" @click="backFunction()">Back</Button>
 												</Col>
 												<Col span="12">
