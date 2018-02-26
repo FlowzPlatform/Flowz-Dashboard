@@ -41,14 +41,14 @@
                     </Form>
                   </div>
                   <div class="panel-footer">
-                      <div class="row" style="padding:10px">
-                        <div class="col-xs-6 col-md-6">
-                            <a class="btn btn-lg btn-block btn-default" @click="backFunction()">Back</a>
-                        </div>
-                        <div class="col-xs-6 col-md-6">
-                            <a class="btn btn-lg btn-block btn-success" @click="payFunction('payDetail')">PAY</a>
-                        </div>
-                      </div>
+										<Row :gutter="16">
+												<Col span="10">
+														<Button class="pull-right" type="primary" @click="backFunction()">Back</Button>
+												</Col>
+												<Col span="12">
+														<Button type="success" :loading="payloading" @click="payFunction('payDetail')">PAY</Button>
+												</Col>
+										</Row>
                   </div>
               </div>
               <div v-if="paying" :class="payInfo.class">
@@ -70,6 +70,7 @@ export default {
   name: 'checkout',
   data () {
     return {
+			payloading: false,
       validMonth: {
         disabledDate (date) {
           return date && date.valueOf() < Date.now() - 86400000;
@@ -123,6 +124,7 @@ export default {
     let self = this
     this.$refs[name].validate((valid) => {
       if (valid) {
+				self.payloading = true
         // this.paying = true
         this.payDone = true
         this.payInfo.class = 'alert alert-warning'
@@ -134,6 +136,7 @@ export default {
           login_token: this.login_token,
           payDetail: this.payDetail
         }
+
         checkout.post(sObj).then(res => {
           // this.payDone = true
           if (res.data.hasOwnProperty('error')) {
@@ -141,12 +144,13 @@ export default {
             this.payInfo.msgType = 'Error!'
             this.payInfo.msg = 'Payment Not Done.'
           } else {
+
             this.payInfo.class = 'alert alert-success'
             this.payInfo.msgType = 'Success!'
             this.payInfo.msg = 'Payment successfully Done.'
             Cookies.set('welcomeMsg', 'Thank You for Subscribing...!')
             this.$router.push('/plan-details/')
-          }
+					}
           // self.paying = false
         })
         .catch(err => {
@@ -159,7 +163,9 @@ export default {
           self.payInfo.msgType = 'Error!'
           self.payInfo.msg = 'Payment Not Done.'
           self.paying = false
+					self.payloading = false
         })
+
         // axios({
         // 				method:'post',
         // 				url:"http://localhost:3030/checkout",

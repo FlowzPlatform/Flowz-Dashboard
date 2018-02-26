@@ -1,7 +1,7 @@
 <template>
         <div>
         
-                <div v-if="loading" class="loadingbar hidden">
+                <div v-if="loading" class="loadingbar">
                         <img class="project-loading" src="../assets/images/activity.svg" style="margin-left: 10px; width:80px; height:100px;"/>
                         <p style="margin-left:20px;color:gray">Populating data...</p>
                 </div> 
