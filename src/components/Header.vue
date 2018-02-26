@@ -8,7 +8,7 @@
         </Col> -->
             <i-col :span="5">
                 <div class="f-logo">
-                    <a href="#">
+                    <a @click="mainPage()">
                         <img src="../assets/images/flowz_digital_logo2.png" style="height: 50px; margin-left: 10px;"/> </a>
                 </div>
             </i-col>
@@ -20,12 +20,12 @@
                                 <Icon type="person" :size="16"></Icon>
                                 {{email}}
                             </template>
-                            <MenuItem name="1-1">
+                            <!-- MenuItem name="1-1">
                                 <a @click="settings()">
                                     <Icon type="ios-locked-settings" :size="16"></Icon>
                                     ACL
                                 </a>
-                                </MenuItem>
+                                </MenuItem -->
                             <MenuItem name="1-2">
                                 <a @click="subscriptionList()">
                                     <Icon type="ios-locked-settings" :size="16"></Icon>
@@ -35,7 +35,7 @@
                             <MenuItem name="1-3">
                                 <a @click="planList()">
                                     <Icon type="ios-locked-settings" :size="16"></Icon>
-                                    Subscribed List
+                                    My Plan
                                 </a>
                             </MenuItem>
                             <MenuItem name="1-4">
@@ -83,18 +83,28 @@
                 Cookie.remove('auth_token' ,{domain: location})
                 Cookie.remove('user' ,{domain: location})
                 this.$router.push('/login');
+                this.$Message.success({content:'You have Succesfully Logged Out',duration:3})
 
             },
             settings: function () {
                 //this.$session.destroy('auth_token');
-                this.$router.push('/acl');
+                //his.$router.push('/acl');
+                let routeData = this.$router.resolve({name: 'acl'});
+                window.open(routeData.href, '_blank');
             },
             subscriptionList: function () {
-                this.$router.push('/subscription-list');
+                //this.$router.push('/subscription-list');
+                let routeData = this.$router.resolve({name: 'subscriptionList'});
+                window.open(routeData.href, '_blank');
             },
             planList: function () {
-                this.$router.push('/plan-details');
+                //this.$router.push('/plan-details');
+                let routeData = this.$router.resolve({name: 'planDetails'});
+                window.open(routeData.href, '_blank');
             },
+            mainPage: function () {
+                this.$router.push('/');
+            }
         },
 
         mounted (){
