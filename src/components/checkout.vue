@@ -41,18 +41,14 @@
                     </Form>
                   </div>
                   <div class="panel-footer">
-                      <div class="row" style="padding:10px">
-											<div class="col-xs-3 col-md-3">
-											</div>
-												<div class="col-xs-3 col-md-3">
-                            <!--a class="btn btn-lg btn-block btn-default" >Back</a-->
-														<Button type="primary" @click="backFunction()">Back</Button>
-                        </div>
-                        <div class="col-xs-3 col-md-3">
+										<Row :gutter="16">
+												<Col span="12">
+														<Button class="pull-right" type="primary" @click="backFunction()">Back</Button>
+												</Col>
+												<Col span="12">
 														<Button type="success" :loading="payloading" @click="payFunction('payDetail')">PAY</Button>
-                            <!-- a id="btnPay"  class="btn btn-lg btn-block btn-success" >PAY</a -->
-                        </div>
-                      </div>
+												</Col>
+										</Row>
                   </div>
               </div>
               <div v-if="paying" :class="payInfo.class">
@@ -147,7 +143,6 @@ export default {
             this.payInfo.class = 'alert alert-danger'
             this.payInfo.msgType = 'Error!'
             this.payInfo.msg = 'Payment Not Done.'
-						self.payloading = false
           } else {
 
             this.payInfo.class = 'alert alert-success'
