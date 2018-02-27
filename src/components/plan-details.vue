@@ -27,11 +27,15 @@ export default {
                 },
                 {
                     title: 'Price',
-                    key: 'price'
+                    key: 'price',
+                    align: 'right',
+                    width: 200
                 },
                 {
-                    title: 'Validity',
-                    key: 'validity'
+                    title: 'Validity (months)',
+                    key: 'validity',
+                    align: 'right',
+                    width: 200
                 },
                 {
                     title: 'Expiry Date',

@@ -23,18 +23,22 @@
                                 <option name="American Express" value="American Express">American Express</option>
                             </select>
                         </div> -->
-                        <FormItem prop="cardNumber" label="CARD NUMBER">
-                          <Input v-model="payDetail.cardNumber" type="text" id="cardNumber" placeholder="Valid Card Number"></Input>
-                        </FormItem>
+												<Row>
+													<Col>
+		                        <FormItem prop="cardNumber" label="CARD NUMBER">
+		                          <Input v-model="payDetail.cardNumber" type="text" id="cardNumber" placeholder="Valid Card Number"></Input>
+		                        </FormItem>
+													</Col>
+												</Row>
                         <Row>
                           <Col span="8">
                             <FormItem prop="expiryMM" label="VALID THRU">
                               <DatePicker format="yy-MM"  @on-change="getMMYYYY" type="month" :options="validMonth" placeholder="Select Month and Year" style="width: 200px"></DatePicker>
                             </FormItem>
                           </Col>
-                          <Col span="6" push="10">
-                            <FormItem prop="cvCode" label="CV CODE">
-                              <Input v-model="payDetail.cvCode" type="password" placeholder="CV Code"></Input>
+                          <Col span="8" push="8">
+                            <FormItem prop="cvCode" label="CVV CODE">
+                              <Input v-model="payDetail.cvCode" type="password" placeholder="CVV Code"></Input>
                             </FormItem>
                           </Col>
                         </Row>
@@ -142,7 +146,8 @@ export default {
           if (res.data.hasOwnProperty('error')) {
             this.payInfo.class = 'alert alert-danger'
             this.payInfo.msgType = 'Error!'
-            this.payInfo.msg = 'Payment Not Done.'
+            this.payInfo.msg = res.data.error
+						self.payloading = false
           } else {
 
             this.payInfo.class = 'alert alert-success'
@@ -157,11 +162,11 @@ export default {
           self.$Notice.error({
             duration: 5,
             title: 'Payment fail..!',
-            desc: 'Please try again or after some time.'
+            desc: 'Please try again after sometime.'
           })
           self.payInfo.class = 'alert alert-danger'
           self.payInfo.msgType = 'Error!'
-          self.payInfo.msg = 'Payment Not Done.'
+          self.payInfo.msg = err.message
           self.paying = false
 					self.payloading = false
         })
