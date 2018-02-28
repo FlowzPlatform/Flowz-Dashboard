@@ -1,9 +1,9 @@
 <template>
 <section class="layer plans">
   <section class="backWhite">
-    <section class="third lift plan-tier lift.active" @click="checkoutFunction(item.id)" v-for="(item, index) in mainData">
+    <section @click="checkoutFunction(item.id)" class="third lift plan-tier lift.active" v-for="(item, index) in mainData">
       <h4>{{item.name.toUpperCase()}}</h4>
-      <h5><sup class="superscript">$</sup><span class="plan-price">{{item.price}}</span>
+      <h5><sup class="superscript">US$</sup><span class="plan-price">{{item.price}}</span>
           <sub><div v-if="item.validity > 1">
                 <p>{{item.validity}} months</p>
                 </div>
