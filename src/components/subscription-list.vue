@@ -54,7 +54,7 @@ import subscriptionPlans from '@/api/subscription-plans'
                     let str2 = d.service.charAt(0).toUpperCase() + d.service.slice(1)
                     return {'key':'<i class="ivu-icon ivu-icon-android-checkmark-circle"></i> <b>'+str+'</b> '+str2, 'value': d.value}
                 }).value()
-                console.log(self.mainData[i])
+                // console.log(self.mainData[i])
             }
         }).catch(err => {
             self.$Notice.error({
