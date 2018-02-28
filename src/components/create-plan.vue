@@ -52,7 +52,7 @@
                     <h4><input type="number" class="description" v-model="plan.price"  @input="validatePrice(plan.price,pIndex)" placeholder="______________________"></input></h4>
                   </div>
                   <div class="col-md-3 no-margin"></div>
-                  <div class="col-md-1 pointer" v-if="plan.validity >= defaultPlan.validity && plan.price >= defaultPlan.price" @click="update(pIndex, true)">
+                  <div class="col-md-1 pointer" v-if="plan.validity >= getDefaultPlan('validity') && plan.price >= getDefaultPlan('price')" @click="update(pIndex, true)">
                   <Tooltip content="Save" placement="top">
                       <icon name="save" scale="1.5"></icon>
                   </Tooltip>
@@ -74,7 +74,7 @@
                       <p>After you click ok, this plan will be delete permanently.</p>
                   </Modal>
                 </div>
-                <div class="col-md-1 pointer" v-if="plan.validity >= defaultPlan.validity && plan.price >= defaultPlan.price">
+                <div class="col-md-1 pointer" v-if="plan.validity >= getDefaultPlan('validity') && plan.price >= getDefaultPlan('price')">
                   <Tooltip content="Enable" placement="top">
                     <i-switch size="small" v-model="plan.status"></i-switch>
                   </Tooltip>
@@ -84,7 +84,7 @@
                     <i-switch size="small" disabled v-model="plan.status"></i-switch>
                   </Tooltip>
                 </div>
-                <div class="col-md-1 pointer" v-if="plan.validity >= defaultPlan.validity && plan.price >= defaultPlan.price && checkOpen(pIndex)" @click="expand(pIndex)">
+                <div class="col-md-1 pointer" v-if="plan.validity >= getDefaultPlan('validity') && plan.price >= getDefaultPlan('price') && checkOpen(pIndex)" @click="expand(pIndex)">
                   <Tooltip content="Expand" placement="top">
                     <Icon type="arrow-down-b" size="30"></Icon>
                   </Tooltip>
@@ -255,8 +255,8 @@ export default {
       defaultPlan: {
         name: 'Base Plan',
         description: 'Website Builder\n1 eCommerce Site\nNo Virtual & CRM',
-        validity:1,
-        price:'999',
+        validity: 1,
+        price: 999,
         time_unit: 'month',
         details: []
       }
@@ -276,7 +276,11 @@ export default {
         })
   },
   methods: {
+    getDefaultPlan(idx) {
+      return this.defaultPlan[idx]
+    },
     validateValidity(validity,pIndex) {
+
       if(validity < this.defaultPlan.validity) {
         this.$Notice.error({
           duration: 5,
