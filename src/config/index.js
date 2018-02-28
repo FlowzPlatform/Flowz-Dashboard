@@ -1,4 +1,4 @@
- 
+
 export default {
   // serverURI: 'http://localhost:3030',
   serverURI: 'https://api.' + process.env.domainkey + '/subscription',

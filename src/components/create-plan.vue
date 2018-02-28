@@ -38,7 +38,7 @@
                     <h4><input type="number" title="Validity" class="description" v-model="plan.validity" @input="validateValidity(plan.validity,pIndex)" min=1 placeholder="____________________"></input></h4>
                   </div>
                   <div class="col-md-2 no-margin">
-                    <h4>Days</h4>
+                    <h4>{{defaultPlan.time_unit}}</h4>
                   </div>
                   <div id="validateErr"></div>
                 </div>
@@ -52,7 +52,7 @@
                     <h4><input type="number" class="description" v-model="plan.price"  @input="validatePrice(plan.price,pIndex)" placeholder="______________________"></input></h4>
                   </div>
                   <div class="col-md-3 no-margin"></div>
-                  <div class="col-md-1 pointer" v-if="plan.validity >= 10 && plan.price >= 50" @click="update(pIndex, true)">
+                  <div class="col-md-1 pointer" v-if="plan.validity >= getDefaultPlan('validity') && plan.price >= getDefaultPlan('price')" @click="update(pIndex, true)">
                   <Tooltip content="Save" placement="top">
                       <icon name="save" scale="1.5"></icon>
                   </Tooltip>
@@ -74,7 +74,7 @@
                       <p>After you click ok, this plan will be delete permanently.</p>
                   </Modal>
                 </div>
-                <div class="col-md-1 pointer" v-if="plan.validity >= 10 && plan.price >= 50">
+                <div class="col-md-1 pointer" v-if="plan.validity >= getDefaultPlan('validity') && plan.price >= getDefaultPlan('price')">
                   <Tooltip content="Enable" placement="top">
                     <i-switch size="small" v-model="plan.status"></i-switch>
                   </Tooltip>
@@ -84,7 +84,7 @@
                     <i-switch size="small" disabled v-model="plan.status"></i-switch>
                   </Tooltip>
                 </div>
-                <div class="col-md-1 pointer" v-if="plan.validity >= 10 && plan.price >= 50 && checkOpen(pIndex)" @click="expand(pIndex)">
+                <div class="col-md-1 pointer" v-if="plan.validity >= getDefaultPlan('validity') && plan.price >= getDefaultPlan('price') && checkOpen(pIndex)" @click="expand(pIndex)">
                   <Tooltip content="Expand" placement="top">
                     <Icon type="arrow-down-b" size="30"></Icon>
                   </Tooltip>
@@ -251,6 +251,14 @@ export default {
       deleteIndex: 0,
       process: {
         cursor: ''
+      },
+      defaultPlan: {
+        name: 'Base Plan',
+        description: 'Website Builder\n1 eCommerce Site\nNo Virtual & CRM',
+        validity: 1,
+        price: 999,
+        time_unit: 'month',
+        details: []
       }
     }
   },
@@ -266,56 +274,29 @@ export default {
                 desc: 'Please refresh page ' + err
             });
         })
-    // axios({
-    //           method:'get',
-    //           url:"http://localhost:3030/subscription-plans"
-    //         }).then(response => {
-    //           console.log("response.....",response)
-    //           for(let i=0;i<response.data.data.length;i++){
-    //            self.plans.push(response.data.data[i])
-    //          }
-    //   })
-    //   .catch(function (error) {
-    //     console.log("**********",error)
-    //     self.$Notice.error({
-    //         duration: 5,
-    //         title: 'Please check...some error'
-    //     });
-    //   });
   },
   methods: {
-    validateValidity(validity,pIndex){
-      if(validity < 10) {
+    getDefaultPlan(idx) {
+      return this.defaultPlan[idx]
+    },
+    validateValidity(validity,pIndex) {
+
+      if(validity < this.defaultPlan.validity) {
         this.$Notice.error({
           duration: 5,
           title: 'Validity Validation Error',
-          desc: 'Validity should be greater than 10 days'
+          desc: 'Validity should be greater than '+ this.defaultPlan.validity +' ' + this.defaultPlan.time_unit
         })
       }
-    // let me = $('#plans_'+pIndex).find(".container")
-    // me.find("#validateErr").html("Validity should be greater than 10")
-    // else{
-    //     let me = $('#plans_'+pIndex).find(".container")
-    //     me.find("#validateErr").html("")
-    //   }
     },
     validatePrice(price,pIndex){
-      if(price < 50) {
+      if(price < this.defaultPlan.price) {
         this.$Notice.error({
           duration: 5,
           title: 'Price Validation Error',
-          desc: 'Price should be greater than 50$'
+          desc: 'Price should be greater than ' + this.defaultPlan.price + '$'
         })
       }
-    // console.log("called",price)
-    //   if(price < 50){
-    //     let me = $('#plans_'+pIndex).find(".container")
-    //     me.find("#priceErr").html("Price should be greater than 50")
-    //   }
-    // else{
-    //     let me = $('#plans_'+pIndex).find(".container")
-    //     me.find("#priceErr").html("")
-    //   }
     },
     checkOpen (index) {
       // if (_.intersection(this.currentOpen,[index]).length > 0)) return true
@@ -353,36 +334,7 @@ export default {
             desc: 'Please try again ' + err
           })
       })
-
-      // axios({
-      //           method:'get',
-      //           url:"http://localhost:3030/register-resource"
-      //         }).then(response => {
-      //           console.log("response.....",response.data.data,response.data.data[0])
-      //             _.forEach(response.data.data, function(data, key) {
-      //               console.log("data",data)
-      //               for(let action in data.actions[0]){
-      //                 data5.push({"module":data.module,"service":data.service,"action":action,"url":data.actions[0][action],"value":0})
-      //               }
-      //             })
-      //           console.log("dataaaaaaaaaaaaaaaaaaaa",data5)
-      //   })
-      //   .catch(function (error) {
-      //     console.log("**********",error)
-      //     self.$Notice.error({
-      //         duration: 5,
-      //         title: 'Please check...some error'
-      //     });
-      //   });
-
-        self.plans.push({
-         name: '',
-         description: '',
-         validity:'365',
-         price:'999',
-         time_unit: 'days',
-         details:data5
-       })
+      self.plans.push(self.defaultPlan)
     },
     async deletePlan (plan) {
       let self = this
@@ -415,7 +367,7 @@ export default {
       this.process.cursor = 'progress!important'
       let self = this
       let dataObj = this.plans[index]
-      if(dataObj.validity >= 10 && dataObj.price >= 50) {
+      if(dataObj.validity >= self.defaultPlan.validity && dataObj.price >= self.defaultPlan.price) {
         if (this.plans[index].id != undefined) {
           subscriptionPlans.put(this.plans[index].id, dataObj).then(res => {
             if (showMsg) {
@@ -446,52 +398,6 @@ export default {
           })
         }
       }
-      /*else if (dataObj.price < 50) {
-        this.$Notice.error({
-          duration: 5,
-          title: 'Price Validation Error',
-          desc: 'Price should be greater than 50$'
-        })
-      } else if (dataObj.validity < 10) {
-        this.$Notice.error({
-          duration: 5,
-          title: 'Validity Validation Error',
-          desc: 'Validity should be greater than 10 days'
-        })
-      }*/
-      // this.process.cursor = ''
-      // let obj1 = []
-      // axios({
-      //   method:'delete',
-      //   url:"http://localhost:3030/subscription-plans",
-      // }).then(response => {
-      //   console.log("response...",response)
-      //   axios({
-      //             method:'post',
-      //             url:"http://localhost:3030/subscription-plans",
-      //             data:this.plans
-      //           }).then(response => {
-      //               console.log("response...",response)
-      //               this.$Notice.success({
-      //                   duration: 2,
-      //                   title: 'Updated successfully...'
-      //               });
-      //             })
-      //             .catch(function (error) {
-      //               console.log("**********",error)
-      //               this.$Notice.error({
-      //                   duration: 5,
-      //                   title: 'Please check...some error'
-      //               });
-      //             });
-      // })
-      // .catch(function (error) {
-      //   console.log("**********",error)
-      //   this.$Notice.error({
-      //       duration: 5,
-      //       title: 'Please check...some error'
-      //   });
-      // });
     }
   }
 }
