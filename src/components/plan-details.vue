@@ -6,7 +6,7 @@
             <div style="font-size: x-large;">My Plan</div><br>
                 <Row>
                     <Col span="20" push="2">
-                        <Table :loading="loading" class='dataTable' :columns="planDetails" :data="planList"></Table>
+                        <Table :loading="loading" class='dataTable' :columns="planDetails" :data="planList" no-data-text="No Data"></Table>
                         <Page style="margin-top:10px;" class="pull-right" :total="planListData.length" :page-size="pageSize" :current="currentPage" @on-change="changePage"></Page>
                     </Col>
                 </Row>
@@ -86,9 +86,9 @@ export default {
             })
             self.planListData = _.sortBy(res.data.data, 'expiredOn')
             self.planList = await self.makeChunk(self.currentPage, self.pageSize)
-            if(self.planList.length > 0) {
-                self.loading = false
-            }
+            // if(self.planList.length > 0) {
+            self.loading = false
+            // }
         })
         /* getUserDetails.get().then(res => {
             packages = res.data.data.package
