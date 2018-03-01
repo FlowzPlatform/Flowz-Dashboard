@@ -167,12 +167,11 @@
                <div class="lconun">
                    <form  v-on:submit.prevent="signupUser" action="#" method="post">
                      <div class="lrinp">
-                        <label>*First Name</label>
-                        <input type="text" required v-model="signup.fname" placeholder="First Name ">
+                        <label style="width:150px">*Name</label>
                      </div>
                      <div class="lrinp">
-                        <label>*Last Name</label>
-                        <input type="text" v-model="signup.lname" placeholder="Last Name ">
+                        <input style="width:48%" type="text" required v-model="signup.fname" placeholder="First Name ">    
+                        <input type="text" style="width:50%" v-model="signup.lname" placeholder="Last Name ">                                            
                      </div>
                      <div class="lrinp">
                         <label>*Email</label>
