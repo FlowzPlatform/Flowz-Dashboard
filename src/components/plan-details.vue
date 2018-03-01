@@ -1,6 +1,6 @@
 <template>
 <Row style="margin-top:30px;">
-    <Col span="12" push="6">
+    <Col span="14" push="5">
         <Card>
             <!-- <h3>Thank You for Subscribing...!</h3> -->
             <div style="font-size: x-large;">My Plan</div><br>
