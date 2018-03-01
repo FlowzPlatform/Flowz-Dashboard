@@ -84,7 +84,7 @@ router.beforeEach((to, from, next) => {
      // headers: {'Authorization': response.data.logintoken}
   })
   .then(function(result) {
-      console.log(result)
+      // console.log(result)
       let location = psl.parse(window.location.hostname)
       location = location.domain === null ? location.input : location.domain
       Cookie.set('user',  result.data.data.email  , {domain: location});
