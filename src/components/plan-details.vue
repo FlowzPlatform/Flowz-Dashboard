@@ -37,14 +37,12 @@ export default {
                 {
                     title: 'Price',
                     key: 'price',
-                    align: 'center',
-                    width: 200
+                    align: 'center'
                 },
                 {
                     title: 'Validity (months)',
                     key: 'validity',
-                    align: 'center',
-                    width: 200
+                    align: 'center'
                 },
                 {
                     title: 'Subscribed',
