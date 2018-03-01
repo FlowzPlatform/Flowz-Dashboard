@@ -72,7 +72,7 @@ body {margin: 0; padding: 0;}
 .lundcon.sing .lsrpt {opacity: 0;}
 .lundcon .lsrpt {opacity: 1;}
 .lconun .el-button--success{ background: #005aab; border-color: #005aab;}
-.rconpt .lrinp {margin-bottom: 7px;}
+.rconpt .lrinp {margin-bottom: 0px;}
 .lconpt .ivu-tabs-tabpane .lconun {padding-right: 0px;padding-left: 0;}
 .ivu-tabs .ivu-tabs-tabpane:first-child {margin-right: 25px;width: 93%;}
 .ivu-tabs .ivu-tabs-tabpane:nth-child(2) {margin-right: 0px;}
