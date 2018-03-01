@@ -66,7 +66,7 @@ export default {
 
                         let url = new URL(window.location.href);
                         let forget_token = url.searchParams.get("forget_token");
-                        
+                       
                     axios.post(config.resetPasswordUrl, {
                               new_password: self.formValidate.newPassword.trim(),
                               token: forget_token
