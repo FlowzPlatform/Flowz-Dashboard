@@ -7,7 +7,7 @@
       <div v-if="!isSocialLogin" class="lundcon">
          <div class="lrpt" >
             <div class="lsrpt" @click="showLogin">
-               <span>Have you an <br> account?</span>
+               <span>Alredy have an <br> account?</span>
                <a href="javascript:void(0)">Login</a>
             </div>
             <div class="rsrpt" @click="showRegister">
@@ -76,28 +76,28 @@
                      <el-tab-pane label="Standard" name="1" >
                         <div class="lconun">
                            <div class="lrinp">
-                              <label style="margin-left: 0px; margin-top: 2px;">Email</label>
-                              <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) " style="margin-left: 0px; margin-top: 2px;">
+                              <label style="margin-left: 0px; margin-top: 2px;">*Email</label>
+                              <input type="email" v-model="login.email" class="" placeholder="Email " style="margin-left: 0px; margin-top: 2px;">
                            </div>
                         </div>
                         <div class="lconun" v-if="!showForgotPassword">
                            <div class="lrinp">
-                              <label style="margin-left: 0px; margin-top: 2px;">Password</label>
-                              <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) " @keyup.enter="loginUser()" style="margin-left: 0px; margin-top: 2px;">
+                              <label style="margin-left: 0px; margin-top: 2px;">*Password</label>
+                              <input type="password" class="" v-model="login.password" placeholder="Password " @keyup.enter="loginUser()" style="margin-left: 0px; margin-top: 2px;">
                            </div>
                         </div>
                      </el-tab-pane>
                      <el-tab-pane v-if="!showForgotPassword" label="LDAP" name="2">
                         <div class="lconun">
                            <div class="lrinp">
-                              <label style="margin-left: 0px; margin-top: 2px;">Email</label>
-                              <input type="email" v-model="login.email" class="" placeholder="Enter Your Email (Required) " style="margin-left: 0px; margin-top: 2px;">
+                              <label style="margin-left: 0px; margin-top: 2px;">*Email</label>
+                              <input type="email" v-model="login.email" class="" placeholder="Email " style="margin-left: 0px; margin-top: 2px;">
                            </div>
                         </div>
                         <div class="lconun">
                            <div class="lrinp">
-                              <label style="margin-left: 0px; margin-top: 2px;">Password</label>
-                              <input type="password" class="" v-model="login.password" placeholder="Enter Your Password (Required) " @keyup.enter="loginUser()" style="margin-left: 0px; margin-top: 2px;">
+                              <label style="margin-left: 0px; margin-top: 2px;">*Password</label>
+                              <input type="password" class="" v-model="login.password" placeholder="Password " @keyup.enter="loginUser()" style="margin-left: 0px; margin-top: 2px;">
                            </div>
                         </div>
                      </el-tab-pane>
@@ -112,8 +112,8 @@
                               <el-button type="success" size="small" class="signupButton"  v-if="showForgotPassword" @click="forgotPasswordSendEmail()" :loading="saveFileLoadingLogin" style="margin-left:18px" >Submit</el-button>
                            </div>
                            <div class="col-md-6" style="top: 9px;">
-                              <a href="javascript:void()" class="lfort" v-if="!showForgotPassword"  v-show="this.selectedTabIndex==0" @click="forgotPassword()" style="margin-right:18px">Forgot Password</a>
-                              <a href="javascript:void()" class="lfort" v-if="showForgotPassword" v-show="this.selectedTabIndex==0" @click="backtoLogin()" style="margin-right:18px">Back to Login</a>
+                              <a href="javascript:void()" class="lfort" v-if="!showForgotPassword"  v-show="this.selectedTabIndex==0" @click="forgotPassword()" style="margin-right:18px;color:#0e0c0c">Forgot Password</a>
+                              <a href="javascript:void()" class="lfort" v-if="showForgotPassword" v-show="this.selectedTabIndex==0" @click="backtoLogin()" style="margin-right:18px;color:#0e0c0c">Back to Login</a>
 
                            </div>
                         </div>
@@ -167,16 +167,20 @@
                <div class="lconun">
                    <form  v-on:submit.prevent="signupUser" action="#" method="post">
                      <div class="lrinp">
-                        <label>Username</label>
-                        <input type="text" v-model="signup.username" placeholder="Enter username (Required)">
+                        <label>*First Name</label>
+                        <input type="text" required v-model="signup.fname" placeholder="First Name ">
                      </div>
                      <div class="lrinp">
-                        <label>Email</label>
-                        <input type="email" v-model="signup.email" placeholder="Enter email (Required)">
+                        <label>*Last Name</label>
+                        <input type="text" v-model="signup.lname" placeholder="Last Name ">
                      </div>
                      <div class="lrinp">
-                        <label>Password</label>
-                        <input type="password" v-model="signup.password" placeholder="Enter password (Required)">
+                        <label>*Email</label>
+                        <input type="email" v-model="signup.email"placeholder="Email " >
+                     </div>
+                     <div class="lrinp">
+                        <label>*Password</label>
+                        <input type="password" v-model="signup.password" placeholder="Password ">
                      </div>
                      <button type="submit" style="display:none"></button>
                   </form>
@@ -186,19 +190,19 @@
                <!-- <div class="lconun">
                   <div class="lrinp">
                      <label>First Name</label>
-                     <input type="text" class="" v-model="register.fname" placeholder="Enter Your First Name (Required) ">
+                     <input type="text" class="" v-model="register.fname" placeholder="Enter Your First Name ">
                   </div>
                </div>
                <div class="lconun">
                   <div class="lrinp">
                      <label>Last Name</label>
-                     <input type="text" class="" v-model="register.lname" placeholder="Enter Your Last Name (Required) ">
+                     <input type="text" class="" v-model="register.lname" placeholder="Enter Your Last Name ">
                   </div>
                </div>
                <div class="lconun">
                   <div class="lrinp">
                      <label>Email Id</label>
-                     <input type="text" class="" v-model="register.email" placeholder="Enter Your Email Id (Required) ">
+                     <input type="text" class="" v-model="register.email" placeholder="Enter Your Email Id ">
                   </div>
                </div>
                <div class="lconun">
@@ -261,7 +265,8 @@ export default {
   data () {
     return {
     signup: {
-            username: "",
+            fname: "",
+            lname:'',
             password: "",
             email: ""
         },
@@ -500,8 +505,10 @@ export default {
             let self = this;
            let emailValidator = await this.validateEmail(self.signup.email);
            console.log(emailValidator)
-          if(self.signup.username == ""){
-               self.$message.warning("User Name is required");
+          if(self.signup.fname == ""){
+               self.$message.warning("First name is required");
+           }else if(self.signup.lname == ""){
+               self.$message.warning("Last name is required");
            }else if(self.signup.email == ""){
                self.$message.warning("email is required");
            }else if(emailValidator == false){
@@ -513,7 +520,8 @@ export default {
                axios.post(config.signupUrl, {
                 email: self.signup.email.trim(),
                 password: self.signup.password.trim(),
-                username: self.signup.username.trim()
+                firstname: self.signup.fname.trim(),
+                lastname : self.signup.lname.trim()
             })
             .then(function (response) {
                 console.log(response);
@@ -527,7 +535,8 @@ export default {
 
                     self.signup.email = '';
                     self.signup.password = "";
-                    self.signup.username = "";
+                    self.signup.fname = "";
+                    self.signup.lname = "";
                     
                      $('.lundcon').addClass('sing');
                 }else{

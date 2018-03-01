@@ -57,6 +57,8 @@ Vue.config.productionTip = false
 
 import axios from 'axios'
 import psl from 'psl'
+import Cookies from 'js-cookie';
+
 // Vue.use(psl)
 
 router.beforeEach((to, from, next) => {
@@ -93,7 +95,19 @@ router.beforeEach((to, from, next) => {
       }
   })
   .catch(function(error){
-    // console.log(error.response)
+    if(error.response.status == 401){
+      let location = psl.parse(window.location.hostname)
+      location = location.domain === null ? location.input : location.domain
+      
+      Cookies.remove('auth_token' ,{domain: location}) 
+      Cookies.remove('subscriptionId' ,{domain: location}) 
+      
+      
+      
+  }else if(error.response.status == 403){
+      
+  
+  }
   })
   } else {
     delete axios.defaults.headers.common['authorization']
