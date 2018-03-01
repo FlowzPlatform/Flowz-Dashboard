@@ -14,7 +14,7 @@ body {margin: 0; padding: 0;}
 .lhed { display: block; width: 100%; padding: 30px;}
 .lcontended {width: 100%;  display: block;}
 .lundcon {max-width: 700px;width: 100%;position: relative;float: left;overflow: hidden;top: 50%;left: 50%;margin: auto;position: absolute;-ms-transform: translateX(-50%) translateY(-50%);transform: translateX(-50%) translateY(-50%);-webkit-transform: translateX(-50%) translateY(-50%);background: rgba(70, 130, 180, 0.72);border-radius: 10px;}
-.lrpt {width: 100%;min-height: 388px;padding: 112px 0;float: left;}
+.lrpt {width: 100%;min-height: 403px !important;padding: 112px 0;float: left;}
 .lrpt .lsrpt,.lrpt .rsrpt {float: left;}
 .lrpt .lsrpt {width: 50%;display: inline-block;padding-left: 80px;}
 .lrpt .lsrpt > span {font-size: 23px;color: #fff;font-family: 'Helvetica-Bd';display: block;}
