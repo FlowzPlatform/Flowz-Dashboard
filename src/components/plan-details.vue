@@ -5,7 +5,7 @@
             <!-- <h3>Thank You for Subscribing...!</h3> -->
             <div style="font-size: x-large;">My Plan</div><br>
                 <Row>
-                    <Col span="20" push="2">
+                    <Col span="22" push="1">
                         <Table :loading="loading" class='dataTable' :columns="planDetails" :data="planList" no-data-text="No Data"></Table>
                         <Page style="margin-top:10px;" class="pull-right" :total="planListData.length" :page-size="pageSize" :current="currentPage" @on-change="changePage"></Page>
                     </Col>
@@ -47,6 +47,11 @@ export default {
                     width: 200
                 },
                 {
+                    title: 'Subscribed',
+                    key: 'createdAt',
+                    align: 'center',
+                },
+                {
                     title: 'Expiry Date',
                     key: 'expiredOn',
                     sortable: true
@@ -83,6 +88,7 @@ export default {
         userSubscription.getOwn().then(async res => {
             await res.data.data.filter(function(o) { 
                 o.expiredOn = moment(o.expiredOn).format("DD-MMM-YYYY")
+                o.createdAt = moment(o.createdAt).startOf('day').fromNow();  
             })
             self.planListData = _.sortBy(res.data.data, 'expiredOn')
             self.planList = await self.makeChunk(self.currentPage, self.pageSize)
