@@ -510,7 +510,7 @@ body {color: #d1d1d1;}
 .users .dascuico:after {background-color: #7e51ac;}
 .users .dascuico {background-color: #7e51ac;}
 
-.virtualshop .tit {color: #6AB187;}
+.virtualshop .tit {color: #418a5f;}
 .virtualshop .tex {color: #666666;}
 .virtualshop .dascuico:after {background-color: #6AB187;}
 .virtualshop .dascuico {background-color: #6AB187;}
