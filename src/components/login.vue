@@ -170,8 +170,8 @@
                         <label style="width:150px">*Name</label>
                      </div>
                      <div class="lrinp">
-                        <input style="width:48%" type="text" required v-model="signup.fname" placeholder="First Name ">    
-                        <input type="text" style="width:50%" v-model="signup.lname" placeholder="Last Name ">                                            
+                        <input style="width:48%;display: inline-block;" type="text" required v-model="signup.fname" placeholder="First Name ">    
+                        <input type="text" style="width:50%;display: inline-block;" v-model="signup.lname" placeholder="Last Name ">                                            
                      </div>
                      <div class="lrinp">
                         <label>*Email</label>
