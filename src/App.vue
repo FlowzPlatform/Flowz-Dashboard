@@ -16,9 +16,9 @@ export default {
     // if(this.$session.get('auth_token')){
     //   this.$router.push('/');
     // }
-    
+
       if(this.$cookie.get('auth_token')){
-       this.$router.push('/');
+       //this.$router.push('/');
      }
   }
 }
@@ -30,8 +30,8 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  
+
   color: #2c3e50;
-  
+
 }
 </style>

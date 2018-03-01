@@ -17,7 +17,7 @@
 		</div>
 	</div>
    </div>
-   
+
    <div class="dasbma">
       
       <div class="dasund">
@@ -33,7 +33,7 @@
 					<li data-content="gulp"><a href="#"></a></li>
 					<li data-content="git"><a href="#"></a></li>
 					<li>
-						<a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan('http://vmail.flowzcluster.tk')" v-on:mouseover="hoverOnSubmenu('rgba(94, 193, 182, 0.7)', 'left' ,3)">
+						<a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan(flowzVmailUrl)" v-on:mouseover="hoverOnSubmenu('rgba(94, 193, 182, 0.7)', 'left' ,3)">
 							<div class="dashcub v-mail">
 								<div class="dascutx">
 									<div class="dascufo">
@@ -49,7 +49,7 @@
 						</a>
 					</li>
 					<li data-content="yo">
-						<a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan('http://webbuilder.flowzcluster.tk')" v-on:mouseover="hoverOnSubmenu('rgba(109, 198, 77, 0.7)', 'left' ,2)">
+						<a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan(flowzBuilderUrl)" v-on:mouseover="hoverOnSubmenu('rgba(109, 198, 77, 0.7)', 'left' ,2)">
 							<div class="dashcub web-builder">
 								<div class="dascutx">
 									<div class="dascufo">
@@ -79,7 +79,7 @@
 					<ul class="radial-nav" id="radial-nav1">
 						<li data-content="git"><a href="#"></a></li>
 						<li data-content="css">
-						<a href="#" class="menu2-item " @click="goTosubscriptionplan('http://uploader.flowzcluster.tk/uploader')" v-on:mouseover="hoverOnSubmenu('rgba(245, 93, 33, 0.7)', 'right' , 6)"> 
+						<a href="#" class="menu2-item " @click="goTosubscriptionplan(flowzUploaderUrl)" v-on:mouseover="hoverOnSubmenu('rgba(245, 93, 33, 0.7)', 'right' , 6)"> 
 							<div class="dashcub dbetl">
 								<div class="dascutx">
 									<div class="dascufo">
@@ -94,7 +94,7 @@
 							</div>
 						</a></li>
 						<li data-content="js">
-						<a href="#" class="menu2-item " @click="goTosubscriptionplan('http://crm.flowzcluster.tk')" v-on:mouseover="hoverOnSubmenu('rgba(242, 168, 46, 0.7)', 'right' , 5)">
+						<a href="#" class="menu2-item " @click="goTosubscriptionplan(flowzcrmUrl)" v-on:mouseover="hoverOnSubmenu('rgba(242, 168, 46, 0.7)', 'right' , 5)">
 							<div class="dashcub accounting">
 								<div class="dascutx">
 									<div class="dascufo">
@@ -151,7 +151,12 @@ export default {
       topup: 200,
       cards : [],
       active1:false,
-      active2:false
+      active2:false,
+      flowzDashboardUrl: 'https://www.dashboard.' + process.env.domainkey,
+      flowzBuilderUrl: 'https://www.webbuilder.' + process.env.domainkey,
+      flowzVmailUrl: 'https://www.vmail.' + process.env.domainkey,
+      flowzUploaderUrl: 'https://www.uploader.' + process.env.domainkey,
+      flowzcrmUrl: 'https://www.crm.' + process.env.domainkey,
     }
   },
   created() {
@@ -169,7 +174,7 @@ export default {
   })
 
 
-        
+
 
         this.cards = [
           {
@@ -180,7 +185,7 @@ export default {
               title : "Work-flow",
               position : "left",
               // desc : "Build your own business flow using BPMN without a vast knoledge of coding. It defines applications as networks of black box processes, which exchange data across predefined connections  by message passing, where the connections are specified externally to the processes.",
-              
+
           },
           {
               img :"/assets/images/web_builder-ss.png" ,
@@ -241,16 +246,19 @@ export default {
               title : "Users",
               // desc : "Successful CRM is about competing in the relationship dimension. Not as an alternative to having a competitive product or reasonable price- but as a differentiator.Track all your user anytime from anywhere across the globe very easily."
           }
-          
+
       ]
     },
-    
+
     mounted(){
+      // console.log('Mounted called...')
+      $("#big-video-wrap").css("width","100%");
+
       let token = this.$cookie.get('auth_token') ;
-      console.log('Token::::::', token)
-      console.log('this.$store.state.isGooleLogin::::::', this.$store.state.isGooleLogin)
-      console.log('this.$store.state.isFacebookLogin::::::', this.$store.state.isFacebookLogin)
-      console.log('Gmail and FB login', (this.$store.state.isGooleLogin || this.$store.state.isFacebookLogin))
+      // console.log('Token::::::', token)
+      // console.log('this.$store.state.isGooleLogin::::::', this.$store.state.isGooleLogin)
+      // console.log('this.$store.state.isFacebookLogin::::::', this.$store.state.isFacebookLogin)
+      // console.log('Gmail and FB login', (this.$store.state.isGooleLogin || this.$store.state.isFacebookLogin))
       if(token == null || token == undefined || token == '' )
       {
         if(!(this.$store.state.isGooleLogin || this.$store.state.isFacebookLogin)){
@@ -261,7 +269,6 @@ export default {
 
   methods :{
     hoverOnSubmenu: function(color, position, index) {
-        
         this.index = index;
         this.card1 = color
         this.position1 = position
@@ -287,7 +294,7 @@ export default {
 	  
 		  $('#radial-nav').toggleClass('expanded');
 		  
-		  console.log(this)
+		  // console.log(this)
 		  $('.overlay').css({'opacity': '0'})
 		if($('#radial-nav').hasClass('expanded')){
 			$('#radial-nav1').removeClass('expanded');
@@ -300,7 +307,7 @@ export default {
 	   
 		  $('#radial-nav1').toggleClass('expanded');
 		 $('.overlay').css({'opacity': '0'})
-		  console.log(this)
+		  // console.log(this)
 		if($('#radial-nav1').hasClass('expanded')){
 			$('#radial-nav').removeClass('expanded');
         }
@@ -320,10 +327,10 @@ export default {
       //  trigger2: function(){
       //     $(".menu2").toggleClass("active");
       // },
-     
       goTosubscriptionplan : function(data){
           //this.$router.push('subscriptionplan/');
-          window.location =data
+         // window.location =data
+         window.open(data, '_blank');
       },
       // goToMoM : function(data){
       //   console.log('Redirect to MOM')
