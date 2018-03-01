@@ -32,7 +32,8 @@
 					<li data-content="yo"><a href="#"></a></li>
 					<li data-content="gulp"><a href="#"></a></li>
 					<li data-content="git"><a href="#"></a></li>
-					<li>
+          <!-- v-mail -->
+          <li>
 						<a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan(flowzVmailUrl)" v-on:mouseover="hoverOnSubmenu('rgba(94, 193, 182, 0.7)', 'left' ,3)">
 							<div class="dashcub v-mail">
 								<div class="dascutx">
@@ -47,7 +48,8 @@
 							   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-3.png"> </div></div>
 							</div>
 						</a>
-					</li>
+          </li>
+          <!-- web-builder -->
 					<li data-content="yo">
 						<a href="javascript:void(0)" class="menu-item vmail" @click="goTosubscriptionplan(flowzBuilderUrl)" v-on:mouseover="hoverOnSubmenu('rgba(109, 198, 77, 0.7)', 'left' ,2)">
 							<div class="dashcub web-builder">
@@ -70,15 +72,11 @@
 				  </ul>
 			  </div>  
 				
-				
-				
-				
-				
-				
 				<div class="nav">
 					<ul class="radial-nav" id="radial-nav1">
-						<li data-content="git"><a href="#"></a></li>
-						<li data-content="css">
+          <li data-content="git"><a href="#"></a></li>
+          <!-- uploader -->
+					<li data-content="css">
 						<a href="#" class="menu2-item " @click="goTosubscriptionplan(flowzUploaderUrl)" v-on:mouseover="hoverOnSubmenu('rgba(245, 93, 33, 0.7)', 'right' , 6)"> 
 							<div class="dashcub dbetl">
 								<div class="dascutx">
@@ -92,8 +90,10 @@
 								</div>
 							   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-6.png"> </div></div>
 							</div>
-						</a></li>
-						<li data-content="js">
+            </a>
+          </li>
+          <!-- crm -->
+					<li data-content="js">
 						<a href="#" class="menu2-item " @click="goTosubscriptionplan(flowzcrmUrl)" v-on:mouseover="hoverOnSubmenu('rgba(242, 168, 46, 0.7)', 'right' , 5)">
 							<div class="dashcub accounting">
 								<div class="dascutx">
@@ -107,16 +107,31 @@
 								</div>
 							   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-5.png"> </div></div>
 							</div>
-						</a></li>
-						<li data-content="jade"><a href="#"></a></li>
-						<li data-content="html5"><a href="#"></a></li>
-						
-						
-						<li data-content="grunt"><a href="#"></a></li>
-						<li data-content="yo"><a href="#"></a></li>
-						<li data-content="gulp"><a href="#"></a></li>
-						<li class="menu" @click="openNav()"><span class="icon-menu"></span><img src="../assets/images/CRM.png"></li>
-					  </ul>
+            </a>
+          </li>
+          <!-- virualshop -->
+          <li data-content="css">
+              <a href="#" class="menu2-item " @click="goTosubscriptionplan(flowzVshopDataUrl)" v-on:mouseover="hoverOnSubmenu('rgba(106, 177, 135, 1)', 'right' , 9)"> 
+                <div class="dashcub virtualshop">
+                  <div class="dascutx">
+                    <div class="dascufo">
+                      <span class="tit">Virtual Shop Data</span>
+                      <span class="tex">The Compatibility of
+              your databases
+              are automatically
+              created</span>
+                    </div>   
+                  </div>
+                   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/virtualshop.png"> </div></div>
+                </div>
+              </a>
+          </li>
+					<li data-content="jade"><a href="#"></a></li>
+					<li data-content="html5"><a href="#"></a></li>
+					<li data-content="grunt"><a href="#"></a></li>
+					<li data-content="yo"><a href="#"></a></li>
+					<li class="menu" @click="openNav()"><span class="icon-menu"></span><img src="../assets/images/CRM.png"></li>
+					</ul>
 				</div>  
 			</section>
 		 
@@ -157,6 +172,7 @@ export default {
       flowzVmailUrl: 'https://www.vmail.' + process.env.domainkey,
       flowzUploaderUrl: 'https://www.uploader.' + process.env.domainkey,
       flowzcrmUrl: 'https://www.crm.' + process.env.domainkey,
+      flowzVshopDataUrl: 'https://www.vshopdata.' + process.env.domainkey
     }
   },
   created() {
@@ -245,7 +261,15 @@ export default {
               position : "right",
               title : "Users",
               // desc : "Successful CRM is about competing in the relationship dimension. Not as an alternative to having a competitive product or reasonable price- but as a differentiator.Track all your user anytime from anywhere across the globe very easily."
-          }
+          },
+          {
+              img :"/assets/images/databases.jpg" ,
+              index: "9",
+              class : "card11 crmpart",
+              position : "left",
+              title : "Virtual Shop Data",
+              desc : "The Compatibility of your databases (both local and remote) are automatically created, configured and updated through the DBETL client. Creating, repairing, deleting and renaming and maintaining multiple databases is much simpler."
+          },
 
       ]
     },
@@ -384,10 +408,19 @@ export default {
 .radial-nav.expanded li:not(.menu) {}
 .radial-nav.expanded li:not(.menu):hover {}
 
-.radial-nav.expanded li:nth-child(1) {-webkit-transform: rotate(20deg) translateY(-210px) rotate(0deg);}
+/* .radial-nav.expanded li:nth-child(1) {-webkit-transform: rotate(20deg) translateY(-210px) rotate(0deg);}
 .radial-nav.expanded li:nth-child(2) {-webkit-transform: rotate(65deg) translateY(-210px) rotate(0deg);}
 .radial-nav.expanded li:nth-child(3) {-webkit-transform: rotate(110deg) translateY(-210px) rotate(0deg);}
 .radial-nav.expanded li:nth-child(4) {-webkit-transform: rotate(155deg) translateY(-210px) rotate(0deg);}
+.radial-nav.expanded li:nth-child(5) {-webkit-transform: rotate(200deg) translateY(-210px) rotate(0deg);}
+.radial-nav.expanded li:nth-child(6) {-webkit-transform: rotate(245deg) translateY(-210px) rotate(0deg);}
+.radial-nav.expanded li:nth-child(7) {-webkit-transform: rotate(290deg) translateY(-210px) rotate(0deg);}
+.radial-nav.expanded li:nth-child(8) {-webkit-transform: rotate(335deg) translateY(-210px) rotate(0deg);} */
+
+.radial-nav.expanded li:nth-child(1) {-webkit-transform: rotate(10deg) translateY(-210px) rotate(0deg);}
+.radial-nav.expanded li:nth-child(2) {-webkit-transform: rotate(50deg) translateY(-210px) rotate(0deg);}
+.radial-nav.expanded li:nth-child(3) {-webkit-transform: rotate(95deg) translateY(-210px) rotate(0deg);}
+.radial-nav.expanded li:nth-child(4) {-webkit-transform: rotate(140deg) translateY(-210px) rotate(0deg);}
 .radial-nav.expanded li:nth-child(5) {-webkit-transform: rotate(200deg) translateY(-210px) rotate(0deg);}
 .radial-nav.expanded li:nth-child(6) {-webkit-transform: rotate(245deg) translateY(-210px) rotate(0deg);}
 .radial-nav.expanded li:nth-child(7) {-webkit-transform: rotate(290deg) translateY(-210px) rotate(0deg);}
@@ -476,6 +509,11 @@ body {color: #d1d1d1;}
 .users .tex {color: #666666;}
 .users .dascuico:after {background-color: #7e51ac;}
 .users .dascuico {background-color: #7e51ac;}
+
+.virtualshop .tit {color: #418a5f;}
+.virtualshop .tex {color: #666666;}
+.virtualshop .dascuico:after {background-color: #6AB187;}
+.virtualshop .dascuico {background-color: #6AB187;}
 
 
 .overlay {position:  fixed;right: 30px;top: 100px;width: 400px;}
