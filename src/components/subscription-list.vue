@@ -1,9 +1,17 @@
 <template>
 <section class="layer plans">
   <section class="backWhite">
-    <section class="third lift plan-tier lift.active" @click="checkoutFunction(item.id)" v-for="(item, index) in mainData">
+    <section @click="checkoutFunction(item.id)" class="third lift plan-tier lift.active" v-for="(item, index) in mainData">
       <h4>{{item.name.toUpperCase()}}</h4>
-      <h5><sup class="superscript">$</sup><span class="plan-price">{{item.price}}</span><sub>{{item.validity}}<br>days</sub></h5>
+      <h5><sup class="superscript">US$</sup><span class="plan-price">{{item.price}}</span>
+          <sub><div v-if="item.validity > 1">
+                <p>{{item.validity}} months</p>
+                </div>
+                <div v-else="item.validity > 1">
+                      <p>/mo</p>
+                </div>
+          </sub>
+      </h5>
       <ul>
         <li v-for="(itemDec, indexDec) in item.description"><strong>{{itemDec}}</strong></li>
       </ul>
@@ -39,7 +47,7 @@ import subscriptionPlans from '@/api/subscription-plans'
         subscriptionPlans.get().then(res => {
             self.mainData = res.data.data
            self.mainData = _.filter(self.mainData, function(o) {
-                    return o.status == 1
+                    return o.status === true
                 })
             self.mainData.sort(function(a, b){
                 return a.price-b.price
@@ -258,6 +266,10 @@ text-transform: capitalize;
 text-align: left;
 margin-left: 3px;
 color: #737373;
+}
+
+.plan-tier sub p{
+  text-transform: lowercase;
 }
 
 .plan-tier .early-adopter-price {
