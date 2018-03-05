@@ -304,15 +304,11 @@ export default {
   created(){
         let self = this;
        var configObj = {};
-       console.log(window.location.search)
+    //    console.log(window.location.search)
 
        var url = new URL(window.location.href);
        var ob_id = url.searchParams.get("ob_id");
-       console.log(ob_id);
-
-
-
-
+    //    console.log(ob_id);
         if(ob_id  && ob_id != undefined)
         {
             this.obId = ob_id;
@@ -587,7 +583,6 @@ export default {
                             headers: {'Authorization': response.data.logintoken}
                         })
                         .then(function(result) {
-                            console.log('--------------->>>>',result)
                             let location = psl.parse(window.location.hostname)
                             location = location.domain === null ? location.input : location.domain
                             Cookie.set('user',  result.data.data.email  , {domain: location});
@@ -627,7 +622,7 @@ export default {
             //     // self.$router.push('/');
             })
             .catch(function (error) {
-                console.log("error-->",error.response)
+                // console.log("error-->",error.response)
                 self.saveFileLoadingLogin = false;
                 if(!error.response || error.response != undefined){
                     self.$message.error(error.response.data)

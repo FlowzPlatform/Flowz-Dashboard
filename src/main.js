@@ -82,33 +82,29 @@ router.beforeEach((to, from, next) => {
       method: 'get',
       url: config1.userDetail,
      // headers: {'Authorization': response.data.logintoken}
-  })
-  .then(function(result) {
+    })
+    .then(function(result) {
       // console.log(result)
       let location = psl.parse(window.location.hostname)
       location = location.domain === null ? location.input : location.domain
       Cookie.set('user',  result.data.data.email  , {domain: location});
       if(result.data.data.package !== undefined) {
-        self.$router.push('/');
+        next()
       } else {
-        self.$router.push('/subscription-list');
+        next({
+          path: '/subscription-list'
+        })
       }
-  })
-  .catch(function(error){
-    if(error.response.status == 401){
-      let location = psl.parse(window.location.hostname)
-      location = location.domain === null ? location.input : location.domain
-      
-      Cookies.remove('auth_token' ,{domain: location}) 
-      Cookies.remove('subscriptionId' ,{domain: location}) 
-      
-      
-      
-  }else if(error.response.status == 403){
-      
-  
-  }
-  })
+    })
+    .catch(function(error){
+      if(error.response.status == 401){
+        let location = psl.parse(window.location.hostname)
+        location = location.domain === null ? location.input : location.domain
+        
+        Cookies.remove('auth_token' ,{domain: location}) 
+        Cookies.remove('subscriptionId' ,{domain: location}) 
+      }else if(error.response.status == 403){}
+    })
   } else {
     delete axios.defaults.headers.common['authorization']
   }
