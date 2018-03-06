@@ -7,7 +7,7 @@
             <Button type="primary" @click="createPlan()" icon="android-add-circle" >Add</Button>
           </Col>
         </Row>
-        <div v-if="plans.length != 0">
+        <div v-if="!planLoding && plans.length != 0">
           <div class="schema-form ivu-table-wrapper">
             <div class="ivu-table ivu-table-border">
               <div class="ivu-table-body">
@@ -93,7 +93,7 @@
                                     <Col span="3">
                                       <a v-if="plan.validity >= getDefaultPlan('validity') && plan.price >= getDefaultPlan('price')">
                                         <Tooltip content="Enable" placement="top">
-                                          <i-switch style="background-color:#2411c5;border-color:#2411c5" size="small" v-model="plan.status"></i-switch>
+                                          <i-switch size="small" v-model="plan.status"></i-switch>
                                         </Tooltip>
                                       </a>
                                       <a v-else class="pointerX">
@@ -220,9 +220,10 @@
             </div>
           </div>
         </div>
-        <Row v-else type="flex" justify="center">
-          <Col span="4" style="margin-bottom:5px;">
-            <h5>Plans not available</h5>
+        <Row type="flex" justify="center">
+          <Col span="4" style="margin-top:5px;">
+            <Spin v-if="planLoding" size="large"></Spin>
+            <h5 v-else-if="!planLoding && plans.length == 0">Plans not available</h5>
           </Col>
         </Row>
       </Card>
@@ -255,6 +256,7 @@ export default {
     return {
       services: [],
       plans: [],
+      planLoding: false,
       currentOpen: [],
       time_units: ['day/s', 'month/s', 'year/s'],
       data5: [],
@@ -275,11 +277,14 @@ export default {
     }
   },
   created()  {
+    this.planLoding = true
     let data5 = []
     let self = this
     subscriptionPlans.get().then(res => {
             self.plans = res.data.data
+            self.planLoding = false
         }).catch(err => {
+            self.planLoding = false
             self.$Notice.error({
                 duration: 5,
                 title: 'Trying to fetch subscription plans',
@@ -382,29 +387,45 @@ export default {
           subscriptionPlans.put(this.plans[index].id, dataObj).then(res => {
             if (showMsg) {
               self.$Notice.success({
-                title: 'Subscription Plan ' + self.plans[index].name + ' has been saved..!'
+              title: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been saved..!'
               })
             }
           }).catch(err => {
-            self.$Notice.error({
+            if( err.response.status == 403) {
+              self.$Notice.error({
+                duration: 5,
+                title: 'Permission not available for action',
+                desc: err.message
+              })
+            } else {
+              self.$Notice.error({
                 duration: 5,
                 title: 'Trying to update subscription plan',
                 desc: 'Please try again ' + err
-            })
+              })
+            }
           })
         } else if(showMsg) {
           subscriptionPlans.post(dataObj).then(res => {
             if (showMsg) {
-              self.$Notice.success({
-                title: 'Subscription Plan ' + self.plans[index].name + ' has been created..!'
+                self.$Notice.success({
+                title: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been created..!'
               })
             }
           }).catch(err => {
-            self.$Notice.error({
+            if( err.response.status == 403) {
+              self.$Notice.error({
+                duration: 5,
+                title: 'Permission not available for action',
+                desc: err.message
+              })
+            } else {
+              self.$Notice.error({
                 duration: 5,
                 title: 'Trying to create subscription plan',
-                desc: 'Please try again' + err
-            })
+                desc: 'Please try again ' + err
+              })
+            }
           })
         }
       }
