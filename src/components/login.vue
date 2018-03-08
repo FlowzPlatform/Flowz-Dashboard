@@ -7,7 +7,7 @@
       <div v-if="!isSocialLogin" class="lundcon">
          <div class="lrpt" >
             <div class="lsrpt" @click="showLogin">
-               <span>Alredy have an <br> account?</span>
+               <span>Already have an <br> account?</span>
                <a href="javascript:void(0)">Login</a>
             </div>
             <div class="rsrpt" @click="showRegister">
