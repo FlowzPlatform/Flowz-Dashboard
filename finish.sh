@@ -54,14 +54,14 @@ echo "waiting for service to upgrade "
           -X GET \
           -H 'Accept: application/json' \
           -H 'Content-Type: application/json' \
-          ""$RANCHER_URL/v2-beta/projects/$ENV_ID/services/$SERVICE_ID/" | jq '.state'` in
+          "$RANCHER_URL/v2-beta/projects/$ENV_ID/services/$SERVICE_ID/" | jq '.state'` in
           "\"upgraded\"" )
               echo "completing service upgrade"
               curl -u ""$RANCHER_ACCESSKEY":"$RANCHER_SECRETKEY"" \
                 -X POST \
                 -H 'Accept: application/json' \
                 -H 'Content-Type: application/json' \
-                ""$RANCHER_URL/v2-beta/projects/$ENV_ID/services/$SERVICE_ID?action=finishupgrade"
+                "$RANCHER_URL/v2-beta/projects/$ENV_ID/services/$SERVICE_ID?action=finishupgrade"
               break ;;
           "\"upgrading\"" )
               echo "still upgrading"
