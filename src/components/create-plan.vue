@@ -343,6 +343,7 @@ export default {
               data5.push({"module":data.module,"service":data.service,"action":action,"value":0})
             }
           }})
+          self.defaultPlan.details = data5
       }).catch(function (error) {
           self.$Notice.error({
             duration: 5,
