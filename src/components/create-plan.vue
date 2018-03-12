@@ -1,221 +1,234 @@
 <template>
-  <div>
-    <div style="border: 2px solid darkblue; margin-top:5%; background-color: #fff; position:relative">
-    <div class="container">
-      <div class="row add-service">
-        <div class="col-xs-12">
-          <div class="pull-right main-option" @click="createPlan()">
-            <Tooltip content="Create new plan" placement="top"><h5><Icon type="android-add-circle" size="18"></Icon> NEW PLAN</h5></Tooltip>
-          </div>
-          <!-- <div class="col-xs-6 main-option" @click="update()">
-            <Tooltip content="Save plans" placement="top"><h5><Icon type="upload"></Icon> UPDATE</h5></Tooltip>
-          </div> -->
-        </div>
-      </div>
-    </div>
-    <div v-if="plans.length != 0">
-      <div v-for="(plan, pIndex) in plans" :id="'plans_'+pIndex">
-        <div class="container">
-          <hr>
-          <div class="col-md-12" style="margin-top:10px">
-            <div class="row" style="margin-top:10px">
-              <div class="col-md-4" style="margin-top:10px">
-                <div class="row">
-                  <div class="col-xs-4 no-margin" >
-                    <h4>Plan Name:</h4>
-                  </div>
-                  <div class="col-xs-7 no-margin">
-                    <h4><input type="text" class="description" v-model="plan.name" placeholder="______________________"></h4>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="row">
-                  <div class="col-md-3 no-margin">
-                    <h4>Validity: </h4>
-                  </div>
-                  <div class="col-md-2 no-margin">
-                    <h4><input type="number" title="Validity" class="description" v-model="plan.validity" @input="validateValidity(plan.validity,pIndex)" min=1 placeholder="____________________"></input></h4>
-                  </div>
-                  <div class="col-md-2 no-margin">
-                    <h4>{{defaultPlan.time_unit}}</h4>
-                  </div>
-                  <div id="validateErr"></div>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="row">
-                  <div class="col-md-3 no-margin">
-                    <h4>Price: $</h4>
-                  </div>
-                  <div class="col-md-2 no-margin">
-                    <h4><input type="number" class="description" v-model="plan.price"  @input="validatePrice(plan.price,pIndex)" placeholder="______________________"></input></h4>
-                  </div>
-                  <div class="col-md-3 no-margin"></div>
-                  <div class="col-md-1 pointer" v-if="plan.validity >= getDefaultPlan('validity') && plan.price >= getDefaultPlan('price')" @click="update(pIndex, true)">
-                  <Tooltip content="Save" placement="top">
-                      <icon name="save" scale="1.5"></icon>
-                  </Tooltip>
-                </div>
-                <div class="col-md-1 pointerX" v-else>
-                  <Tooltip content="Save" placement="top">
-                      <icon name="save" scale="1.5"></icon>
-                  </Tooltip>
-                </div>
-                <div class="col-md-1 pointer" @click="confirmDelete = true, deleteIndex = pIndex, loading = true">
-                  <Tooltip content="Delete plan" placement="top">
-                      <Icon type="trash-a" size="30"></Icon>
-                  </Tooltip>
-                  <Modal
-                      v-model="confirmDelete"
-                      title="Confirm Delete"
-                      :loading="loading"
-                      @on-ok="deletePlan(deleteIndex)">
-                      <p>After you click ok, this plan will be delete permanently.</p>
-                  </Modal>
-                </div>
-                <div class="col-md-1 pointer" v-if="plan.validity >= getDefaultPlan('validity') && plan.price >= getDefaultPlan('price')">
-                  <Tooltip content="Enable" placement="top">
-                    <i-switch size="small" v-model="plan.status"></i-switch>
-                  </Tooltip>
-                </div>
-                <div class="col-md-1 pointerX" v-else>
-                  <Tooltip content="Enable" placement="top">
-                    <i-switch size="small" disabled v-model="plan.status"></i-switch>
-                  </Tooltip>
-                </div>
-                <div class="col-md-1 pointer" v-if="plan.validity >= getDefaultPlan('validity') && plan.price >= getDefaultPlan('price') && checkOpen(pIndex)" @click="expand(pIndex)">
-                  <Tooltip content="Expand" placement="top">
-                    <Icon type="arrow-down-b" size="30"></Icon>
-                  </Tooltip>
-                </div>
-                <div class="col-md-1 pointerX" v-else>
-                  <Tooltip content="Expand" placement="top">
-                    <Icon type="arrow-down-b" size="30"></Icon>
-                  </Tooltip>
-                </div>
-
-                </div>
-              </div>
-              <!--<div class="col-md-5">
-
-              </div>-->
-            </div>
-          </div>
-        </div>
-        <div :id="'plan_'+pIndex" class="outer-toggle">
-          <Card>
-          <!-- <Tree :data="plan.obj"></Tree> -->
-          <div class="container">
-            <div class="row">
-              <div class="col-xs-2" style="margin-top:6px;" >
-                <h5>Description:</h5>
-              </div>
-              <div class="col-md-6 no-margin" >
-                <textarea :on-change="update(pIndex, false)" v-model="plan.description" class="description" rows="2" cols="25"></textarea>
-              </div>
-            </div>
-          </div>
+  <Row style="margin-top:30px;" type="flex" justify="center">
+    <Col span="18">
+      <Card>
+        <Row slot="title" type="flex" justify="end">
+          <Col span="2" style="margin-bottom:5px;">
+            <Button type="primary" @click="createPlan()" icon="android-add-circle" >Add</Button>
+          </Col>
+        </Row>
+        <div v-if="!planLoding && plans.length != 0">
           <div class="schema-form ivu-table-wrapper">
-          <div class="ivu-table ivu-table-border">
-                  <div class="ivu-table-body" style="max-height:450px;">
-                      <table cellspacing="0" cellpadding="0" border="0" style="width: 100%;overflow-y:auto;">
-                          <colgroup>
-                              <col width="20">
-                                  <col width="20">
-                                      <col width="20">
-                                          <!--<col width="20">-->
-                                              <col width="20">
-                          </colgroup>
-                          <thead>
-                              <tr>
-                                  <th class="">
-                                      <div class="ivu-table-cell">
-                                          <span>Module</span>
+            <div class="ivu-table ivu-table-border">
+              <div class="ivu-table-body">
+                  <table cellspacing="0" cellpadding="0" border="0" style="width: 100%;">
+                      <thead>
+                          <tr>
+                              <th class="ivu-table-column">
+                                  <div class="ivu-table-cell">
+                                      <span>Plan Name</span>
+                                  </div>
+                              </th>
+                              <th class="ivu-table-column">
+                                  <div class="ivu-table-cell">
+                                      <span>Validity</span>
+                                  </div>
+                              </th>
+                              <th class="ivu-table-column">
+                                  <div class="ivu-table-cell"><span>Price</span>
+                                  </div>
+                              </th>
+                              <th class="ivu-table-column-center">
+                                  <div class="ivu-table-cell"><span>Action</span>
+                                  </div>
+                              </th>
+                          </tr>
+                      </thead>
+                      <tbody class="ivu-table-tbody" v-for="(plan, pIndex) in plans" :id="'plans_'+pIndex">
+                          <tr class="ivu-table-row">
+                              <td class="">
+                                <div class="ivu-table-cell">
+                                  <Tooltip content="Plan Name" placement="bottom">
+                                    <input v-model="plan.name" title="Plan Name" placeholder="*Plan Name" ></input>
+                                  </Tooltip>
+                                </div>
+                              </td>
+                              <td class="">
+                                <div class="ivu-table-cell">
+                                  <Tooltip content="Validity" placement="bottom">
+                                    <input type="number" class="description" v-model="plan.validity" v-on:blur="validateValidity(plan.validity,pIndex)" min=1 placeholder="*Validity"></input>
+                                  </Tooltip>
+                                </div>
+                              </td>
+                              <td class="">
+                                  <div class="ivu-table-cell">
+                                    <Tooltip content="Price" placement="bottom">
+                                      <input type="number" class="description" v-model="plan.price"  v-on:blur="validatePrice(plan.price,pIndex)" placeholder="*Price"></input>
+                                    </Tooltip>
+                                  </div>
+                              </td>
+                              <td class="ivu-table-column-center">
+                                  <Row type="flex" justify="center" align="middle">
+                                    <Col span="3"> 
+                                      <a v-if="plan.validity >= getDefaultPlan('validity') && plan.price >= getDefaultPlan('price')" @click="update(pIndex, true)">
+                                        <Tooltip content="Save" placement="top">
+                                          <icon name="save" scale="1.05" color="#59b161"></icon>
+                                        </Tooltip>
+                                      </a>
+                                      <a v-else class="pointerX">
+                                        <Tooltip content="Save" placement="top">
+                                          <icon name="save" scale="1.05" color="#59b161"></icon>
+                                        </Tooltip>
+                                      </a>
+                                    </Col>
+                                    <Col span="3">
+                                      <a @click="confirmDelete = true, deleteIndex = pIndex">
+                                        <Tooltip content="Delete plan" placement="top">
+                                          <Icon type="trash-b" size="23" color="#e84c3c"></Icon>
+                                        </Tooltip>
+                                        <Modal v-model="confirmDelete" :loading="loading">
+                                          <p slot="header" style="color:#f60;text-align:center">
+                                            <Icon type="information-circled"></Icon>
+                                            <span>Delete confirmation</span>
+                                          </p>
+                                          <div style="text-align:center">
+                                              <p>After you click DELETE, this plan will be delete permanently.</p>
+                                          </div>
+                                          <div slot="footer">
+                                              <Button type="error" size="large" long :loading="loading" @click="deletePlan(deleteIndex)">Delete</Button>
+                                          </div>
+                                        </Modal>
+                                      </a>
+                                    </Col>
+                                    <Col span="3">
+                                      <a v-if="plan.validity >= getDefaultPlan('validity') && plan.price >= getDefaultPlan('price')">
+                                        <Tooltip content="Enable" placement="top">
+                                          <i-switch size="small" v-model="plan.status"></i-switch>
+                                        </Tooltip>
+                                      </a>
+                                      <a v-else class="pointerX">
+                                        <Tooltip content="Enable" placement="top">
+                                          <i-switch size="small" disabled v-model="plan.status"></i-switch>
+                                        </Tooltip>
+                                      </a>
+                                    </Col>
+                                    <Col span="3">
+                                      <a v-if="plan.validity >= getDefaultPlan('validity') && plan.price >= getDefaultPlan('price') && checkOpen(pIndex)" @click="expand(pIndex)">
+                                        <Tooltip content="Expand" placement="top">
+                                          <Icon type="arrow-down-b" size="25"></Icon>
+                                        </Tooltip>
+                                      </a>
+                                      <a v-else class="pointerX">
+                                        <Tooltip content="Expand" placement="top">
+                                          <Icon type="arrow-down-b" size="25"></Icon>
+                                        </Tooltip>
+                                      </a>
+                                    </Col>
+                                  </Row>
+                              </td>
+                          </tr>
+                          <tr class="ivu-table-row">
+                            <td colspan="4" class="hidden-td">
+                              <div :id="'plan_'+pIndex" class="outer-toggle">
+                                <Row>
+                                  <Col span="22" push="1">
+                                    <Card>
+                                      <Row align="middle" type="flex">
+                                        <Col span="4">
+                                          <h5 style="height: 35px">Description</h5>
+                                        </Col>
+                                        <Col span="18">
+                                          <Input style="margin-bottom:5px" v-on:blur="update(pIndex, false)" v-model="plan.description" type="textarea" :autosize="{minRows: 1,maxRows: 25}" placeholder="Enter something..."></Input>
+                                        </Col>
+                                      </Row>
+                                      <div class="schema-form ivu-table-wrapper">
+                                        <div class="ivu-table ivu-table-border">
+                                          <div class="ivu-table-body" style="max-height:450px;">
+                                              <table cellspacing="0" cellpadding="0" border="0" style="width: 100%;overflow-y:auto;">
+                                                  <thead>
+                                                      <tr>
+                                                          <th class="">
+                                                              <div class="ivu-table-cell">
+                                                                  <span>Module</span>
+                                                              </div>
+                                                          </th>
+                                                          <th class="">
+                                                              <div class="ivu-table-cell">
+                                                                  <span>Service</span>
+                                                              </div>
+                                                          </th>
+                                                          <th class="">
+                                                              <div class="ivu-table-cell">
+                                                                <span>Operation</span>
+                                                              </div>
+                                                          </th>
+                                                          <th class="">
+                                                              <div class="ivu-table-cell">
+                                                                <span>Value</span>
+                                                              </div>
+                                                          </th>
+                                                      </tr>
+                                                  </thead>
+                                                  <tbody class="ivu-table-tbody">
+                                                      <tr class="ivu-table-row" v-for="(item, index) in plan.details">
+                                                          <td class="">
+                                                              <div class="ivu-table-cell">
+                                                                {{item.module}}
+                                                              </div>
+                                                          </td>
+                                                          <td class="">
+                                                            <div class="ivu-table-cell">
+                                                              {{item.service}}
+                                                            </div>
+                                                          </td>
+                                                          <td class="">
+                                                            <div class="">
+                                                              <div class="ivu-table-cell">
+                                                                {{item.action}}
+                                                              </div>
+                                                            </div>
+                                                          </td>
+                                                          <td class="">
+                                                            <div class="ivu-table-cell">
+                                                                <Input type="text" v-model="item.value" placeholder="Module" size="small" :style="process" class="schema-form-input" v-if="item.value == 0" v-on:blur="update(pIndex, false)"></Input>
+                                                                <Input type="text" v-model="item.value" placeholder="Module" size="small" :style="process" class="schema-form-input redInput" v-else  v-on:blur="update(pIndex, false)"></Input>
+                                                            </div>
+                                                          </td>
+                                                      </tr>
+                                                  </tbody>
+                                              </table>
+                                          </div>
+                                          <div class="ivu-table-tip" style="display: none;">
+                                              <table cellspacing="0" cellpadding="0" border="0">
+                                                  <tbody>
+                                                      <tr>
+                                                          <td><span>No filter data</span></td>
+                                                      </tr>
+                                                  </tbody>
+                                              </table>
+                                          </div>
+                                        </div>
                                       </div>
-                                  </th>
-                                  <th class="">
-                                      <div class="ivu-table-cell">
-                                          <span>Service</span>
-                                      </div>
-                                  </th>
-                                  <th class="">
-                                      <div class="ivu-table-cell">
-                                        <span>Operation</span>
-                                      </div>
-                                  </th>
-                                  <!-- <th class="">
-                                      <div class="ivu-table-cell">
-                                        <span>Route</span>
-                                      </div>
-                                  </th> -->
-                                  <th class="">
-                                      <div class="ivu-table-cell">
-                                        <span>Value</span>
-                                      </div>
-                                  </th>
-                              </tr>
-                          </thead>
-                          <tbody class="ivu-table-tbody">
-                              <tr class="ivu-table-row" v-for="(item, index) in plan.details">
-                                  <td class="">
-                                      <div class="ivu-table-cell">
-                                        {{item.module}}
-                                          <!-- <Input type="text" v-model="item.module" placeholder="Module" size="small" class="schema-form-input"></Input> -->
-                                      </div>
-                                  </td>
-                                  <td class="">
-                                    <div class="ivu-table-cell">
-                                      {{item.service}}
-                                        <!-- <Input type="text" v-model="item.service" placeholder="Module" size="small" class="schema-form-input"></Input> -->
-                                    </div>
-                                  </td>
-                                  <td class="">
-                                    <div class="">
-                                      <div class="ivu-table-cell">
-                                        {{item.action}}
-                                          <!-- <Input type="text" v-model="item.action" placeholder="Module" size="small" class="schema-form-input"></Input> -->
-                                      </div>
-                                    </div>
-                                  </td>
-                                  <!-- <td class="">
-                                    <div class="ivu-table-cell">
-                                      {{item.url}}
-                                         <Input type="text" v-model="item.url" placeholder="Module" size="small" class="schema-form-input"></Input>
-                                    </div>
-                                  </td> -->
-                                  <td class="">
-                                    <div class="ivu-table-cell">
-                                        <Input type="text" v-model="item.value" placeholder="Module" size="small" :style="process" class="schema-form-input" v-if="item.value == 0" @on-change="update(pIndex, false)"></Input>
-                                        <Input type="text" v-model="item.value" placeholder="Module" size="small" :style="process" class="schema-form-input redInput" v-else  @on-change="update(pIndex, false)"></Input>
-                                    </div>
-                                  </td>
-                              </tr>
-                          </tbody>
-                      </table>
-                  </div>
-                  <div class="ivu-table-tip" style="display: none;">
-                      <table cellspacing="0" cellpadding="0" border="0">
-                          <tbody>
-                              <tr>
-                                  <td><span>No filter data</span></td>
-                              </tr>
-                          </tbody>
-                      </table>
-                  </div>
+                                    </Card>
+                                  </Col>
+                                </Row>
+                              </div>
+                            </td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="ivu-table-tip" style="display: none;">
+                  <table cellspacing="0" cellpadding="0" border="0">
+                      <tbody>
+                          <tr>
+                              <td><span>No filter data</span></td>
+                          </tr>
+                      </tbody>
+                  </table>
               </div>
             </div>
-          </Card>
+          </div>
         </div>
-      </div>
-    </div>
-    <div v-else class="container main-option" align="center"><h5>Plans not available</h5></div>
-    <div class="container">
-      <hr>
-    </div>
-  <!-- </Card> -->
-</div>
-  </div>
+        <Row type="flex" justify="center">
+          <Col span="4" style="margin-top:5px;">
+            <Spin v-if="planLoding" size="large"></Spin>
+            <h5 v-else-if="!planLoding && plans.length == 0">Plans not available</h5>
+          </Col>
+        </Row>
+      </Card>
+    </Col>
+  </Row>
 </template>
 
 <script>
@@ -243,6 +256,7 @@ export default {
     return {
       services: [],
       plans: [],
+      planLoding: false,
       currentOpen: [],
       time_units: ['day/s', 'month/s', 'year/s'],
       data5: [],
@@ -263,11 +277,14 @@ export default {
     }
   },
   created()  {
+    this.planLoding = true
     let data5 = []
     let self = this
     subscriptionPlans.get().then(res => {
             self.plans = res.data.data
+            self.planLoding = false
         }).catch(err => {
+            self.planLoding = false
             self.$Notice.error({
                 duration: 5,
                 title: 'Trying to fetch subscription plans',
@@ -280,7 +297,6 @@ export default {
       return this.defaultPlan[idx]
     },
     validateValidity(validity,pIndex) {
-
       if(validity < this.defaultPlan.validity) {
         this.$Notice.error({
           duration: 5,
@@ -327,6 +343,7 @@ export default {
               data5.push({"module":data.module,"service":data.service,"action":action,"value":0})
             }
           }})
+          self.defaultPlan.details = data5
       }).catch(function (error) {
           self.$Notice.error({
             duration: 5,
@@ -338,6 +355,7 @@ export default {
     },
     async deletePlan (plan) {
       let self = this
+      this.loading = true
       if (this.plans[plan].id != undefined) {
         await subscriptionPlans.delete(this.plans[plan].id).then(res => {
           self.$Notice.success({
@@ -357,11 +375,9 @@ export default {
       this.confirmDelete = false
     },
     expand (plan) {
-      this.slideVisible = $("#plan_"+plan).is(":hidden")
       $('#plan_'+plan).slideToggle(function() {
         $(this).is(':hidden') ? 'hidden' : 'visible'
       })
-      // $('#plan_'+plan).slideToggle(700)
     },
     update (index, showMsg) {
       this.process.cursor = 'progress!important'
@@ -372,29 +388,45 @@ export default {
           subscriptionPlans.put(this.plans[index].id, dataObj).then(res => {
             if (showMsg) {
               self.$Notice.success({
-                title: 'Subscription Plan ' + self.plans[index].name + ' has been saved..!'
+              title: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been saved..!'
               })
             }
           }).catch(err => {
-            self.$Notice.error({
+            if( err.response.status == 403) {
+              self.$Notice.error({
+                duration: 5,
+                title: 'Permission not available for action',
+                desc: err.message
+              })
+            } else {
+              self.$Notice.error({
                 duration: 5,
                 title: 'Trying to update subscription plan',
-                desc: 'Please try again' + err
-            })
+                desc: 'Please try again ' + err
+              })
+            }
           })
         } else if(showMsg) {
           subscriptionPlans.post(dataObj).then(res => {
             if (showMsg) {
-              self.$Notice.success({
-                title: 'Subscription Plan ' + self.plans[index].name + ' has been created..!'
+                self.$Notice.success({
+                title: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been created..!'
               })
             }
           }).catch(err => {
-            self.$Notice.error({
+            if( err.response.status == 403) {
+              self.$Notice.error({
+                duration: 5,
+                title: 'Permission not available for action',
+                desc: err.message
+              })
+            } else {
+              self.$Notice.error({
                 duration: 5,
                 title: 'Trying to create subscription plan',
-                desc: 'Please try again' + err
-            })
+                desc: 'Please try again ' + err
+              })
+            }
           })
         }
       }
@@ -413,6 +445,7 @@ export default {
   font-size:16px;
   color:red;
 }
+
   .col-xs-3 {
     padding-right: 0px;
     padding-left: 0px;
@@ -432,6 +465,9 @@ export default {
   .outer-toggle {
     /*transition: 0.5s all linear;*/
     display: none;
+  }
+  .hidden-td {
+    height: 0px;
   }
 
   .route-header {
@@ -476,6 +512,10 @@ export default {
   input {
     border: none;
     margin: 2px;
+  }
+
+  input:focus {
+    outline: none !important;
   }
 
   input.description {
@@ -593,10 +633,6 @@ export default {
 .ivu-card-bordered {
     border: 4px solid #dddee1;
     border-color: #072C75;
-    margin-left: 20%;
-    margin-right: 20%;
-    margin-bottom: 1%;
-    width: 60%;
 }
 
 .redInput input {

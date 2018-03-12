@@ -5,6 +5,9 @@ export default {
     get: () => {
         return api.request('get', '/' + model)
     },
+    getThis: (id) => {
+        return api.request('get', '/' + model + '/' + id)
+    },
     post: (data) => {
         return api.request('post', '/' + model + '/', data)
     },
