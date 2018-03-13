@@ -128,7 +128,7 @@ export default {
           { required: true, message: 'Please select expiry year', trigger: 'blur' }
         ],
         cvCode: [
-          { required: true, message: 'Please enter CV code', trigger: 'blur' }
+          { required: true, message: 'Please enter CVV code', trigger: 'blur' }
         ]
       },
       sub_id: '',
