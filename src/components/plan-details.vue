@@ -86,7 +86,7 @@ export default {
         userSubscription.getOwn().then(async res => {
             await res.data.data.filter(function(o) { 
                 o.expiredOn = moment(o.expiredOn).format("DD-MMM-YYYY")
-                o.createdAt = moment(o.createdAt).startOf('day').fromNow();  
+                o.createdAt = moment(o.createdAt).fromNow()
             })
             self.planListData = _.sortBy(res.data.data, 'expiredOn')
             self.planList = await self.makeChunk(self.currentPage, self.pageSize)

@@ -388,7 +388,8 @@ export default {
           subscriptionPlans.put(this.plans[index].id, dataObj).then(res => {
             if (showMsg) {
               self.$Notice.success({
-              title: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been saved..!'
+              title: '<b>' + self.plans[index].name + '</b>',
+              desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been saved..!'
               })
             }
           }).catch(err => {
@@ -410,7 +411,8 @@ export default {
           subscriptionPlans.post(dataObj).then(res => {
             if (showMsg) {
                 self.$Notice.success({
-                title: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been created..!'
+                title: '<b>' + self.plans[index].name + '</b>',
+                desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been created..!'
               })
             }
           }).catch(err => {
