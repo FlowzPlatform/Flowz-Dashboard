@@ -28,13 +28,13 @@
                                 </MenuItem -->
                             <MenuItem name="1-2">
                                 <a @click="subscriptionList()">
-                                    <Icon type="ios-locked-settings" :size="16"></Icon>
+                                    <Icon type="ios-list-outline" :size="16"></Icon>
                                     Subscription List
                                 </a>
                             </MenuItem>
                             <MenuItem name="1-3">
                                 <a @click="planList()">
-                                    <Icon type="ios-locked-settings" :size="16"></Icon>
+                                   <Icon type="ios-keypad-outline" :size="16"></Icon>
                                     My Plan
                                 </a>
                             </MenuItem>
@@ -118,9 +118,15 @@
 <style scoped>
     .user.background--light {
         color: #be2828;
-      }
+    }
 
     .user.background--dark {
         color: rgb(32, 136, 63);
-      }
+    }
+    .ivu-menu-item-active {
+        background: transparent !important;
+    }
+    .ivu-menu-item-selected {
+        background: transparent !important;
+    }
 </style>

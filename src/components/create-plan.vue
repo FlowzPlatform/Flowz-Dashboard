@@ -3,8 +3,8 @@
     <Col span="18">
       <Card>
         <Row slot="title" type="flex" justify="end">
-          <Col span="2" style="margin-bottom:5px;">
-            <Button type="primary" @click="createPlan()" icon="android-add-circle" >Add</Button>
+          <Col span="3" style="margin-bottom:5px;">
+            <Button type="primary" @click="createPlan()" icon="android-add-circle" :loading="addPlanLoading">Add New Plan</Button>
           </Col>
         </Row>
         <div v-if="!planLoding && plans.length != 0">
@@ -21,7 +21,7 @@
                               </th>
                               <th class="ivu-table-column">
                                   <div class="ivu-table-cell">
-                                      <span>Validity</span>
+                                      <span>Validity <span style="color:gray;font-size:10px">(Month)</span></span>
                                   </div>
                               </th>
                               <th class="ivu-table-column">
@@ -35,32 +35,32 @@
                           </tr>
                       </thead>
                       <tbody class="ivu-table-tbody" v-for="(plan, pIndex) in plans" :id="'plans_'+pIndex">
-                          <tr class="ivu-table-row">
+                          <tr v-bind:class="plan.class">
                               <td class="">
                                 <div class="ivu-table-cell">
                                   <Tooltip content="Plan Name" placement="bottom">
-                                    <input v-model="plan.name" title="Plan Name" placeholder="*Plan Name" ></input>
+                                    <input class="form-control" v-model="plan.name" title="Plan Name" placeholder="*Plan Name" ></input>
                                   </Tooltip>
                                 </div>
                               </td>
                               <td class="">
                                 <div class="ivu-table-cell">
                                   <Tooltip content="Validity" placement="bottom">
-                                    <input type="number" class="description" v-model="plan.validity" v-on:blur="validateValidity(plan.validity,pIndex)" min=1 placeholder="*Validity"></input>
+                                    <input  type="text" class="description form-control" v-model="plan.validity" min=1 v-on:keyup="validateValidity(plan.validity, pIndex)" placeholder="*Validity"></input>
                                   </Tooltip>
                                 </div>
                               </td>
                               <td class="">
                                   <div class="ivu-table-cell">
                                     <Tooltip content="Price" placement="bottom">
-                                      <input type="number" class="description" v-model="plan.price"  v-on:blur="validatePrice(plan.price,pIndex)" placeholder="*Price"></input>
+                                      <input type="text" class="description form-control" v-model="plan.price" v-on:keyup="validatePrice(plan.price, pIndex)" placeholder="*Price"></input>
                                     </Tooltip>
                                   </div>
                               </td>
                               <td class="ivu-table-column-center">
                                   <Row type="flex" justify="center" align="middle">
                                     <Col span="3"> 
-                                      <a v-if="plan.validity >= getDefaultPlan('validity') && plan.price >= getDefaultPlan('price')" @click="update(pIndex, true)">
+                                      <a v-if="plan.validity >= getDefaultPlan('validity') && plan.price >= getDefaultPlan('price')" @click="update(pIndex)">
                                         <Tooltip content="Save" placement="top">
                                           <icon name="save" scale="1.05" color="#59b161"></icon>
                                         </Tooltip>
@@ -128,7 +128,7 @@
                                           <h5 style="height: 35px">Description</h5>
                                         </Col>
                                         <Col span="18">
-                                          <Input style="margin-bottom:5px" v-on:blur="update(pIndex, false)" v-model="plan.description" type="textarea" :autosize="{minRows: 1,maxRows: 25}" placeholder="Enter something..."></Input>
+                                          <Input style="margin-bottom:5px" v-model="plan.description" type="textarea" :autosize="{minRows: 1,maxRows: 25}" placeholder="Enter something..."></Input>
                                         </Col>
                                       </Row>
                                       <div class="schema-form ivu-table-wrapper">
@@ -180,8 +180,8 @@
                                                           </td>
                                                           <td class="">
                                                             <div class="ivu-table-cell">
-                                                                <Input type="text" v-model="item.value" placeholder="Module" size="small" :style="process" class="schema-form-input" v-if="item.value == 0" v-on:blur="update(pIndex, false)"></Input>
-                                                                <Input type="text" v-model="item.value" placeholder="Module" size="small" :style="process" class="schema-form-input redInput" v-else  v-on:blur="update(pIndex, false)"></Input>
+                                                                <Input type="text" v-model="item.value" placeholder="Module" size="small" :style="process" class="schema-form-input" v-if="item.value == 0"></Input>
+                                                                <Input type="text" v-model="item.value" placeholder="Module" size="small" :style="process" class="schema-form-input redInput" v-else></Input>
                                                             </div>
                                                           </td>
                                                       </tr>
@@ -257,6 +257,7 @@ export default {
       services: [],
       plans: [],
       planLoding: false,
+      addPlanLoading: false,
       currentOpen: [],
       time_units: ['day/s', 'month/s', 'year/s'],
       data5: [],
@@ -281,37 +282,44 @@ export default {
     let data5 = []
     let self = this
     subscriptionPlans.get().then(res => {
-            self.plans = res.data.data
-            self.planLoding = false
-        }).catch(err => {
-            self.planLoding = false
-            self.$Notice.error({
-                duration: 5,
-                title: 'Trying to fetch subscription plans',
-                desc: 'Please refresh page ' + err
-            });
-        })
+      self.plans = res.data.data
+      self.planLoding = false
+    }).catch(err => {
+        self.planLoding = false
+        self.$Notice.error({
+            duration: 5,
+            title: 'Trying to fetch subscription plans',
+            desc: 'Please refresh page ' + err
+        });
+    })
   },
   methods: {
     getDefaultPlan(idx) {
       return this.defaultPlan[idx]
     },
-    validateValidity(validity,pIndex) {
-      if(validity < this.defaultPlan.validity) {
-        this.$Notice.error({
-          duration: 5,
-          title: 'Validity Validation Error',
-          desc: 'Validity should be greater than '+ this.defaultPlan.validity +' ' + this.defaultPlan.time_unit
-        })
+    validateValidity(validity, pIndex) {
+      var num = validity.match(/^[0-9]+$/);
+      if (num === null) {
+        this.plans[pIndex].validity = ''
+        /* if(validity < this.defaultPlan.validity) {
+          this.$Notice.error({
+            duration: 5,
+            title: 'Validity Validation Error',
+            desc: 'Validity should be greater than '+ this.defaultPlan.validity + ' ' + this.defaultPlan.time_unit
+          })
+        } */
       }
     },
     validatePrice(price,pIndex){
-      if(price < this.defaultPlan.price) {
-        this.$Notice.error({
-          duration: 5,
-          title: 'Price Validation Error',
-          desc: 'Price should be greater than ' + this.defaultPlan.price + '$'
-        })
+      if (isNaN(price)) {
+        this.plans[pIndex].price = ''
+        /* if(price < this.defaultPlan.price) {
+          this.$Notice.error({
+            duration: 5,
+            title: 'Price Validation Error',
+            desc: 'Price should be greater than ' + this.defaultPlan.price + '$'
+          })
+        } */
       }
     },
     checkOpen (index) {
@@ -330,13 +338,16 @@ export default {
       }
       return false
     },
-    createPlan () {
+    async createPlan () {
       let self = this
+      self.addPlanLoading = true
       let data5 = []
       let keys = []
       let modules = ['crm','uploader','webbuilder','subscription']
-      registerResource.get().then(res => {
-        // console.log("res.....",res.data.data,res.data.data[0])
+      self.plans.filter( function (o) {
+        o.class = 'ivu-table-row'
+      })
+      await registerResource.get().then(res => {
         _.forEach(res.data.data, function(data, key) {
           if(modules.includes(data.module)) {
             for(let action in data.actions[0]) {
@@ -351,26 +362,47 @@ export default {
             desc: 'Please try again ' + err
           })
       })
-      self.plans.push(self.defaultPlan)
+      subscriptionPlans.post(self.defaultPlan).then(res => {
+        self.$Notice.success({
+          title: '<b>New Plan</b>',
+          desc: '<b>New Subscription Plan</b> has been created..!'
+        })
+        res.data.class = 'ivu-table-row-highlight'
+        self.plans.splice(0, 0, res.data);
+        // self.plans.push(res.data)
+        self.addPlanLoading = false
+      }).catch(err => {
+        if( err.response.status == 403) {
+          self.$Notice.error({
+            duration: 5,
+            title: 'Permission not available for action',
+            desc: err.message
+          })
+        } else {
+          self.$Notice.error({
+            duration: 5,
+            title: 'Trying to create subscription plan',
+            desc: 'Please try again ' + err
+          })
+        }
+      })
     },
     async deletePlan (plan) {
       let self = this
       this.loading = true
-      if (this.plans[plan].id != undefined) {
-        await subscriptionPlans.delete(this.plans[plan].id).then(res => {
-          self.$Notice.success({
-            title: 'Subscription Plan ' + this.plans[plan].name + ' has been deleted..!'
-          })
-        }).catch(err => {
-          self.$Notice.error({
-            duration: 5,
-            title: 'Trying to delete subscription plan',
-            desc: 'Please try again' + err
-          })
+      await subscriptionPlans.delete(this.plans[plan].id).then(res => {
+        self.$Notice.success({
+          title: '<b>' + self.plans[plan].name + '</b> deleted.',
+          desc: 'Subscription Plan <b>' + self.plans[plan].name + '</b> has been deleted..!'
         })
-      } else {
-        await this.plans.splice(plan, 1)
-      }
+        self.plans.splice(plan, 1)
+      }).catch(err => {
+        self.$Notice.error({
+          duration: 5,
+          title: 'Can not delete <b>' + self.plans[plan].name + '</b>',
+          desc: 'Please try again' + err
+        })
+      })
       this.loading = false
       this.confirmDelete = false
     },
@@ -379,19 +411,18 @@ export default {
         $(this).is(':hidden') ? 'hidden' : 'visible'
       })
     },
-    update (index, showMsg) {
+    update (index) {
       this.process.cursor = 'progress!important'
       let self = this
       let dataObj = this.plans[index]
-      if(dataObj.validity >= self.defaultPlan.validity && dataObj.price >= self.defaultPlan.price) {
+      if(dataObj.validity >= self.defaultPlan.validity && dataObj.price >= self.defaultPlan.price && dataObj.name != '') {
         if (this.plans[index].id != undefined) {
+          delete dataObj.class          
           subscriptionPlans.put(this.plans[index].id, dataObj).then(res => {
-            if (showMsg) {
-              self.$Notice.success({
-              title: '<b>' + self.plans[index].name + '</b>',
+            self.$Notice.success({
+              title: '<b>' + self.plans[index].name + '</b> saved.',
               desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been saved..!'
-              })
-            }
+            })
           }).catch(err => {
             if( err.response.status == 403) {
               self.$Notice.error({
@@ -407,28 +438,25 @@ export default {
               })
             }
           })
-        } else if(showMsg) {
-          subscriptionPlans.post(dataObj).then(res => {
-            if (showMsg) {
-                self.$Notice.success({
-                title: '<b>' + self.plans[index].name + '</b>',
-                desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been created..!'
-              })
-            }
-          }).catch(err => {
-            if( err.response.status == 403) {
-              self.$Notice.error({
-                duration: 5,
-                title: 'Permission not available for action',
-                desc: err.message
-              })
-            } else {
-              self.$Notice.error({
-                duration: 5,
-                title: 'Trying to create subscription plan',
-                desc: 'Please try again ' + err
-              })
-            }
+        }
+      } else {
+        if (dataObj.name == '') {
+          this.$Notice.error({
+            duration: 5,
+            title: 'Plan Name is NULL.',
+            desc: '<b>Plan Name</b> should not be null..!'
+          })
+        } else if(dataObj.validity < this.defaultPlan.validity) {
+          this.$Notice.error({
+            duration: 5,
+            title: 'Validity Validation Error',
+            desc: 'Validity should be greater than '+ this.defaultPlan.validity + ' ' + this.defaultPlan.time_unit
+          })
+        } else if (dataObj.price < this.defaultPlan.price) {
+          this.$Notice.error({
+            duration: 5,
+            title: 'Price Validation Error',
+            desc: 'Price should be greater than ' + this.defaultPlan.price + '$'
           })
         }
       }
@@ -446,6 +474,11 @@ export default {
 #priceErr{
   font-size:16px;
   color:red;
+}
+#header-fixed {
+    position: fixed;
+    top: 0px; display:none;
+    background-color:white;
 }
 
   .col-xs-3 {
@@ -511,19 +544,19 @@ export default {
     cursor: pointer;
   }
 
-  input {
+  /* input {
     border: none;
     margin: 2px;
-  }
+  } */
 
   input:focus {
     outline: none !important;
   }
 
-  input.description {
+  /* input.description {
     width: 100%;
     margin-top: -2px;
-  }
+  } */
 
   textarea.description {
     width: 100%;

@@ -3,7 +3,7 @@ let model = 'subscription-plans'
 
 export default {
     get: () => {
-        return api.request('get', '/' + model)
+        return api.request('get', '/' + model + '?$sort[name]=1')
     },
     getThis: (id) => {
         return api.request('get', '/' + model + '/' + id)
