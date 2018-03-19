@@ -44,7 +44,7 @@
                 <Row align="bottom" type="flex">
                   <Col span="10" pull="4">
                     <Row type="flex" justify="space-around">
-                      <Col span="10">
+                      <Col span="11">
                         <FormItem prop="expiryMM">
                           <Select tabindex="2" v-model="payDetail.expiryMM"  placeholder="MM">
                             <Option v-for="item in expiryMonth" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -102,6 +102,25 @@ import subscriptionPlans from '@/api/subscription-plans'
 export default {
   name: 'checkout',
   data () {
+    const validateCardNumber = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('Please enter CARD NUMBER'))
+      } else if (isNaN(value)) {
+        callback(new Error('CARD NUMBER can only contain numbers.'))
+      } else {
+        callback();
+      }
+    };
+    const validateCvvNumber = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('Please enter CVV CODE'))
+      } else if (isNaN(value)) {
+        callback(new Error('CVV CODE can only contain numbers.'))
+      } else {
+        callback();
+      }
+    };
+
     return {
       mainData: [],
 			payloading: false,
@@ -119,16 +138,16 @@ export default {
       },
       payDetailRule: {
         cardNumber : [
-          { required: true, message: 'Please fill card number', trigger: 'blur' }
+          { required: true, validator: validateCardNumber, trigger: 'blur' }
         ],
         expiryMM: [
-          { required: true, message: 'Please select expiry month', trigger: 'blur' }
+          { required: true, message: 'Please select EXPIRY MONTH', trigger: 'blur' }
         ],
         expiryYY: [
-          { required: true, message: 'Please select expiry year', trigger: 'blur' }
+          { required: true, message: 'Please select EXPIRY YEAR', trigger: 'blur' }
         ],
         cvCode: [
-          { required: true, message: 'Please enter CVV code', trigger: 'blur' }
+          { required: true, validator: validateCvvNumber, message: '', trigger: 'blur' }
         ]
       },
       sub_id: '',
@@ -236,7 +255,7 @@ export default {
     payFunction (name) {
     let self = this
     this.$refs[name].validate((valid) => {
-      if (valid) {
+      if (valid) {  
 				self.payloading = true
         // this.paying = true
         this.payDone = true
