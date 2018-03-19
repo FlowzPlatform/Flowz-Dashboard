@@ -1,5 +1,5 @@
 <template>
-	<Row style="margin-top:20px">
+	<Row style="margin-top:20px" type="flex" justify="center">
     <Col span="16" push="6">
       <section class="third lift plan-tier lift.active" v-for="(item, index) in mainData">
         <h4>{{item.name.toUpperCase()}}</h4>
@@ -18,10 +18,7 @@
       </section>
     </Col>
     <Col span="8" pull="6">
-      <div v-if="payDone" :class="payInfo.class">
-        <strong>{{payInfo.msgType}}</strong> {{payInfo.msg}}.
-      </div>
-      <div class="panel panel-custom" style="">
+      <div class="panel panel-custom">
           <div class="panel-heading">
               <h3 class="text-center">Payment Details</h3></div>
           <div class="panel-body" style="text-allign:left">
@@ -39,7 +36,7 @@
                 <Row>
                   <Col>
                     <FormItem prop="cardNumber" label="CARD NUMBER">
-                      <Input v-model="payDetail.cardNumber" type="text" id="cardNumber" placeholder="Valid Card Number" icon="card"></Input>
+                      <Input tabindex="1" v-model="payDetail.cardNumber" type="text" id="cardNumber" placeholder="Valid Card Number" icon="card"></Input>
                     </FormItem>
                   </Col>
                 </Row>
@@ -49,14 +46,14 @@
                     <Row type="flex" justify="space-around">
                       <Col span="10">
                         <FormItem prop="expiryMM">
-                          <Select v-model="payDetail.expiryMM"  placeholder="MM">
+                          <Select tabindex="2" v-model="payDetail.expiryMM"  placeholder="MM">
                             <Option v-for="item in expiryMonth" :value="item.value" :key="item.value">{{ item.label }}</Option>
                           </Select>
                         </FormItem>
                       </Col>
                       <Col span="12">
                         <FormItem prop="expiryYY">
-                          <Select v-model="payDetail.expiryYY"  placeholder="YYYY">
+                          <Select tabindex="3" v-model="payDetail.expiryYY"  placeholder="YYYY">
                             <Option v-for="item in expiryYear" :value="item.value" :key="item.value">{{ item.label }}</Option>
                           </Select>
                         </FormItem>
@@ -66,7 +63,7 @@
                   </Col>
                   <Col span="6" offset="8">
                     <FormItem prop="cvCode" label="CVV CODE">
-                      <Input v-model="payDetail.cvCode" type="password" placeholder="CVV Code" >
+                      <Input tabindex="4" v-model="payDetail.cvCode" type="password" placeholder="CVV Code" >
                         <Poptip slot="append" trigger="hover" title="CVV info" placement="right" content="CVV code is a 3 digit number on the back side of your card.">
                           <Icon type="help-circled"></Icon>
                         </Poptip>
@@ -86,6 +83,9 @@
                 </Col>
             </Row>
           </div>
+      </div>
+      <div v-if="payDone" :class="payInfo.class">
+        <strong>{{payInfo.msgType}}</strong> {{payInfo.msg}}.
       </div>
       <div v-if="paying" :class="payInfo.class">
         <strong>{{payInfo.msgType}}</strong> {{payInfo.msg}}.
@@ -254,13 +254,13 @@ export default {
           // this.payDone = true
           if (res.data.hasOwnProperty('error')) {
             this.payInfo.class = 'alert alert-danger'
-            this.payInfo.msgType = 'Error!'
+            this.payInfo.msgType = 'Error..!'
             this.payInfo.msg = res.data.error
 						self.payloading = false
           } else {
 
             this.payInfo.class = 'alert alert-success'
-            this.payInfo.msgType = 'Success!'
+            this.payInfo.msgType = 'Success..!'
             this.payInfo.msg = 'Payment successfully Done.'
             Cookies.set('welcomeMsg', 'Thank You for Subscribing...!')
             this.$router.push('/plan-details/')
@@ -271,10 +271,10 @@ export default {
           self.$Notice.error({
             duration: 5,
             title: 'Payment fail..!',
-            desc: 'Please try again after sometime.'
+            desc: err + ' please try again after sometime.'
           })
           self.payInfo.class = 'alert alert-danger'
-          self.payInfo.msgType = 'Error!'
+          self.payInfo.msgType = 'Error..!'
           self.payInfo.msg = err.message
           self.paying = false
 					self.payloading = false
