@@ -61,7 +61,7 @@
                       <!--<DatePicker format="yy-MM"  @on-change="getMMYYYY" type="month" :options="validMonth" placeholder="Select Month and Year" style="width: 200px"></DatePicker>-->
                     </Row>
                   </Col>
-                  <Col span="6" offset="8">
+                  <Col span="8" offset="6">
                     <FormItem prop="cvCode" label="CVV CODE">
                       <Input tabindex="4" v-model="payDetail.cvCode" type="password" placeholder="CVV Code" >
                         <Poptip slot="append" trigger="hover" title="CVV info" placement="right" content="CVV code is a 3 digit number on the back side of your card.">
@@ -106,7 +106,7 @@ export default {
       if (!value) {
         callback(new Error('Please enter CARD NUMBER'))
       } else if (isNaN(value)) {
-        callback(new Error('CARD NUMBER can only contain numbers.'))
+        callback(new Error('Please enter valid CARD NUMBER.'))
       } else {
         callback();
       }
@@ -115,7 +115,7 @@ export default {
       if (!value) {
         callback(new Error('Please enter CVV CODE'))
       } else if (isNaN(value)) {
-        callback(new Error('CVV CODE can only contain numbers.'))
+        callback(new Error('Please enter valid CVV CODE.'))
       } else {
         callback();
       }
@@ -282,7 +282,9 @@ export default {
             this.payInfo.msgType = 'Success..!'
             this.payInfo.msg = 'Payment successfully Done.'
             Cookies.set('welcomeMsg', 'Thank You for Subscribing...!')
-            this.$router.push('/plan-details/')
+            this.$router.push({
+              name: 'planDetails'
+            })
 					}
           // self.paying = false
         })
