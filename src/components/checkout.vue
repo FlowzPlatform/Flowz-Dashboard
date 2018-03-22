@@ -1,5 +1,5 @@
 <template>
-	<Row style="margin-top:20px" type="flex" justify="center">
+	<Row class="setMiddle" type="flex" justify="center" align="middle">
     <Col span="16" push="6">
       <section class="third lift plan-tier lift.active" v-for="(item, index) in mainData">
         <h4>{{item.name.toUpperCase()}}</h4>
@@ -61,7 +61,7 @@
                       <!--<DatePicker format="yy-MM"  @on-change="getMMYYYY" type="month" :options="validMonth" placeholder="Select Month and Year" style="width: 200px"></DatePicker>-->
                     </Row>
                   </Col>
-                  <Col span="6" offset="8">
+                  <Col span="8" offset="6">
                     <FormItem prop="cvCode" label="CVV CODE">
                       <Input tabindex="4" v-model="payDetail.cvCode" type="password" placeholder="CVV Code" >
                         <Poptip slot="append" trigger="hover" title="CVV info" placement="right" content="CVV code is a 3 digit number on the back side of your card.">
@@ -76,10 +76,10 @@
           <div class="panel-footer">
             <Row type="flex" justify="space-around">
                 <Col span="11">
-                    <Button class="pull-right" type="primary" @click="backFunction()">Back</Button>
+                    <Button class="pull-right" type="success" :loading="payloading" @click="payFunction('payDetail')">PAY</Button>
                 </Col>
                 <Col span="11">
-                    <Button type="success" :loading="payloading" @click="payFunction('payDetail')">PAY</Button>
+                    <Button type="primary" @click="backFunction()">Back</Button>
                 </Col>
             </Row>
           </div>
@@ -104,18 +104,18 @@ export default {
   data () {
     const validateCardNumber = (rule, value, callback) => {
       if (!value) {
-        callback(new Error('Please enter CARD NUMBER'))
+        callback(new Error('Please Enter Card Number.'))
       } else if (isNaN(value)) {
-        callback(new Error('CARD NUMBER can only contain numbers.'))
+        callback(new Error('Please Enter Valid Card Number.'))
       } else {
         callback();
       }
     };
     const validateCvvNumber = (rule, value, callback) => {
       if (!value) {
-        callback(new Error('Please enter CVV CODE'))
+        callback(new Error('Please Enter CVV Code.'))
       } else if (isNaN(value)) {
-        callback(new Error('CVV CODE can only contain numbers.'))
+        callback(new Error('Please Enter Valid CVV Code.'))
       } else {
         callback();
       }
@@ -141,10 +141,10 @@ export default {
           { required: true, validator: validateCardNumber, trigger: 'blur' }
         ],
         expiryMM: [
-          { required: true, message: 'Please select EXPIRY MONTH', trigger: 'blur' }
+          { required: true, message: 'Please Select Expiry Month.', trigger: 'blur' }
         ],
         expiryYY: [
-          { required: true, message: 'Please select EXPIRY YEAR', trigger: 'blur' }
+          { required: true, message: 'Please Select Expiry Year.', trigger: 'blur' }
         ],
         cvCode: [
           { required: true, validator: validateCvvNumber, message: '', trigger: 'blur' }
@@ -260,8 +260,8 @@ export default {
         // this.paying = true
         this.payDone = true
         this.payInfo.class = 'alert alert-warning'
-        this.payInfo.msgType = 'Processing payment..!'
-        this.payInfo.msg = 'Please do not refresh page or do not go back.'
+        this.payInfo.msgType = 'Processing Payment..!'
+        this.payInfo.msg = 'Please Do Not Refresh Page Or Do Not Go Back.'
         // let auth_token = this.$cookie.get('auth_token')2128
         var sObj = {
           sub_id: this.sub_id,
@@ -280,9 +280,11 @@ export default {
 
             this.payInfo.class = 'alert alert-success'
             this.payInfo.msgType = 'Success..!'
-            this.payInfo.msg = 'Payment successfully Done.'
-            Cookies.set('welcomeMsg', 'Thank You for Subscribing...!')
-            this.$router.push('/plan-details/')
+            this.payInfo.msg = 'Payment Successfully Done.'
+            Cookies.set('welcomeMsg', 'Thank You For Subscribing...!')
+            this.$router.push({
+              name: 'planDetails'
+            })
 					}
           // self.paying = false
         })
@@ -290,7 +292,7 @@ export default {
           self.$Notice.error({
             duration: 5,
             title: 'Payment fail..!',
-            desc: err + ' please try again after sometime.'
+            desc: err + ' Please Try Again After Sometime.'
           })
           self.payInfo.class = 'alert alert-danger'
           self.payInfo.msgType = 'Error..!'
@@ -339,6 +341,17 @@ export default {
 }
 </script>
 <style scoped>
+.setMiddle{
+    width: 100%;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    margin: auto;
+    position: absolute;
+    -ms-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+}
   .panel-custom {
     border-color: #000044;
   }
@@ -435,8 +448,6 @@ strong {
 
 .lift.active,
 .lift:hover {
-  top: 0px;
-  overflow: initial;
 }
 
 
