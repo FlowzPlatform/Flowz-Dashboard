@@ -10,7 +10,7 @@ export default {
   authenticate ({ commit }, authToken) {
     return axios({
       method: 'get',
-      url: config.microURI + '/userdetails',
+      url: config.userDetailsAPI + 'userdetails',
       headers: {
         'authorization': authToken
       }
