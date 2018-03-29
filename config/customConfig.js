@@ -1,6 +1,6 @@
 
-//let frontEndUrl = 'https://localhost:8082';
-let frontEndUrl = 'https://dashboard.'+process.env.domainkey+'/';
+//let frontEndUrl = 'http://localhost:8083';
+let frontEndUrl = 'https://dashboard.'+process.env.domainkey;
 
 export default{
     // loginUrl : "http://ec2-54-88-11-110.compute-1.amazonaws.com/api/login",
@@ -23,8 +23,8 @@ export default{
 
 
         loginWithFacebookUrl : 'https://auth.'+process.env.domainkey+'/auth/facebook',
-        loginWithGoogleUrl : 'https://auth.'+process.env.domainkey+'/auth/Gplus',
-    loginWithTwitterUrl : 'https://auth.'+process.env.domainkey+'/auth/twitter',
+        loginWithGoogleUrl : 'https://auth.'+process.env.domainkey+'/auth/google',
+        loginWithTwitterUrl : 'https://auth.'+process.env.domainkey+'/auth/twitter',
         loginWithGithubUrl : 'https://auth.'+process.env.domainkey+'/auth/github',
         loginWithLinkedInUrl : 'https://auth.'+process.env.domainkey+'/auth/linkedin',
 

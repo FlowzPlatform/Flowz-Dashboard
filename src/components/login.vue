@@ -16,32 +16,37 @@
             </div>
          </div>
          <div class="lrconpt">
-            <form id="form-facebook" name="form-facebook" :action="loginWithFacebookUrl" method="post">
+            <form id="form-facebook" name="form-facebook" :action="loginWithFacebookUrl" method="get">
                <input type="hidden" name="success_url" :value="facebookSuccessCallbackUrl">
+               <input type="hidden" name="failure_url" :value="facebookSuccessCallbackUrl">
             </form>
-            <form id="form-google" name="form-google" :action = "loginWithGoogleUrl" method="post">
+            <form id="form-google" name="form-google" :action = "loginWithGoogleUrl" method="get">
                <input type="hidden" name="success_url" :value="googleSuccessCallbackUrl">
+               <input type="hidden" name="failure_url" :value="googleSuccessCallbackUrl">
             </form>
-            <form id="form-twitter" name="form-twitter" :action="loginWithTwitterUrl" method="post">
+            <form id="form-twitter" name="form-twitter" :action="loginWithTwitterUrl" method="get">
                <input type="hidden" name="success_url" :value="twitterSuccessCallbackUrl">
+               <input type="hidden" name="failure_url" :value="twitterSuccessCallbackUrl">
             </form>
-            <!-- <form id="form-linkedin" name="form-linkedin" :action="loginWithLinkedinUrl" method="post">
+            <form id="form-linkedin" name="form-linkedin" :action="loginWithLinkedInUrl" method="get">
                <input type="hidden" name="success_url" :value="linkedInSuccessCallbackUrl">
-            </form> -->
-            <form id="form-github" name="form-github" :action="loginWithGithubUrl" method="post">
+               <input type="hidden" name="failure_url" :value="linkedInSuccessCallbackUrl">
+            </form>
+            <form id="form-github" name="form-github" :action="loginWithGithubUrl" method="get">
                <input type="hidden" name="success_url" :value="githubSuccessCallbackUrl">
+               <input type="hidden" name="failure_url" :value="githubSuccessCallbackUrl">
             </form>
 
             <div class="lconpt">
                <div class="lconun">
                   <span class="lthlob">
-                      <Tooltip content="Login with facebook">
+                      <!-- <Tooltip content="Login with facebook">
                      <span  @click="submitFb()" class="fb">
                         <icon name="facebook"></icon>
                      </span>
 
                      </Tooltip>
-                     - 
+                     -  -->
                      <Tooltip content="Login with google">
                      <span class="google" @click="submitGoogle()">
                         <icon name="google"></icon>
@@ -54,10 +59,12 @@
                       </span>
                       </Tooltip>
                       -
-                      <!-- <span class="linkedin" @click="submitLinkedin()">
+                      <Tooltip content="Login with linkdin">
+                      <span class="linkedin" @click="submitLinkedin()">
                         <icon name="linkedin"></icon>
-                      </span> -->
-
+                      </span> 
+                        </Tooltip>
+                        -
                       <Tooltip content="Login with github">
 
                       <span class="github" @click="submitGithub()">
@@ -129,12 +136,12 @@
                      <span class="lthlob">
 
                         
-                        <Tooltip content="Login with facebook">
+                        <!-- <Tooltip content="Login with facebook">
                         <span  @click="submitFb()" class="fb">
                            <icon name="facebook"></icon>
                         </span>
                         </Tooltip>
-                        - 
+                        -  -->
                         <Tooltip content="Login with google">
 
                          <span  @click="submitGoogle()" class="google">
@@ -147,10 +154,12 @@
                         <icon name="twitter"></icon>
                       </span>
                       </Tooltip>
-                      <!-- -
+                      -
+                       <Tooltip content="Login with linkdin">
                       <span class="linkedin" @click="submitLinkedin()">
                         <icon name="linkedin"></icon>
-                      </span> -->
+                      </span>
+                       </Tooltip>
                       -
                       <Tooltip content="Login with github">
                       <span class="github" @click="submitGithub()">
@@ -278,12 +287,12 @@ export default {
         googleSuccessCallbackUrl : config.googleSuccessCallbackUrl,
         twitterSuccessCallbackUrl: config.twitterSuccessCallbackUrl,
         githubSuccessCallbackUrl: config.githubSuccessCallbackUrl,
-       // linkedInSuccessCallbackUrl: config.linkedInSuccessCallbackUrl,
+        linkedInSuccessCallbackUrl: config.linkedInSuccessCallbackUrl,
         loginWithFacebookUrl : config.loginWithFacebookUrl,
         loginWithGoogleUrl : config.loginWithGoogleUrl,
         loginWithTwitterUrl: config.loginWithTwitterUrl,
         loginWithGithubUrl: config.loginWithGithubUrl,
-       // loginWithLinkedInUrl: config.loginWithLinkedInUrl,
+        loginWithLinkedInUrl: config.loginWithLinkedInUrl,
       isSocialLogin : false,
       register:{
           fname:"",
