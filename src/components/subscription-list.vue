@@ -45,31 +45,45 @@ import subscriptionPlans from '@/api/subscription-plans'
 
         let self = this
         subscriptionPlans.get().then(res => {
-            self.mainData = res.data.data
-           self.mainData = _.filter(self.mainData, function(o) {
-                    return o.status === true
-                })
-            self.mainData.sort(function(a, b){
-                return a.price-b.price
-            })
-            for(let i = 0; i < self.mainData.length; i++) {
-                self.mainData[i].description = self.mainData[i].description.split('\n')
-                self.mainData[i].details = _.chain(self.mainData[i].details).filter(function(o) {
-                    o.value = parseInt(o.value)
-                    return o.value > 0
-                }).map(function(d) {
-                    let str = d.module.charAt(0).toUpperCase() + d.module.slice(1)
-                    let str2 = d.service.charAt(0).toUpperCase() + d.service.slice(1)
-                    return {'key':'<i class="ivu-icon ivu-icon-android-checkmark-circle"></i> <b>'+str+'</b> '+str2, 'value': d.value}
-                }).value()
-                // console.log(self.mainData[i])
-            }
+          self.mainData = res.data.data
+          self.mainData = _.filter(self.mainData, function(o) {
+            return o.status === true
+          })
+          self.mainData.sort(function(a, b){
+              return a.price-b.price
+          })
+          for(let i = 0; i < self.mainData.length; i++) {
+            self.mainData[i].description = self.mainData[i].description.split('\n')
+            self.mainData[i].details = _.chain(self.mainData[i].details).filter(function(o) {
+                o.value = parseInt(o.value)
+                return o.value > 0
+            }).map(function(d) {
+                let str = d.module.charAt(0).toUpperCase() + d.module.slice(1)
+                let str2 = d.service.charAt(0).toUpperCase() + d.service.slice(1)
+                return {'key':'<i class="ivu-icon ivu-icon-android-checkmark-circle"></i> <b>'+str+'</b> '+str2, 'value': d.value}
+            }).value()
+            // console.log(self.mainData[i])
+          }
         }).catch(err => {
+          if(err.response != undefined) {
+            self.$Notice.error({
+                duration: 5,
+                title: 'Fetching subscription plans',
+                desc: err.response.data.message
+            });
+          } else if(err.message == 'Network Error'){
+            self.$Notice.error({
+                duration: 5,
+                title: 'Fetching subscription plans',
+                desc: 'API service unavailable.'
+            });
+          } else {
             self.$Notice.error({
                 duration: 5,
                 title: 'Fetching subscription plans',
                 desc: err
             });
+          }
         })
       },
       checkoutFunction (sub_id) {

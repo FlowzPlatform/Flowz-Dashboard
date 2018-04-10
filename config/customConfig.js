@@ -12,22 +12,17 @@ export default{
     feathersServiceBaseUrl :  "https://api."+process.env.domainkey+"/serverapi/",
     signupUrl : "https://api."+process.env.domainkey+"/auth/api/setup",
 
-
     facebookSuccessCallbackUrl: frontEndUrl,
     googleSuccessCallbackUrl: frontEndUrl,
     twitterSuccessCallbackUrl: frontEndUrl,
     githubSuccessCallbackUrl: frontEndUrl,
     linkedInSuccessCallbackUrl: frontEndUrl,
 
-
-
-
-        loginWithFacebookUrl : 'https://auth.'+process.env.domainkey+'/auth/facebook',
-        loginWithGoogleUrl : 'https://auth.'+process.env.domainkey+'/auth/google',
-        loginWithTwitterUrl : 'https://auth.'+process.env.domainkey+'/auth/twitter',
-        loginWithGithubUrl : 'https://auth.'+process.env.domainkey+'/auth/github',
-        loginWithLinkedInUrl : 'https://auth.'+process.env.domainkey+'/auth/linkedin',
-
+    loginWithFacebookUrl : 'https://auth.'+process.env.domainkey+'/auth/facebook',
+    loginWithGoogleUrl : 'https://auth.'+process.env.domainkey+'/auth/google',
+    loginWithTwitterUrl : 'https://auth.'+process.env.domainkey+'/auth/twitter',
+    loginWithGithubUrl : 'https://auth.'+process.env.domainkey+'/auth/github',
+    loginWithLinkedInUrl : 'https://auth.'+process.env.domainkey+'/auth/linkedin',
 
     userDetail:             "https://api."+process.env.domainkey+"/auth/api/userdetails",
     varifyEmailUrl :         "https://api."+process.env.domainkey+"/auth/api/verifyemail",

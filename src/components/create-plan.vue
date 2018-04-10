@@ -39,7 +39,7 @@
                               <td class="">
                                 <div class="ivu-table-cell">
                                   <Tooltip content="Plan Name" placement="bottom">
-                                    <input class="form-control" v-model="plan.name" title="Plan Name" placeholder="*Plan Name" ></input>
+                                    <input class="form-control" v-model="plan.name" placeholder="*Plan Name" ></input>
                                   </Tooltip>
                                 </div>
                               </td>
@@ -285,12 +285,20 @@ export default {
       self.plans = res.data.data
       self.planLoding = false
     }).catch(err => {
-        self.planLoding = false
+      if(err.message == 'Network Error'){
         self.$Notice.error({
+          duration: 5,
+              title: 'Loading created plans',
+              desc: 'API service unavailable.'
+          });
+        } else {
+          self.$Notice.error({
             duration: 5,
-            title: 'Trying to fetch subscription plans',
-            desc: 'Please refresh page ' + err
-        });
+              title: 'Loading created plans',
+              desc: err.response.data.message
+          });
+        }
+      self.planLoding = false
     })
   },
   methods: {
