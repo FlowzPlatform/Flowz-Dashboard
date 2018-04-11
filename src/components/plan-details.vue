@@ -94,6 +94,21 @@ export default {
             // if(self.planList.length > 0) {
             self.loading = false
             // }
+        }).catch(err => {
+            if(err.message == 'Network Error'){
+                self.$Notice.error({
+                    duration: 5,
+                    title: 'Getting your plans',
+                    desc: 'API service unavailable.'
+                });
+            } else {
+                self.$Notice.error({
+                    duration: 5,
+                    title: 'Getting your plans',
+                    desc: err.response.data.message
+                });
+            }
+            self.loading = false
         })
         /* getUserDetails.get().then(res => {
             packages = res.data.data.package
