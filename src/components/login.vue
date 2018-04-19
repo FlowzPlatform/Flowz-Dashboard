@@ -58,12 +58,12 @@
                         <icon name="twitter"></icon>
                       </span>
                       </Tooltip>
-                      -
+                      <!-- -
                       <Tooltip content="Login with linkdin">
                       <span class="linkedin" @click="submitLinkedin()">
                         <icon name="linkedin"></icon>
                       </span> 
-                        </Tooltip>
+                        </Tooltip> -->
                         -
                       <Tooltip content="Login with github">
 
@@ -154,12 +154,12 @@
                         <icon name="twitter"></icon>
                       </span>
                       </Tooltip>
-                      -
+                      <!-- -
                        <Tooltip content="Login with linkdin">
                       <span class="linkedin" @click="submitLinkedin()">
                         <icon name="linkedin"></icon>
                       </span>
-                       </Tooltip>
+                       </Tooltip> -->
                       -
                       <Tooltip content="Login with github">
                       <span class="github" @click="submitGithub()">
@@ -520,7 +520,7 @@ export default {
            }else if(self.signup.password == ""){
                self.$message.warning("password is required");
            }else{
-               self.saveFileLoading = true;
+               self.saveFileLoadingLogin = true;
                axios.post(config.signupUrl, {
                 email: self.signup.email.trim(),
                 password: self.signup.password.trim(),
@@ -529,6 +529,7 @@ export default {
             })
             .then(function (response) {
                 console.log(response);
+                self.saveFileLoadingLogin = false;
                 if(response.data.code == 200){
                     self.saveFileLoading = false;
                     //alert(response.data.message+", please check your email for password")
@@ -544,7 +545,7 @@ export default {
                     
                      $('.lundcon').addClass('sing');
                 }else{
-                   self.saveFileLoading = false;
+                    
                    self.$message({
                     message: response.data.error,
                     type: 'warning'
@@ -552,6 +553,7 @@ export default {
                 }
             })
             .catch(function (error) {
+                 self.saveFileLoadingLogin = false;
                 // this.login.password = ''
                  console.log(error.response);
                 //self.saveFileLoading = false;
