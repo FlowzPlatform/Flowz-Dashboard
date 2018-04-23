@@ -5,7 +5,7 @@ export default {
     return api.request('get', '/' + model + '/' + userId)
   },
   getOwn: () => {
-    return api.request('get', '/' + model + '?$limit=100')
+    return api.request('get', '/' + model + '?$paginate=false')
   }
 //   getThis: (id) => {
 //     return api.request('get', '/' + model + '/' + id)

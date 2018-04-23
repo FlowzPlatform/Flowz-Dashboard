@@ -51,10 +51,7 @@ export default new Router({
             path: '/checkout/:id',
             name: 'checkout',
             component: checkout,
-            props: {
-              id: Text,
-              required: false
-            },
+            props: true,
             meta: { requiresAuth: true }
         },
         {

@@ -1,21 +1,28 @@
 <template>
 	<Row class="setMiddle" type="flex" justify="center" align="middle">
-    <Col span="16" push="6">
-      <section class="third lift plan-tier lift.active" v-for="(item, index) in mainData">
-        <h4>{{item.name.toUpperCase()}}</h4>
-        <h5><sup class="superscript">US$</sup><span class="plan-price">{{item.price}}</span>
-            <sub><div v-if="item.validity > 1">
-                  <p>{{item.validity}} months</p>
-                  </div>
-                  <div v-else="item.validity > 1">
-                        <p>/mo</p>
-                  </div>
-            </sub>
-        </h5>
-        <ul>
-          <li v-for="(itemDec, indexDec) in item.description"><strong>{{itemDec}}</strong></li>
-        </ul>
+    <Col span="16" push="2">
+    <div class="third " v-for="(item, index) in mainData">
+      <h3 class="type-header" v-if="item.type == 'basic' && basicPlan != undefined">Basic</h3>
+      <h3 class="type-header" v-if="item.type == 'addon'">Add-on</h3>
+      <section class="plan-tier lift">
+          <h4>{{item.name.toUpperCase()}}</h4>
+          <h5><sup class="superscript">US$</sup><span class="plan-price">{{item.price}}</span>
+              <sub><div v-if="item.validity > 1">
+                    <p>{{item.validity}} months</p>
+                    </div>
+                    <div v-else="item.validity > 1">
+                      <p>/mo</p>
+                    </div>
+              </sub>
+          </h5>
+          <ul>
+            <li v-for="itemDec in item.description"><strong>{{itemDec}}</strong></li>
+          </ul>
       </section>
+      <div class="plus" v-if="mainData.length > 0 && index !== (mainData.length -1)">
+        <i class="fa fa-plus-circle"></i>
+      </div>
+    </div>
     </Col>
     <Col span="8" pull="6">
       <div class="panel panel-custom">
@@ -135,6 +142,10 @@ import { setTimeout } from 'timers';
 import transactions from '@/api/transactions'
 
 export default {
+  props: {
+    basicPlan: String,
+    basicSubId: String
+  },
   name: 'checkout',
   data () {
     const validateCardNumber = (rule, value, callback) => {
@@ -276,38 +287,44 @@ export default {
       expiryYear: []
     }
   },
-  mounted () {
+  async mounted () {
     let self = this
+    let data = []
     this.sub_id = this.$route.params.id
-    subscriptionPlans.getThis( this.sub_id).then(res => {
-      self.mainData.push(res.data)
-      self.mainData.sort(function(a, b) {
-        return a.price-b.price
-      })
-      for(let i = 0; i < self.mainData.length; i++) {
-        self.mainData[i].description = self.mainData[i].description.split('\n')
-        self.mainData[i].details = _.chain(self.mainData[i].details).filter(function(o) {
-            o.value = parseInt(o.value)
-            return o.value > 0
-        }).map(function(d) {
-            let str = d.module.charAt(0).toUpperCase() + d.module.slice(1)
-            let str2 = d.service.charAt(0).toUpperCase() + d.service.slice(1)
-            return {'key':'<i class="ivu-icon ivu-icon-android-checkmark-circle"></i> <b>'+str+'</b> '+str2, 'value': d.value}
-        }).value()
-      }
-    }).catch(err => {
-      self.$Notice.error({
-          duration: 5,
-          title: 'Fetching subscription plan',
-          desc: err.response.data.message
-      });
-    })
+    if (this.basicPlan != undefined)
+      data.push(await this.getPlanDetails(this.basicSubId))
+    data.push(await this.getPlanDetails(this.sub_id))
+    
+    for(let i = 0; i < data.length; i++) {
+      data[i].description = data[i].description.split('\n')
+      data[i].details = _.chain(data[i].details).filter(function(o) {
+        o.value = parseInt(o.value)
+          return o.value > 0
+      }).map(function(d) {
+        let str = d.module.charAt(0).toUpperCase() + d.module.slice(1)
+          let str2 = d.service.charAt(0).toUpperCase() + d.service.slice(1)
+          return {'key':'<i class="ivu-icon ivu-icon-android-checkmark-circle"></i> <b>'+str+'</b> '+str2, 'value': d.value}
+      }).value()
+    }
+    self.mainData = data
     for(let j=0; j <= 20; j++ ){
       let yy = new Date().getFullYear()+j
       self.expiryYear.push({label: yy.toString(),value: yy.toString()})
     }
   },
   methods: {
+    getPlanDetails(sub_id) {
+      let self = this
+      return subscriptionPlans.getThis(sub_id).then(res => {
+        return res.data
+      }).catch(err => {
+        self.$Notice.error({
+          duration: 5,
+          title: 'Fetching subscription plan',
+          desc: err.response.data.message
+        });
+      })
+    },
     checkCardType (val) {
       let result = []
       if(val != '') {
@@ -344,6 +361,7 @@ export default {
         // let auth_token = this.$cookie.get('auth_token')2128
         var sObj = {
           sub_id: this.sub_id,
+          basicPlan: this.basicPlan,
           login_token: this.login_token,
           payDetail: this.payDetail
         }
@@ -459,6 +477,20 @@ export default {
   background-color: #081944b5;
     border-color: #081944b5;
 } */
+.plus{
+  color: #fff;
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  left: 21%;
+  font-size: 25px;
+}
+.type-header {
+  color: #464c5b;
+  font-weight: bold;
+  border-radius: 5px;
+  font-family: "Source Sans Pro", "helvetica", sans-serif;
+}
 .pay-icon {
   width: 55px;
   padding: 5px;
@@ -487,7 +519,7 @@ export default {
 	}
   h4 {
     margin-bottom: 12px;
-    font-size: 1.25em;
+    font-size: 1.50em;
     font-weight: 400;
     text-transform: uppercase;
     text-align: center;
@@ -545,6 +577,9 @@ strong {
   margin: 0 0px 0 0;
   display: inline-block;
   float:left;
+  top:50%;
+  margin-right: 4%;
+  text-align: center;
 }
 
 .plan-tier {
@@ -566,13 +601,6 @@ strong {
   transition: all .075s ease-out;
 }
 
-.lift:nth-child(3) active
-
-.lift.active,
-.lift:hover {
-}
-
-
 .plan-tier h4 {
   padding: 18px 0 15px;
   margin: 0 0 30px;
@@ -580,11 +608,8 @@ strong {
   color: white;
 }
 
-.plan-tier:nth-child(1) h4 {background: #00a55f}
-.plan-tier:nth-child(2) h4 {background: #6BBAA7;}
-.plan-tier:nth-child(3) h4 {background: #FBA100;}
-.plan-tier:nth-child(4) h4 {background: #6C648B;}
-.plan-tier:nth-child(5) h4 {background: #B6A19E;}
+.third:nth-child(1) h4 {background: #FBA100;}
+.third:nth-child(2) h4 {background: #6BBAA7;}
 
 .plan-tier {
   text-align: center;

@@ -1,40 +1,84 @@
 <template>
-<section class="layer plans">
-  <section class="backWhite">
-    <section @click="checkoutFunction(item.id)" class="third lift plan-tier lift.active" v-for="(item, index) in mainData">
-      <h4>{{item.name.toUpperCase()}}</h4>
-      <h5><sup class="superscript">US$</sup><span class="plan-price">{{item.price}}</span>
-          <sub><div v-if="item.validity > 1">
-                <p>{{item.validity}} months</p>
-                </div>
-                <div v-else="item.validity > 1">
-                      <p>/mo</p>
-                </div>
-          </sub>
-      </h5>
-      <ul>
-        <li v-for="(itemDec, indexDec) in item.description"><strong>{{itemDec}}</strong></li>
-      </ul>
+<div>
+  <section v-if="basicPlans.length > 0" class="layer plans">
+    <section class="backWhite">
+    <div class="type-header">
+      <p>Basic Plans</p>
+    </div>
+      <section @click="checkoutFunction(item.id)" class="third lift plan-tier lift.active" v-for="(item, index) in basicPlans">
+        <h4>{{item.name.toUpperCase()}}</h4>
+        <h5><sup class="superscript">US$</sup><span class="plan-price">{{item.price}}</span>
+            <sub><div v-if="item.validity > 1">
+                  <p>{{item.validity}} months</p>
+                  </div>
+                  <div v-else="item.validity > 1">
+                        <p>/mo</p>
+                  </div>
+            </sub>
+        </h5>
+        <ul>
+          <li v-for="(itemDec, indexDec) in item.description"><strong>{{itemDec}}</strong></li>
+        </ul>
+      </section>
+      <div style="clear: both"></div>
     </section>
-    <div style="clear: both"></div>
   </section>
-</section>
+  <section v-if="addOns.length > 0" class="layer plans">
+    <section class="backWhite">
+    <div class="type-header">
+      <p>Add-on</p>
+    </div>
+      <section @click="checkoutAddonFunction(item.id)" class="third lift plan-tier lift.active" v-for="(item, index) in addOns">
+        <h4>{{item.name.toUpperCase()}}</h4>
+        <h5><sup class="superscript">US$</sup><span class="plan-price">{{item.price}}</span>
+            <sub><div v-if="item.validity > 1">
+                  <p>{{item.validity}} months</p>
+                  </div>
+                  <div v-else="item.validity > 1">
+                        <p>/mo</p>
+                  </div>
+            </sub>
+        </h5>
+        <ul>
+          <li v-for="(itemDec, indexDec) in item.description"><strong>{{itemDec}}</strong></li>
+        </ul>
+      </section>
+      <div style="clear: both"></div>
+    </section>
+  </section>
+  <Modal title="My Plan" v-model="showPlanSelection" :mask-closable="false" @on-ok="makeAddon()" width="60%" :loading="validateModal">
+    <p style="margin-bottom:0px">Select basic plan which you wants to extend.</p>
+    <my-plan style="padding:35px" v-on:selectedSubscription="setSelectedSubscription"></my-plan>
+  </Modal>
+</div>
 </template>
 <script>
 // import defaultSubscription from '@/api/default-subscription'
 // import axios from 'axios'
 import subscriptionPlans from '@/api/subscription-plans'
+import myPlans from './owners-plan.vue'
+import { loadavg } from 'os';
 
   export default {
+    components: {
+      'my-plan': myPlans
+    },
     name: 'subscriptionList',
     data () {
       return {
         showDetails:'0',
         mainData: [],
+        basicPlans: [],
+        addOns: [],
+        showPlanSelection: false,
+        selectedAddon: '',
+        selectedBasicPlan: '',
+        selectedBasicSubId: '',
+        validateModal: true,
         details: [{
-            "key": "key",
-            "width": 230,
-            "type": "html"
+          "key": "key",
+          "width": 230,
+          "type": "html"
         }, {
             "key": "value"
         }]
@@ -42,7 +86,6 @@ import subscriptionPlans from '@/api/subscription-plans'
     },
     methods: {
       init () {
-
         let self = this
         subscriptionPlans.get().then(res => {
           self.mainData = res.data.data
@@ -64,6 +107,13 @@ import subscriptionPlans from '@/api/subscription-plans'
             }).value()
             // console.log(self.mainData[i])
           }
+          self.addOns = _.filter(self.mainData, function(o) {
+            return o.type === 'addon'
+          })
+          self.basicPlans = _.filter(self.mainData, function(o) {
+            return o.type === 'basic'
+          })
+
         }).catch(err => {
           if(err.response != undefined) {
             self.$Notice.error({
@@ -88,9 +138,36 @@ import subscriptionPlans from '@/api/subscription-plans'
       },
       checkoutFunction (sub_id) {
         this.$router.push('/checkout/' + sub_id)
+      },
+      checkoutAddonFunction(addon_id) {
+        this.selectedAddon = addon_id
+        this.showPlanSelection = true
+      },
+      makeAddon() {
+        if (this.selectedBasicPlan == '') {
+          this.$Message.error({ content: 'Please select basic plan.'})
+          this.validateModal = false
+          setTimeout(() => {
+            this.validateModal = true
+          }, 100);
+        } else {
+          this.$router.push({
+            name: 'checkout',
+            params: {
+              id: this.selectedAddon,
+              'basicPlan': this.selectedBasicPlan,
+              'basicSubId': this.selectedBasicSubId
+            }
+          })
+        }
+      },
+      setSelectedSubscription(id) {
+        this.selectedBasicPlan = id[0]
+        this.selectedBasicSubId = id[1]
       }
     },
     mounted () {
+      // this.$on('selectedSubscription', this.setSelectedSubscription(id))
       this.init()
     }
   }
@@ -104,7 +181,16 @@ padding: 0;
 box-sizing: border-box;
 -moz-box-sizing: border-box;
 }
-
+.type-header {
+  background-color: #ffffff7c;
+  color: #464c5b;
+  font-weight: bold;
+  border-radius: 5px;
+  font-family: "Source Sans Pro", "helvetica", sans-serif;
+  font-size: 16px;
+  text-align: center;
+  position: sticky;
+}
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary, time, mark, audio, video {
 margin: 0;
 padding: 0;

@@ -1,40 +1,37 @@
 <template>
-<Row style="margin-top:30px;">
-    <Col span="14" push="5">
-        <Card>
-            <!-- <h3>Thank You for Subscribing...!</h3> -->
-            <div style="font-size: x-large;">My Plan</div><br>
-                <Row>
-                    <Col span="22" push="1">
-                    <plan-table></plan-table>
-                        <!-- <Table :loading="loading" class='dataTable' :columns="planDetails" :data="planList" no-data-text="No Data"></Table>
-                        <Page style="margin-top:10px;" class="pull-right" :total="planListData.length" :page-size="pageSize" :current="currentPage" @on-change="changePage"></Page> -->
-                    </Col>
-                </Row>
-        </Card>
-    </Col>
-</Row>
+    <div>
+        <Table highlight-row :loading="loading" class='dataTable' :columns="planDetails" :data="planList" no-data-text="No Data" @on-current-change="currentRow"></Table>
+        <Page size="small" show-total style="margin-top:10px;" class="pull-right" :total="planListData.length" :page-size="pageSize" :current="currentPage" @on-change="changePage"></Page>
+    </div>
 </template>
 <script>
 /*eslint-disable*/
-// import getUserDetails from '@/api/userdetails';
-// import userSubscription from '@/api/user-subscription'
-// import Cookies from 'js-cookie'
-// import _ from 'lodash'
-// var moment = require('moment');
-// moment().format();
+import getUserDetails from '@/api/userdetails';
+import userSubscription from '@/api/user-subscription';
+import expandRow from './add-on.vue';
+import Cookies from 'js-cookie'
+import _ from 'lodash'
+var moment = require('moment');
+moment().format();
 // import Emitter from '@/mixins/emitter'
-// let index
-import ownPlans from './owners-plan.vue'
+let index
 export default {
-    components: {
-        'plan-table': ownPlans
-    },
     name: 'planDetails',
     data () {
-        return {/* 
+        return {
             loading: true,
             planDetails: [
+                {
+                    type: 'expand',
+                    width: 50,
+                    render: (h, params) => {
+                        return h(expandRow, {
+                            props: {
+                                row: params.row
+                            }
+                        })
+                    }
+                },
                 {
                     title: 'Plan',
                     key: 'name'
@@ -65,36 +62,38 @@ export default {
             moment : moment,
             currentPage: 1,
             pageSize: 10 
-         */}
+        }
     },
     methods:{
-    /* async changePage (pageNo) {
-        this.planList = await this.makeChunk(pageNo, this.pageSize)
-    },
-    async makeChunk (pageNo, size) {
-        let chunk = []
-        for (let i=(pageNo - 1) * size; i < size + (pageNo - 1) * size; i++) {
-            if(this.planListData[i] != undefined) {
-                await chunk.push(this.planListData[i])
+        async changePage (pageNo) {
+            this.planList = await this.makeChunk(pageNo, this.pageSize)
+        },
+        async makeChunk (pageNo, size) {
+            let chunk = []
+            for (let i=(pageNo - 1) * size; i < size + (pageNo - 1) * size; i++) {
+                if(this.planListData[i] != undefined) {
+                    await chunk.push(this.planListData[i])
+                }
             }
+            return chunk.slice()
+        },
+        currentRow(currentRow) {
+            this.$emit('selectedSubscription', [currentRow.id, currentRow.sub_id])
         }
-        return chunk.slice()
-    } */
-
     },
     mounted(){
-        /* let self = this
+        let self = this
         if(Cookies.get('welcomeMsg')) {
             this.$Message.success(Cookies.get('welcomeMsg'));
             Cookies.remove('welcomeMsg')
         }
         userSubscription.getOwn().then(async res => {
-            res.data.data = await _.orderBy(res.data.data, 'createdAt', 'desc')
-            await res.data.data.filter(function(o) { 
+            res.data = await _.orderBy(res.data, 'createdAt', 'desc')
+            await res.data.filter(function(o) { 
                 o.expiredOn = moment(o.expiredOn).format("DD-MMM-YYYY")
                 o.createdAt = moment(o.createdAt).fromNow()
             })
-            self.planListData = res.data.data
+            self.planListData = res.data
             self.planList = await self.makeChunk(self.currentPage, self.pageSize)
             // if(self.planList.length > 0) {
             self.loading = false
@@ -114,7 +113,7 @@ export default {
                 });
             }
             self.loading = false
-        }) */
+        })
         /* getUserDetails.get().then(res => {
             packages = res.data.data.package
 
@@ -149,7 +148,7 @@ export default {
     }
 }
 </script>
-<style scoped>/* 
+<style scoped>
 h3 {
     font-size: 30px;
     text-align: center;
@@ -181,5 +180,5 @@ th .ivu-table-cell {
 td.ivu-table-expanded-cell {
     padding: 0px;
     background: #f8f8f9;
-} */
+}
 </style>

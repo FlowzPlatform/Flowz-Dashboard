@@ -10,8 +10,15 @@
         <div v-if="!planLoding && plans.length != 0">
           <div class="schema-form ivu-table-wrapper">
             <div class="ivu-table ivu-table-border">
-              <div class="ivu-table-body">
+              <div class="ivu-table-body ">
                   <table cellspacing="0" cellpadding="0" border="0" style="width: 100%;">
+                     <colgroup>
+                          <col width="22">
+                              <col width="22">
+                                  <col width="22">
+                                      <col width="15">
+                                          <col width="20">
+                      </colgroup>
                       <thead>
                           <tr>
                               <th class="ivu-table-column">
@@ -26,6 +33,10 @@
                               </th>
                               <th class="ivu-table-column">
                                   <div class="ivu-table-cell"><span>Price</span>
+                                  </div>
+                              </th>
+                              <th class="ivu-table-column">
+                                  <div class="ivu-table-cell"><span>Type</span>
                                   </div>
                               </th>
                               <th class="ivu-table-column-center">
@@ -57,10 +68,21 @@
                                     </Tooltip>
                                   </div>
                               </td>
+                              <td class="">
+                                <div class="ivu-table-cell">
+                                    <Tooltip content="Type" placement="bottom">
+                                      <select class="form-control" v-model="plan.type">
+                                        <option value="basic">Basic</option>
+                                        <option value="addon">Add-on</option>
+                                      </select>
+                                      <!-- <input type="text" class="description form-control" v-model="plan.price" v-on:keyup="validatePrice(plan.price, pIndex)" placeholder="*Price"></input> -->
+                                    </Tooltip>
+                                  </div>
+                              </td>
                               <td class="ivu-table-column-center">
                                   <Row type="flex" justify="center" align="middle">
                                     <Col span="3"> 
-                                      <a v-if="plan.validity >= getDefaultPlan('validity') && plan.price >= getDefaultPlan('price')" @click="update(pIndex)">
+                                      <a v-if="plan.validity >= getDefaultPlan('validity', pIndex) && plan.price >= getDefaultPlan('price', pIndex)" @click="update(pIndex)">
                                         <Tooltip content="Save" placement="top">
                                           <icon name="save" scale="1.05" color="#59b161"></icon>
                                         </Tooltip>
@@ -91,7 +113,7 @@
                                       </a>
                                     </Col>
                                     <Col span="3">
-                                      <a v-if="plan.validity >= getDefaultPlan('validity') && plan.price >= getDefaultPlan('price')">
+                                      <a v-if="plan.validity >= getDefaultPlan('validity', pIndex) && plan.price >= getDefaultPlan('price', pIndex)">
                                         <Tooltip content="Enable" placement="top">
                                           <i-switch size="small" v-model="plan.status"></i-switch>
                                         </Tooltip>
@@ -103,7 +125,7 @@
                                       </a>
                                     </Col>
                                     <Col span="3">
-                                      <a v-if="plan.validity >= getDefaultPlan('validity') && plan.price >= getDefaultPlan('price') && checkOpen(pIndex)" @click="expand(pIndex)">
+                                      <a v-if="plan.validity >= getDefaultPlan('validity', pIndex) && plan.price >= getDefaultPlan('price', pIndex) && checkOpen(pIndex)" @click="expand(pIndex)">
                                         <Tooltip content="Expand" placement="top">
                                           <Icon type="arrow-down-b" size="25"></Icon>
                                         </Tooltip>
@@ -118,7 +140,7 @@
                               </td>
                           </tr>
                           <tr class="ivu-table-row">
-                            <td colspan="4" class="hidden-td">
+                            <td colspan="5" class="hidden-td">
                               <div :id="'plan_'+pIndex" class="outer-toggle">
                                 <Row>
                                   <Col span="22" push="1">
@@ -273,6 +295,7 @@ export default {
         validity: 1,
         price: 999,
         time_unit: 'month',
+        type: 'basic',
         details: []
       }
     }
@@ -302,8 +325,9 @@ export default {
     })
   },
   methods: {
-    getDefaultPlan(idx) {
-      return this.defaultPlan[idx]
+    getDefaultPlan(idx, pIndex) {
+      return this.plans[pIndex].type == 'basic' ? this.defaultPlan[idx] : 0
+      // return this.defaultPlan[idx]
     },
     validateValidity(validity, pIndex) {
       var num = validity.match(/^[0-9]+$/);
@@ -423,50 +447,52 @@ export default {
       this.process.cursor = 'progress!important'
       let self = this
       let dataObj = this.plans[index]
-      if(dataObj.validity >= self.defaultPlan.validity && dataObj.price >= self.defaultPlan.price && dataObj.name != '') {
-        if (this.plans[index].id != undefined) {
-          delete dataObj.class          
-          subscriptionPlans.put(this.plans[index].id, dataObj).then(res => {
-            self.$Notice.success({
-              title: '<b>' + self.plans[index].name + '</b> saved.',
-              desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been saved..!'
+      if (dataObj.name == '') {
+        this.$Notice.error({
+          duration: 5,
+          title: 'Plan Name is NULL.',
+          desc: '<b>Plan Name</b> should not be null..!'
+        })
+      } else if(dataObj.type == 'basic' && dataObj.validity < this.defaultPlan.validity) {
+        this.$Notice.error({
+          duration: 5,
+          title: 'Please Correct Validity',
+          desc: 'Validity should be greater than '+ this.defaultPlan.validity + ' ' + this.defaultPlan.time_unit
+        })
+      } else if (dataObj.type == 'addon' && dataObj.validity == '') {
+        this.$Notice.error({
+          duration: 5,
+          title: 'Please Correct Validity',
+          desc: 'Validity can not be empty'
+        })
+      } else if (dataObj.price < this.defaultPlan.price) {
+        this.$Notice.error({
+          duration: 5,
+          title: 'Please Correct Price',
+          desc: 'Price should be greater than ' + this.defaultPlan.price + '$'
+        })
+      } else if (this.plans[index].id != undefined) {
+        delete dataObj.class          
+        subscriptionPlans.put(this.plans[index].id, dataObj).then(res => {
+          self.$Notice.success({
+            title: '<b>' + self.plans[index].name + '</b> saved.',
+            desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been saved..!'
+          })
+        }).catch(err => {
+          if( err.response.status == 403) {
+            self.$Notice.error({
+              duration: 5,
+              title: 'Permission not available for action',
+              desc: err.message
             })
-          }).catch(err => {
-            if( err.response.status == 403) {
-              self.$Notice.error({
-                duration: 5,
-                title: 'Permission not available for action',
-                desc: err.message
-              })
-            } else {
-              self.$Notice.error({
-                duration: 5,
-                title: 'Trying to update subscription plan',
-                desc: 'Please try again ' + err
-              })
-            }
-          })
-        }
-      } else {
-        if (dataObj.name == '') {
-          this.$Notice.error({
-            duration: 5,
-            title: 'Plan Name is NULL.',
-            desc: '<b>Plan Name</b> should not be null..!'
-          })
-        } else if(dataObj.validity < this.defaultPlan.validity) {
-          this.$Notice.error({
-            duration: 5,
-            title: 'Validity Validation Error',
-            desc: 'Validity should be greater than '+ this.defaultPlan.validity + ' ' + this.defaultPlan.time_unit
-          })
-        } else if (dataObj.price < this.defaultPlan.price) {
-          this.$Notice.error({
-            duration: 5,
-            title: 'Price Validation Error',
-            desc: 'Price should be greater than ' + this.defaultPlan.price + '$'
-          })
-        }
+          } else {
+            self.$Notice.error({
+              duration: 5,
+              title: 'Trying to update subscription plan',
+              desc: 'Please try again ' + err
+            })
+          }
+        })
       }
     }
   }
