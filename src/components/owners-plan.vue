@@ -16,6 +16,9 @@ moment().format();
 // import Emitter from '@/mixins/emitter'
 let index
 export default {
+    components: {
+        expandRow
+    },
     name: 'planDetails',
     data () {
         return {

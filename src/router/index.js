@@ -55,6 +55,13 @@ export default new Router({
             meta: { requiresAuth: true }
         },
         {
+          path: '/checkout/:id/:basicSubId/:basicPlan',
+          name: 'checkout-addon',
+          component: checkout,
+          props: true,
+          meta: { requiresAuth: true }
+        },
+        {
            path: '/plan-details',
            name: 'planDetails',
            component: planDetails,

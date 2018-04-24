@@ -465,11 +465,17 @@ export default {
           title: 'Please Correct Validity',
           desc: 'Validity can not be empty'
         })
-      } else if (dataObj.price < this.defaultPlan.price) {
+      } else if (dataObj.type == 'basic' && dataObj.price < this.defaultPlan.price) {
         this.$Notice.error({
           duration: 5,
           title: 'Please Correct Price',
           desc: 'Price should be greater than ' + this.defaultPlan.price + '$'
+        })
+      } else if (dataObj.type == 'addon' && dataObj.price == '') {
+        this.$Notice.error({
+          duration: 5,
+          title: 'Please Correct Price',
+          desc: 'Price can not be empty'
         })
       } else if (this.plans[index].id != undefined) {
         delete dataObj.class          

@@ -152,11 +152,11 @@ import { loadavg } from 'os';
           }, 100);
         } else {
           this.$router.push({
-            name: 'checkout',
+            name: 'checkout-addon',
             params: {
               id: this.selectedAddon,
-              'basicPlan': this.selectedBasicPlan,
-              'basicSubId': this.selectedBasicSubId
+              'basicSubId': this.selectedBasicSubId,
+              'basicPlan': this.selectedBasicPlan
             }
           })
         }

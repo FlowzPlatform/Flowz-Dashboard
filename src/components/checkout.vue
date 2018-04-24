@@ -367,12 +367,14 @@ export default {
         }
 
         checkout.post(sObj).then(async res => {
-          await transactions.get(res.data.transaction_id).then(res => {
-            transactionStatus = res.data.transaction_status
-            paymentStatus = res.data.payment_status
-          }).catch(err => {
-            console.log('ERR', err)
-          })
+          if(res.data.transaction_id) {
+            await transactions.get(res.data.transaction_id).then(res => {
+              transactionStatus = res.data.transaction_status
+              paymentStatus = res.data.payment_status
+            }).catch(err => {
+              console.log('ERR', err)
+            })
+          }
           if (res.data.hasOwnProperty('error')) {
             this.payInfo.class = 'alert alert-danger'
             this.payInfo.msgType = 'Error..! '
