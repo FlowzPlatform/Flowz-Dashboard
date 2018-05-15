@@ -16,32 +16,37 @@
             </div>
          </div>
          <div class="lrconpt">
-            <form id="form-facebook" name="form-facebook" :action="loginWithFacebookUrl" method="post">
+            <form id="form-facebook" name="form-facebook" :action="loginWithFacebookUrl" method="get">
                <input type="hidden" name="success_url" :value="facebookSuccessCallbackUrl">
+               <input type="hidden" name="failure_url" :value="facebookSuccessCallbackUrl">
             </form>
-            <form id="form-google" name="form-google" :action = "loginWithGoogleUrl" method="post">
+            <form id="form-google" name="form-google" :action = "loginWithGoogleUrl" method="get">
                <input type="hidden" name="success_url" :value="googleSuccessCallbackUrl">
+               <input type="hidden" name="failure_url" :value="googleSuccessCallbackUrl">
             </form>
-            <form id="form-twitter" name="form-twitter" :action="loginWithTwitterUrl" method="post">
+            <form id="form-twitter" name="form-twitter" :action="loginWithTwitterUrl" method="get">
                <input type="hidden" name="success_url" :value="twitterSuccessCallbackUrl">
+               <input type="hidden" name="failure_url" :value="twitterSuccessCallbackUrl">
             </form>
-            <!-- <form id="form-linkedin" name="form-linkedin" :action="loginWithLinkedinUrl" method="post">
+            <form id="form-linkedin" name="form-linkedin" :action="loginWithLinkedInUrl" method="get">
                <input type="hidden" name="success_url" :value="linkedInSuccessCallbackUrl">
-            </form> -->
-            <form id="form-github" name="form-github" :action="loginWithGithubUrl" method="post">
+               <input type="hidden" name="failure_url" :value="linkedInSuccessCallbackUrl">
+            </form>
+            <form id="form-github" name="form-github" :action="loginWithGithubUrl" method="get">
                <input type="hidden" name="success_url" :value="githubSuccessCallbackUrl">
+               <input type="hidden" name="failure_url" :value="githubSuccessCallbackUrl">
             </form>
 
             <div class="lconpt">
                <div class="lconun">
                   <span class="lthlob">
-                      <Tooltip content="Login with facebook">
+                      <!-- <Tooltip content="Login with facebook">
                      <span  @click="submitFb()" class="fb">
                         <icon name="facebook"></icon>
                      </span>
 
                      </Tooltip>
-                     - 
+                     -  -->
                      <Tooltip content="Login with google">
                      <span class="google" @click="submitGoogle()">
                         <icon name="google"></icon>
@@ -53,11 +58,13 @@
                         <icon name="twitter"></icon>
                       </span>
                       </Tooltip>
-                      -
-                      <!-- <span class="linkedin" @click="submitLinkedin()">
+                      <!-- -
+                      <Tooltip content="Login with linkdin">
+                      <span class="linkedin" @click="submitLinkedin()">
                         <icon name="linkedin"></icon>
-                      </span> -->
-
+                      </span> 
+                        </Tooltip> -->
+                        -
                       <Tooltip content="Login with github">
 
                       <span class="github" @click="submitGithub()">
@@ -129,12 +136,12 @@
                      <span class="lthlob">
 
                         
-                        <Tooltip content="Login with facebook">
+                        <!-- <Tooltip content="Login with facebook">
                         <span  @click="submitFb()" class="fb">
                            <icon name="facebook"></icon>
                         </span>
                         </Tooltip>
-                        - 
+                        -  -->
                         <Tooltip content="Login with google">
 
                          <span  @click="submitGoogle()" class="google">
@@ -148,9 +155,11 @@
                       </span>
                       </Tooltip>
                       <!-- -
+                       <Tooltip content="Login with linkdin">
                       <span class="linkedin" @click="submitLinkedin()">
                         <icon name="linkedin"></icon>
-                      </span> -->
+                      </span>
+                       </Tooltip> -->
                       -
                       <Tooltip content="Login with github">
                       <span class="github" @click="submitGithub()">
@@ -278,12 +287,12 @@ export default {
         googleSuccessCallbackUrl : config.googleSuccessCallbackUrl,
         twitterSuccessCallbackUrl: config.twitterSuccessCallbackUrl,
         githubSuccessCallbackUrl: config.githubSuccessCallbackUrl,
-       // linkedInSuccessCallbackUrl: config.linkedInSuccessCallbackUrl,
+        linkedInSuccessCallbackUrl: config.linkedInSuccessCallbackUrl,
         loginWithFacebookUrl : config.loginWithFacebookUrl,
         loginWithGoogleUrl : config.loginWithGoogleUrl,
         loginWithTwitterUrl: config.loginWithTwitterUrl,
         loginWithGithubUrl: config.loginWithGithubUrl,
-       // loginWithLinkedInUrl: config.loginWithLinkedInUrl,
+        loginWithLinkedInUrl: config.loginWithLinkedInUrl,
       isSocialLogin : false,
       register:{
           fname:"",
@@ -303,15 +312,11 @@ export default {
   created(){
         let self = this;
        var configObj = {};
-       console.log(window.location.search)
+    //    console.log(window.location.search)
 
        var url = new URL(window.location.href);
        var ob_id = url.searchParams.get("ob_id");
-       console.log(ob_id);
-
-
-
-
+    //    console.log(ob_id);
         if(ob_id  && ob_id != undefined)
         {
             this.obId = ob_id;
@@ -515,7 +520,7 @@ export default {
            }else if(self.signup.password == ""){
                self.$message.warning("password is required");
            }else{
-               self.saveFileLoading = true;
+               self.saveFileLoadingLogin = true;
                axios.post(config.signupUrl, {
                 email: self.signup.email.trim(),
                 password: self.signup.password.trim(),
@@ -524,6 +529,7 @@ export default {
             })
             .then(function (response) {
                 console.log(response);
+                self.saveFileLoadingLogin = false;
                 if(response.data.code == 200){
                     self.saveFileLoading = false;
                     //alert(response.data.message+", please check your email for password")
@@ -539,7 +545,7 @@ export default {
                     
                      $('.lundcon').addClass('sing');
                 }else{
-                   self.saveFileLoading = false;
+                    
                    self.$message({
                     message: response.data.error,
                     type: 'warning'
@@ -547,6 +553,7 @@ export default {
                 }
             })
             .catch(function (error) {
+                 self.saveFileLoadingLogin = false;
                 // this.login.password = ''
                  console.log(error.response);
                 //self.saveFileLoading = false;
@@ -586,7 +593,6 @@ export default {
                             headers: {'Authorization': response.data.logintoken}
                         })
                         .then(function(result) {
-                            console.log('--------------->>>>',result)
                             let location = psl.parse(window.location.hostname)
                             location = location.domain === null ? location.input : location.domain
                             Cookie.set('user',  result.data.data.email  , {domain: location});
@@ -626,7 +632,7 @@ export default {
             //     // self.$router.push('/');
             })
             .catch(function (error) {
-                console.log("error-->",error.response)
+                // console.log("error-->",error.response)
                 self.saveFileLoadingLogin = false;
                 if(!error.response || error.response != undefined){
                     self.$message.error(error.response.data)
