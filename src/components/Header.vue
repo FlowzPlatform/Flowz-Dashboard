@@ -32,12 +32,12 @@
                                     Subscription List
                                 </a>
                             </MenuItem>
-                            <MenuItem name="1-3">
+                            <!-- MenuItem name="1-3">
                                 <a @click="planList()">
                                    <Icon type="ios-keypad-outline" :size="16"></Icon>
                                     My Plan
                                 </a>
-                            </MenuItem>
+                            </MenuItem -->
                             <MenuItem name="1-4">
                             <a @click="logout()">
                                 <Icon type="ios-locked-outline" :size="16"></Icon>
