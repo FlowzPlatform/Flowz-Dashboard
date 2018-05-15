@@ -417,6 +417,7 @@ export default {
 .radial-nav.expanded li:nth-child(7) {-webkit-transform: rotate(290deg) translateY(-210px) rotate(0deg);}
 .radial-nav.expanded li:nth-child(8) {-webkit-transform: rotate(335deg) translateY(-210px) rotate(0deg);} */
 
+
 .radial-nav.expanded li:nth-child(1) {-webkit-transform: rotate(10deg) translateY(-210px) rotate(0deg);}
 .radial-nav.expanded li:nth-child(2) {-webkit-transform: rotate(50deg) translateY(-210px) rotate(0deg);}
 .radial-nav.expanded li:nth-child(3) {-webkit-transform: rotate(95deg) translateY(-210px) rotate(0deg);}
@@ -425,6 +426,20 @@ export default {
 .radial-nav.expanded li:nth-child(6) {-webkit-transform: rotate(245deg) translateY(-210px) rotate(0deg);}
 .radial-nav.expanded li:nth-child(7) {-webkit-transform: rotate(290deg) translateY(-210px) rotate(0deg);}
 .radial-nav.expanded li:nth-child(8) {-webkit-transform: rotate(335deg) translateY(-210px) rotate(0deg);}
+
+
+
+.radial-nav.expanded li:nth-child(1) .dascufo {-webkit-transform: rotate(-10deg) translateY(10px) translateX(10px);}
+.radial-nav.expanded li:nth-child(2) .dascufo{-webkit-transform: rotate(-56deg) translateY(-18px) translateX(-28px)}
+.radial-nav.expanded li:nth-child(3) .dascufo{-webkit-transform: rotate(-94deg) translateY(-59px) translateX(-38px)}
+.radial-nav.expanded li:nth-child(4) .dascufo{-webkit-transform: rotate(-138deg) translateY(-59px) translateX(-17px); width:159px;}
+.radial-nav.expanded li:nth-child(5) .dascufo{-webkit-transform: rotate(-200deg) translateY(10px) translateX(10px);}
+.radial-nav.expanded li:nth-child(6) .dascufo{-webkit-transform: rotate(-245deg) translateY(-70px) translateX(54px)}
+.radial-nav.expanded li:nth-child(7) .dascufo{-webkit-transform: rotate(-286deg) translateY(-42px) translateX(55px);}
+.radial-nav.expanded li:nth-child(8) .dascufo{-webkit-transform: rotate(-335deg) translateY(10px) translateX(10px);}
+
+
+
 
 .radial-nav.expanded li a {opacity: 1;}
 .radial-nav.expanded .icon-menu {border-color: #5151f1;-webkit-transform: rotate(90deg);}
@@ -462,7 +477,7 @@ body {color: #d1d1d1;}
 .dascutx:before {content: "";position: absolute;background-color: #ffffff;width: 210px;top: -20px;height: 40px;left: 0;border-radius: 100%;}
 .dascutx:after {content: "";height: 115px;width: 210px;position: absolute;border-top: 115px solid #ffffff;border-left: 45px solid transparent;border-right: 45px solid transparent;left: 0;top: 0;}
 .dascuico:after {content: "";background-color: #c8df4a;width: 100%;top: -7px;height: 17px;left: 0;border-radius: 100%;display: inline-block;position: absolute;}
-.dascufo {position: relative;z-index: 1;width: 149px;margin: 0 auto;text-align: left;}
+.dascufo {position: relative;z-index: 1;width: 100px;margin: 0 auto;text-align: left;}
 .dascufo .tit {width: 100%;display: inline-block;font-family: 'Helvetica-N-Md';font-size: 18px;text-transform: capitalize; line-height:20px; float:left;}
 .dascufo .tex {font-family: 'Helvetica-LT-Roman';font-size: 13px;line-height: 15px;display: inline-block; line-height:14px; float:left;}
 .dasvubot {min-height: 46px;display: inline-block;vertical-align: middle;position: relative;z-index: 1;margin-top: -5px;}
