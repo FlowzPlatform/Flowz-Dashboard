@@ -68,7 +68,7 @@
 					</li>
 					<li data-content="gulp"><a href="javascript:void(0)"></a></li>
 
-					<!-- li class="menu"  @click="openNav1()"><span class="icon-menu"></span> <img src="../assets/images/Website.png" ></li-->
+					<li class="menu"  @click="openNav1()"><span class="icon-menu"></span> <img src="../assets/images/Website.png" ></li>
 				  </ul>
 			  </div>
 
