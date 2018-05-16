@@ -29,7 +29,6 @@ import config1 from '../config/customConfig'
   // And plug it in
 Vue.use(vueFeathers, feathers)
 
-
 Vue.config.productionTip = false
 import AsyncComputed from 'vue-async-computed'
 Vue.use(AsyncComputed)

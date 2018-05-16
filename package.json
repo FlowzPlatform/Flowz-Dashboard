@@ -13,6 +13,7 @@
     "axios": "^0.17.1",
     "bootstrap": "^3.3.7",
     "bootstrap-vue": "^1.4.0",
+    "chargebee": "^2.3.5",
     "element-ui": "^2.0.5",
     "feathers": "^2.2.3",
     "feathers-hooks": "^2.1.2",
