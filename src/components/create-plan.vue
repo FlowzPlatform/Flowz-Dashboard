@@ -2,9 +2,17 @@
   <Row style="margin-top:30px;" type="flex" justify="center">
     <Col span="18">
       <Card>
-        <Row slot="title" type="flex" justify="end">
-          <Col span="3" style="margin-bottom:5px;">
-            <Button type="primary" @click="createPlan()" icon="android-add-circle" :loading="addPlanLoading">Add New Plan</Button>
+        <Row slot="title">
+          <Col span="4">
+            <Tabs v-model="activeTab" @on-click="changeActiveTab">
+              <TabPane label="Plan" name="plan"></TabPane>
+              <TabPane label="Addon" name="addon"></TabPane>
+            </Tabs>
+          </Col>
+          <Col span="3" offset="17" class-name="action-button">
+            <!-- <Col span="3" style="margin-bottom:5px;"> -->
+              <Button type="primary" @click="createPlan(activeTab)" icon="android-add-circle" :loading="addPlanLoading"><span v-if="activeTab === 'plan'">Create Plan</span><span v-else>Create Addon</span></Button>
+           <!--  </Col> -->
           </Col>
         </Row>
         <div v-if="!planLoding && plans.length != 0">
@@ -16,14 +24,15 @@
                           <col width="22">
                               <col width="22">
                                   <col width="22">
-                                      <col width="15">
+                                      <!-- <col width="15"> -->
                                           <col width="20">
                       </colgroup>
                       <thead>
                           <tr>
                               <th class="ivu-table-column">
                                   <div class="ivu-table-cell">
-                                      <span>Plan Name</span>
+                                      <span v-if="activeTab === 'plan'">Plan Name</span>
+                                      <span v-else>Addon Name</span>
                                   </div>
                               </th>
                               <th class="ivu-table-column">
@@ -35,10 +44,10 @@
                                   <div class="ivu-table-cell"><span>Price <span style="color:gray;font-size:10px">(USD)</span></span>
                                   </div>
                               </th>
-                              <th class="ivu-table-column">
+                              <!-- <th class="ivu-table-column">
                                   <div class="ivu-table-cell"><span>Type</span>
                                   </div>
-                              </th>
+                              </th> -->
                               <th class="ivu-table-column-center">
                                   <div class="ivu-table-cell"><span>Action</span>
                                   </div>
@@ -46,43 +55,43 @@
                           </tr>
                       </thead>
                       <tbody class="ivu-table-tbody" v-for="(plan, pIndex) in plans" :id="'plans_'+pIndex">
-                          <tr v-bind:class="plan.plan.class">
+                          <tr v-bind:class="plan.class">
                               <td class="">
                                 <div class="ivu-table-cell">
                                   <Tooltip content="Plan Name" placement="bottom">
-                                    <input class="form-control" v-model="plan.plan.name" placeholder="*Plan Name" ></input>
+                                    <input class="form-control" v-model="plan.name" placeholder="*Plan Name" ></input>
                                   </Tooltip>
                                 </div>
                               </td>
                               <td class="">
                                 <div class="ivu-table-cell">
                                   <Tooltip content="Validity" placement="bottom">
-                                    <input  type="text" class="description form-control" v-model="plan.plan.period" min=1 v-on:keyup="validateValidity(plan.plan.period, pIndex)" placeholder="*Validity"></input>
+                                    <input  type="text" class="description form-control" v-model="plan.period" min=1 v-on:keyup="validateValidity(plan.period, pIndex)" placeholder="*Validity"></input>
                                   </Tooltip>
                                 </div>
                               </td>
                               <td class="">
                                   <div class="ivu-table-cell">
                                     <Tooltip content="Price" placement="bottom">
-                                      <input type="text" class="description form-control" v-model="plan.plan.price" v-on:keyup="validatePrice(plan.plan.price, pIndex)" placeholder="*Price"></input>
+                                      <input type="text" class="description form-control" v-model="plan.price" v-on:keyup="validatePrice(plan.price, pIndex)" placeholder="*Price"></input>
                                     </Tooltip>
                                   </div>
                               </td>
-                              <td class="">
+                              <!-- <td class="">
                                 <div class="ivu-table-cell">
                                     <Tooltip content="Type" placement="bottom">
-                                      <select class="form-control" v-model="plan.plan.object">
+                                      <select class="form-control" v-model="plan.object">
                                         <option value="plan">Basic</option>
                                         <option value="addon">Add-on</option>
                                       </select>
-                                      <!-- <input type="text" class="description form-control" v-model="plan.price" v-on:keyup="validatePrice(plan.price, pIndex)" placeholder="*Price"></input> -->
+                                      <input type="text" class="description form-control" v-model="plan.price" v-on:keyup="validatePrice(plan.price, pIndex)" placeholder="*Price"></input>
                                     </Tooltip>
                                   </div>
-                              </td>
+                              </td> -->
                               <td class="ivu-table-column-center">
                                   <Row type="flex" justify="center" align="middle">
                                     <Col span="3"> 
-                                      <a v-if="plan.plan.period >= getDefaultPlan('validity', pIndex) && plan.plan.price >= getDefaultPlan('price', pIndex)" @click="update(pIndex)">
+                                      <a v-if="plan.period >= getDefaultPlan('validity', pIndex) && plan.price >= getDefaultPlan('price', pIndex)" @click="update(pIndex)">
                                         <Tooltip content="Save" placement="top">
                                           <icon name="save" scale="1.05" color="#59b161"></icon>
                                         </Tooltip>
@@ -113,19 +122,19 @@
                                       </a>
                                     </Col>
                                     <Col span="3">
-                                      <a v-if="plan.plan.period >= getDefaultPlan('validity', pIndex) && plan.plan.price >= getDefaultPlan('price', pIndex)">
+                                      <a v-if="plan.period >= getDefaultPlan('validity', pIndex) && plan.price >= getDefaultPlan('price', pIndex)">
                                         <Tooltip content="Enable" placement="top">
-                                          <i-switch size="small" true-value="active" false-value="archived" v-model="plan.plan.status"></i-switch>
+                                          <i-switch size="small" true-value="active" false-value="archived" v-model="plan.status"></i-switch>
                                         </Tooltip>
                                       </a>
                                       <a v-else class="pointerX">
                                         <Tooltip content="Enable" placement="top">
-                                          <i-switch size="small" disabled v-model="plan.plan.status"></i-switch>
+                                          <i-switch size="small" disabled v-model="plan.status"></i-switch>
                                         </Tooltip>
                                       </a>
                                     </Col>
                                     <Col span="3">
-                                      <a v-if="plan.plan.period >= getDefaultPlan('validity', pIndex) && plan.plan.price >= getDefaultPlan('price', pIndex) && checkOpen(pIndex)" @click="expand(pIndex)">
+                                      <a v-if="plan.period >= getDefaultPlan('validity', pIndex) && plan.price >= getDefaultPlan('price', pIndex) && checkOpen(pIndex)" @click="expand(pIndex)">
                                         <Tooltip content="Expand" placement="top">
                                           <Icon type="arrow-down-b" size="25"></Icon>
                                         </Tooltip>
@@ -140,7 +149,7 @@
                               </td>
                           </tr>
                           <tr class="ivu-table-row">
-                            <td colspan="5" class="hidden-td">
+                            <td colspan="4" class="hidden-td">
                               <div :id="'plan_'+pIndex" class="outer-toggle">
                                 <Row>
                                   <Col span="22" push="1">
@@ -150,7 +159,7 @@
                                           <h5 style="height: 35px">Description</h5>
                                         </Col>
                                         <Col span="18">
-                                          <Input style="margin-bottom:5px" v-model="plan.plan.description" type="textarea" :autosize="{minRows: 1,maxRows: 25}" placeholder="Enter something..."></Input>
+                                          <Input style="margin-bottom:5px" v-model="plan.description" type="textarea" :autosize="{minRows: 1,maxRows: 25}" placeholder="Enter something..."></Input>
                                         </Col>
                                       </Row>
                                       <div class="schema-form ivu-table-wrapper">
@@ -181,9 +190,8 @@
                                                           </th>
                                                       </tr>
                                                   </thead>
-                                                  <tbody class="ivu-table-tbody" v-if="plan.plan.meta_data">
-                                                    <!-- {{ JSON.parse(plan.plan.meta_data) }} -->
-                                                      <tr class="ivu-table-row" v-for="(item, index) in plan.plan.meta_data.details">
+                                                  <tbody class="ivu-table-tbody" v-if="plan.meta_data">
+                                                      <tr class="ivu-table-row" v-for="(item, index) in plan.meta_data.details">
                                                           <td class="">
                                                               <div class="ivu-table-cell">
                                                                 {{item.module}}
@@ -246,7 +254,7 @@
         <Row type="flex" justify="center">
           <Col span="4" style="margin-top:5px;">
             <Spin v-if="planLoding" size="large"></Spin>
-            <h5 v-else-if="!planLoding && plans.length == 0">Plans not available</h5>
+            <h5 v-else-if="!planLoding && plans.length == 0"><span v-if="activeTab === 'plan'">Plans</span><span v-else>Addons</span> not available</h5>
           </Col>
         </Row>
       </Card>
@@ -255,12 +263,16 @@
 </template>
 
 <script>
+const uuidv1 = require('uuid/v1');
 import subscriptionPlans from '@/api/subscription-plans';
 import cbPlan from '@/api/cb-plan';
+import cbAddon from '@/api/cb-addon';
 import registerResource from '@/api/register-resource';
 import Icon from 'vue-awesome/components/Icon';
 import BootstrapVue from 'bootstrap-vue';
+import Cookies from 'js-cookie';
 import Vue from 'vue';
+import psl from 'psl'
 import _ from 'lodash';
 import 'vue-awesome/icons';
 Vue.use(BootstrapVue);
@@ -280,6 +292,8 @@ export default {
     return {
       services: [],
       plans: [],
+      planData: [],
+      addonData: [],
       planLoding: false,
       addPlanLoading: false,
       currentOpen: [],
@@ -288,6 +302,7 @@ export default {
       confirmDelete: false,
       loading: false,
       deleteIndex: 0,
+      activeTab: 'plan',
       process: {
         cursor: ''
       },
@@ -306,14 +321,46 @@ export default {
     this.planLoding = true
     let data5 = []
     let self = this
-// NEW SUBSCRIPTION CODE WITH CHARGEBEE
+
+    // NEW SUBSCRIPTION CODE WITH CHARGEBEE
     cbPlan.get().then(res => {
-      self.plans = res.data
-      self.planLoding = false
+      for(let i in res.data) {
+        res.data[i].plan.price /= 100 
+        self.planData.push(res.data[i].plan);
+      }
+      self.plans = self.planData;
+      self.planLoding = false;
     }).catch(err => {
-      console.log('Error', err);
+      let location = psl.parse(window.location.hostname)
+      location = location.domain === null ? location.input : location.domain
+      if (err.message == 'Network Error') {
+        self.$Notice.error({
+          duration: 5,
+          title: 'Loading created plans',
+          desc: 'API service unavailable.'
+        });
+      } else if (err.response.data.message == 'User authentication fail') {
+        self.$Notice.error({
+          duration: 5,
+          title: 'Your session has been expired.',
+          desc: err.response.data.message + ', please login again.'
+        });
+        Cookies.remove('auth_token', {domain: location});
+        Cookies.remove('user', {domain: location});
+        self.$router.push({ name: 'login' });
+      }
     });
-// OLD CODE FOR SUBSCRIPTION
+
+    cbAddon.get().then(res => {
+      for(let i in res.data) {
+        res.data[i].addon.price /= 100 //To convert price from cents to dollars
+        self.addonData.push(res.data[i].addon);
+      }
+    }).catch(err => {
+      console.log('Error Addon : ', err)
+    });
+
+    // OLD CODE FOR SUBSCRIPTION
     /* subscriptionPlans.get().then(res => {
       self.plans = res.data.data
       self.planLoding = false
@@ -335,14 +382,17 @@ export default {
     }); */
   },
   methods: {
+    changeActiveTab (name) {
+      this.plans = name === 'plan' ? this.planData : this.addonData;
+    },
     getDefaultPlan (idx, pIndex) {
-      return this.plans[pIndex].plan.object == 'plan' ? this.defaultPlan[idx] : 0
+      return this.plans[pIndex].object == 'plan' ? this.defaultPlan[idx] : 0
       // return this.defaultPlan[idx]
     },
     validateValidity (validity, pIndex) {
       var num = validity.match(/^[0-9]+$/);
       if (num === null) {
-        this.plans[pIndex].validity = ''
+        this.plans[pIndex].period = ''
         /* if(validity < this.defaultPlan.validity) {
           this.$Notice.error({
             duration: 5,
@@ -380,30 +430,55 @@ export default {
       }
       return false
     },
-    async createPlan () {
+    async createPlan (method) {
       let self = this
       self.addPlanLoading = true
       let data5 = []
       let keys = []
       let modules = ['crm','uploader','webbuilder','subscription']
+      
       self.plans.filter( function (o) {
         o.class = 'ivu-table-row'
       })
+
       await registerResource.get().then(res => {
         _.forEach(res.data.data, function(data, key) {
           if(modules.includes(data.module)) {
             for(let action in data.actions[0]) {
               data5.push({"module":data.module,"service":data.service,"action":action,"value":0})
             }
-          }})
-          self.defaultPlan.details = data5
+          }
+        })
+        self.defaultPlan.details = data5
       }).catch(function (error) {
-          self.$Notice.error({
-            duration: 5,
-            title: 'Trying to create subscription plan',
-            desc: 'Please try again ' + err
-          })
+        console.log('ERROR:::', error)
+        self.$Notice.error({
+          duration: 5,
+          title: 'Trying to create subscription plan',
+          desc: 'Please try again ' + err
+        })
       })
+      let convertedPrice = self.defaultPlan.price * 100
+      let id = uuidv1();
+      let planDefinition = {
+        "id": id,
+        "name": self.defaultPlan.name,
+        "description": self.defaultPlan.description,
+        "invoice_name": self.defaultPlan.name,
+        "price": convertedPrice,
+        "status": "archived",
+        "period": self.defaultPlan.validity,
+        "period_unit": "month",
+        "meta_data": {
+          "details": self.defaultPlan.details
+        }
+      }
+      if (method == 'plan') {
+        this.createNewPlan(planDefinition)
+      } else if (method == 'addon') {
+        this.createNewAddon(planDefinition)
+      }
+      // console.log('>>>>>>>>>>>>>...', planDefinition)
 // OLD CODE FOR SUBSCRIPTION
       /* subscriptionPlans.post(self.defaultPlan).then(res => {
         self.$Notice.success({
@@ -490,7 +565,13 @@ export default {
         })
       } else if (this.plans[index].id != undefined) {
         delete dataObj.class          
-        subscriptionPlans.put(this.plans[index].id, dataObj).then(res => {
+        if (self.activeTab == 'plan') {
+          self.updatePlan(self.plans[index].id, dataObj);
+        } else {
+          self.updateAddon(self.plans[index].id, dataObj);
+        }
+        //OLD CODE FOR UPDATE PLAN DETAILS
+        /* subscriptionPlans.put(this.plans[index].id, dataObj).then(res => {
           self.$Notice.success({
             title: '<b>' + self.plans[index].name + '</b> saved.',
             desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been saved..!'
@@ -509,8 +590,56 @@ export default {
               desc: 'Please try again ' + err
             })
           }
-        })
+        }) */
       }
+    },
+    createNewPlan(planDefinition) {
+      let self = this
+      cbPlan.post(planDefinition).then(res => {
+        if (res.data.api_error_code == 'duplicate_entry') {
+          self.$Notice.error({
+            title: 'Plan Already Exist.',
+            duration: 5,
+            desc: res.data.message
+          })
+        } else {
+          self.$Notice.success({
+            title: '<b>New Plan</b>',
+            desc: '<b>New Subscription Plan</b> has been created..!'
+          })
+          res.data.class = 'ivu-table-row-highlight'
+          self.plans.splice(0, 0, res.data);
+          self.addPlanLoading = false
+        }
+        console.log('res>>>', res)
+      }).catch(err => {
+        console.log('Error Plan: ', err)
+      });
+    },
+    createNewAddon(planDefinition) {
+      let self = this
+    },
+    updatePlan(id, data) {
+      let self = this;
+      let convertedPrice = data.price * 100;
+      let updateDefinition = {
+        "name": data.name,
+        "description": data.description,
+        "invoice_name": data.name,
+        "price": convertedPrice,
+        "meta_data": {
+          "details": data.details
+        }
+      }
+      cbPlan.put(id, updateDefinition).then(res => {
+        console.log('UpdatedPlan :: ',res)
+        self.$Notice.success({
+          title: '<b>' + data.name + '</b> saved.',
+          desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been saved..!'
+        })
+      }).catch(err => {
+        cosole.log('UpdatePlan Error:')
+      })
     }
   }
 }
@@ -518,207 +647,207 @@ export default {
 
 <style scoped>
 #validateErr {
-   font-size: 16px;
-   color: red;
-   margin-top: 25px;
+  font-size: 16px;
+  color: red;
+  margin-top: 25px;
 }
 #priceErr{
   font-size:16px;
   color:red;
 }
 #header-fixed {
-    position: fixed;
-    top: 0px; display:none;
-    background-color:white;
+  position: fixed;
+  top: 0px; display:none;
+  background-color:white;
 }
 
-  .col-xs-3 {
-    padding-right: 0px;
-    padding-left: 0px;
-  }
-  .service-header {
-    border-bottom: solid 2px #000044;
-    background-color: #000044;
-    color: white;
-  }
-
-  .outer-main {
-    border: solid 3px #000044;
-    margin-top: 10px;
-    border-radius: 10px;
-  }
-
-  .outer-toggle {
-    /*transition: 0.5s all linear;*/
-    display: none;
-  }
-  .hidden-td {
-    height: 0px;
-  }
-
-  .route-header {
-    border-bottom: solid 2px black;
-    border-top: solid 1px black
-  }
-
-  .method-name {
-    border-right: solid 1px black
-  }
-
-  .method {
-    border-bottom: solid 0.5px black;
-    font-size: 1.5em
-  }
-
-  h3 {
-    font-size: 2.5em;
-    margin: 10px;
-  }
-
-  h5 {
-    font-size: 1.5em;
-  }
-
-  h4, .h4 {
-    font-size: 21px;
+.col-xs-3 {
+  padding-right: 0px;
+  padding-left: 0px;
+}
+.service-header {
+  border-bottom: solid 2px #000044;
+  background-color: #000044;
+  color: white;
 }
 
-  .options {
-    padding: 3px;
-    border-left: dashed 1px grey;
-    cursor: pointer;
-  }
+.outer-main {
+  border: solid 3px #000044;
+  margin-top: 10px;
+  border-radius: 10px;
+}
 
-  .options-main {
-    padding: 12px;
-    border-left: dashed 1px grey;
-    cursor: pointer;
-  }
+.outer-toggle {
+  /*transition: 0.5s all linear;*/
+  display: none;
+}
+.hidden-td {
+  height: 0px;
+}
 
-  /* input {
-    border: none;
-    margin: 2px;
-  } */
+.route-header {
+  border-bottom: solid 2px black;
+  border-top: solid 1px black
+}
 
-  input:focus {
-    outline: none !important;
-  }
+.method-name {
+  border-right: solid 1px black
+}
 
-  /* input.description {
-    width: 100%;
-    margin-top: -2px;
-  } */
+.method {
+  border-bottom: solid 0.5px black;
+  font-size: 1.5em
+}
 
-  textarea.description {
-    width: 100%;
-    margin-top: -2px;
-  }
+h3 {
+  font-size: 2.5em;
+  margin: 10px;
+}
 
-  .delete {
-    margin-top: 5px;
-    border-left: solid 1px #dddddd;
-    cursor: pointer;
-  }
+h5 {
+  font-size: 1.5em;
+}
 
-  .delete-route-option {
-    margin-top: 12px;
-    border-left: solid 1px #dddddd;
-  }
+h4, .h4 {
+  font-size: 21px;
+}
 
-  .add-service {
-    cursor: pointer;
-    margin-top: 10px;
-  }
+.options {
+  padding: 3px;
+  border-left: dashed 1px grey;
+  cursor: pointer;
+}
 
-  .main-option {
-    padding-bottom: 5px;
-  }
+.options-main {
+  padding: 12px;
+  border-left: dashed 1px grey;
+  cursor: pointer;
+}
 
-  .pointer {
-    cursor: pointer;
-  }
+/* input {
+  border: none;
+  margin: 2px;
+} */
 
-  .pointerX {
-    cursor: not-allowed;
-  }
+input:focus {
+  outline: none !important;
+}
 
-  .input-default-value {
-    width: 100%;
-    border-left: solid 1px black;
-    background-color: #f5f5f5;
-    padding: 2px;
-  }
+/* input.description {
+  width: 100%;
+  margin-top: -2px;
+} */
 
-  .no-margin {
-    margin: 0px;
-    padding: 0px;
-  }
+textarea.description {
+  width: 100%;
+  margin-top: -2px;
+}
 
-  hr {
-    border-width: 2px;
-    border-color: #888888;
-  }
+.delete {
+  margin-top: 5px;
+  border-left: solid 1px #dddddd;
+  cursor: pointer;
+}
 
-  hr.internal {
-    border-width: 2px;
-    margin: 5px;
-    border-color: #888888;
-  }
+.delete-route-option {
+  margin-top: 12px;
+  border-left: solid 1px #dddddd;
+}
 
-  div.internal {
-    margin: 5px;
-  }
+.add-service {
+  cursor: pointer;
+  margin-top: 10px;
+}
 
-  table {
-    width: 100%
-  }
+.main-option {
+  padding-bottom: 5px;
+}
 
-  .internal2 {
-    border-left: dashed 1px grey;
-  }
+.pointer {
+  cursor: pointer;
+}
 
-  .ivu-tree{
-    margin-right: 80%;
-    text-align: left;
-  }
+.pointerX {
+  cursor: not-allowed;
+}
+
+.input-default-value {
+  width: 100%;
+  border-left: solid 1px black;
+  background-color: #f5f5f5;
+  padding: 2px;
+}
+
+.no-margin {
+  margin: 0px;
+  padding: 0px;
+}
+
+hr {
+  border-width: 2px;
+  border-color: #888888;
+}
+
+hr.internal {
+  border-width: 2px;
+  margin: 5px;
+  border-color: #888888;
+}
+
+div.internal {
+  margin: 5px;
+}
+
+table {
+  width: 100%
+}
+
+.internal2 {
+  border-left: dashed 1px grey;
+}
+
+.ivu-tree{
+  margin-right: 80%;
+  text-align: left;
+}
 
 .ivu-card-bordered:hover {
   border-color: #072C75;
-  /*border: 4px solid #dddee1;*/
+/*border: 4px solid #dddee1;*/
 }
 
 .ivu-tree-title {
-    display: inline-block;
-    margin: 0;
-    padding: 0 4px;
-    border-radius: 3px;
-    cursor: pointer;
-    vertical-align: top;
-    color: #495060;
-    transition: all .2s ease-in-out;
-    font-size: 18px;
+  display: inline-block;
+  margin: 0;
+  padding: 0 4px;
+  border-radius: 3px;
+  cursor: pointer;
+  vertical-align: top;
+  color: #495060;
+  transition: all .2s ease-in-out;
+  font-size: 18px;
 }
 .ivu-tree ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    font-size: 18px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
 }
 .ivu-article li:not([class^=ivu-]) {
-    margin-bottom: 5px;
-    font-size: 14px;
+  margin-bottom: 5px;
+  font-size: 14px;
 }
 
 .ivu-tree-arrow {
-    cursor: pointer;
-    width: 12px;
-    text-align: center;
-    display: inline-block;
+  cursor: pointer;
+  width: 12px;
+  text-align: center;
+  display: inline-block;
 }
 
 .ivu-card-bordered {
-    border: 4px solid #dddee1;
-    border-color: #072C75;
+  border: 4px solid #dddee1;
+  border-color: #072C75;
 }
 
 .redInput input {
@@ -727,14 +856,14 @@ export default {
 }
 
 .ivu-table-cell {
-    padding-left: 18px;
-    padding-right: 18px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: normal;
-    word-break: break-all;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    font-size: 14px;
+  padding-left: 18px;
+  padding-right: 18px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-all;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  font-size: 14px;
 }
 </style>

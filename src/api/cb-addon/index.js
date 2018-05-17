@@ -1,5 +1,5 @@
 import api from '../../api';
-let model = 'cb-plan';
+let model = 'cb-addon';
 
 export default {
     get: (id) => {
