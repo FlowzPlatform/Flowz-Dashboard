@@ -113,7 +113,8 @@
                                             <span>Delete confirmation</span>
                                           </p>
                                           <div style="text-align:center">
-                                              <p>After you click DELETE, this plan will be delete permanently.</p>
+                                              <p v-if="activeTab === 'plan'"><b>{{ plan.name }}</b> will be delete permanently only if it is not subscribed by any user otherwise it will disabled.</p>
+                                              <p v-else>Confirm action to permanently delete <b>{{ plan.name }}.<br></b> After deleting this addon will not accessible.</p>
                                           </div>
                                           <div slot="footer">
                                               <Button type="error" size="large" long :loading="loading" @click="deletePlan(deleteIndex)">Delete</Button>
@@ -121,15 +122,15 @@
                                         </Modal>
                                       </a>
                                     </Col>
-                                    <Col span="3">
+                                    <Col span="3" v-if="activeTab === 'plan'">
                                       <a v-if="plan.period >= getDefaultPlan('validity', pIndex) && plan.price >= getDefaultPlan('price', pIndex)">
                                         <Tooltip content="Enable" placement="top">
-                                          <i-switch size="small" true-value="active" false-value="archived" v-model="plan.status"></i-switch>
+                                          <i-switch @on-change="makePlanArchived(plan.status, pIndex)" size="small" true-value="active" false-value="archived" v-model="plan.status"></i-switch>
                                         </Tooltip>
                                       </a>
                                       <a v-else class="pointerX">
                                         <Tooltip content="Enable" placement="top">
-                                          <i-switch size="small" disabled v-model="plan.status"></i-switch>
+                                          <i-switch size="small" true-value="active" false-value="archived" disabled v-model="plan.status"></i-switch>
                                         </Tooltip>
                                       </a>
                                     </Col>
@@ -259,6 +260,9 @@
         </Row>
       </Card>
     </Col>
+    <div id="overlay" v-show="showOverlay">
+      <img class="project-loading" src="../assets/images/indicator.svg" style="margin-left: 10px; width:80px; height:100px;"/>
+    </div>
   </Row>
 </template>
 
@@ -267,6 +271,7 @@ const uuidv1 = require('uuid/v1');
 import subscriptionPlans from '@/api/subscription-plans';
 import cbPlan from '@/api/cb-plan';
 import cbAddon from '@/api/cb-addon';
+import roles from '@/api/roles';
 import registerResource from '@/api/register-resource';
 import Icon from 'vue-awesome/components/Icon';
 import BootstrapVue from 'bootstrap-vue';
@@ -284,6 +289,7 @@ Vue.use(iView, { locale });
 
 import 'vue-awesome/icons';
 import $ from 'jquery';
+import { log } from 'util';
 Vue.component('icon', Icon);
 
 export default {
@@ -314,51 +320,73 @@ export default {
         time_unit: 'month',
         type: 'basic',
         details: []
-      }
+      },
+      showOverlay: false
     }
   },
   created()  {
-    this.planLoding = true
-    let data5 = []
     let self = this
-
-    // NEW SUBSCRIPTION CODE WITH CHARGEBEE
-    cbPlan.get().then(res => {
-      for(let i in res.data) {
-        res.data[i].plan.price /= 100 
-        self.planData.push(res.data[i].plan);
-      }
-      self.plans = self.planData;
-      self.planLoding = false;
+    this.showOverlay = true;
+    roles.get().then(res => {
+      this.planLoding = true
+      let data5 = []
+  
+      // NEW SUBSCRIPTION CODE WITH CHARGEBEE
+      cbPlan.get().then(res => {
+        /* for(let i in res.data) {
+          res.data[i].plan.price /= 100 
+          self.planData.push(res.data[i].plan);
+        } */
+        res.data.map((itm) => {
+          itm.plan.price /= 100;
+          self.planData.push(itm.plan)
+        })
+        self.plans = self.planData;
+        self.planLoding = false;
+      }).catch(err => {
+        let location = psl.parse(window.location.hostname)
+        location = location.domain === null ? location.input : location.domain
+        if (err.message == 'Network Error') {
+          self.$Notice.error({
+            duration: 5,
+            title: 'Loading created plans',
+            desc: 'API service unavailable.'
+          });
+        } else if (err.response.data.message == 'User authentication fail') {
+          self.$Notice.error({
+            duration: 5,
+            title: 'Your session has been expired.',
+            desc: err.response.data.message + ', please login again.'
+          });
+          Cookies.remove('auth_token', {domain: location});
+          Cookies.remove('user', {domain: location});
+          self.$router.push({ name: 'login' });
+        } else {
+          self.$Message.error(err.response.data.message);
+        }
+      });
+  
+      cbAddon.get().then(res => {
+        res.data.map((itm) => {
+          itm.addon.price /= 100;
+          if (itm.addon.status == 'active')
+            self.addonData.push(itm.addon);
+        })
+      }).catch(err => {
+        console.log('Error Addon : ', err)
+      });
+      this.showOverlay = false
     }).catch(err => {
-      let location = psl.parse(window.location.hostname)
-      location = location.domain === null ? location.input : location.domain
-      if (err.message == 'Network Error') {
-        self.$Notice.error({
-          duration: 5,
-          title: 'Loading created plans',
-          desc: 'API service unavailable.'
+      if(err.response.status == 403) {
+        self.$Modal.warning({
+          title: "Warning",
+          content: "You are not authorized to see ",
+          onOk: () => {
+            self.$router.go(-1);
+          }
         });
-      } else if (err.response.data.message == 'User authentication fail') {
-        self.$Notice.error({
-          duration: 5,
-          title: 'Your session has been expired.',
-          desc: err.response.data.message + ', please login again.'
-        });
-        Cookies.remove('auth_token', {domain: location});
-        Cookies.remove('user', {domain: location});
-        self.$router.push({ name: 'login' });
       }
-    });
-
-    cbAddon.get().then(res => {
-      for(let i in res.data) {
-        res.data[i].addon.price /= 100 //To convert price from cents to dollars
-        self.addonData.push(res.data[i].addon);
-      }
-    }).catch(err => {
-      console.log('Error Addon : ', err)
-    });
+    })
 
     // OLD CODE FOR SUBSCRIPTION
     /* subscriptionPlans.get().then(res => {
@@ -390,6 +418,7 @@ export default {
       // return this.defaultPlan[idx]
     },
     validateValidity (validity, pIndex) {
+      validity = validity.toString();
       var num = validity.match(/^[0-9]+$/);
       if (num === null) {
         this.plans[pIndex].period = ''
@@ -430,6 +459,66 @@ export default {
       }
       return false
     },
+    makePlanArchived (val, index) {
+      let self = this;
+      if (val == 'archived') {
+        cbPlan.delete(self.plans[index].id).then(res => {
+          if (res.data.api_error_code) {
+            if (res.data.api_error_code == 'resource_not_found') {
+              self.$Notice.error({
+                title: 'You can\'t disable ' + self.plans[index].name,
+                duration: 5,
+                desc: res.data.message
+              });
+            } else {
+              self.$Notice.error({
+                title: 'Error: ' + res.data.api_error_code,
+                duration: 5,
+                desc: res.data.message
+              });
+            }
+            self.plans[index].status = 'active';
+          } else {
+            self.$Notice.success({
+              title: '<b>' + self.plans[index].name + '</b> Plan Disabled.',
+              desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been disabled..!'
+            })
+          }
+          console.log('Plan archived :: ', res)
+        }).catch(err => {
+          self.plans[index].status = 'active';
+          console.log('Plan archived erro ::', err)
+        });
+      } else if (val == 'active') {
+        cbPlan.patch(self.plans[index].id).then(res => {
+          if (res.data.api_error_code) {
+            if (res.data.api_error_code == 'resource_not_found') {
+              self.$Notice.error({
+                title: 'You can\'t enable ' + self.plans[index].name,
+                duration: 5,
+                desc: res.data.message
+              });
+            } else {
+              self.$Notice.error({
+                title: 'Error: ' + res.data.api_error_code,
+                duration: 5,
+                desc: res.data.message
+              });
+            }
+            self.plans[index].status = 'archived';
+          } else {
+            self.$Notice.success({
+              title: '<b>' + self.plans[index].name + '</b> Plan Enabled.',
+              desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been enabled..!'
+            })
+          }
+          console.log('Plan unarchived :: ', res);
+        }).catch(err => {
+          self.plans[index].status = 'archived';
+          console.log('Plan unarchived error ::', err)
+        });
+      }
+    },
     async createPlan (method) {
       let self = this
       self.addPlanLoading = true
@@ -439,7 +528,7 @@ export default {
       
       self.plans.filter( function (o) {
         o.class = 'ivu-table-row'
-      })
+      });
 
       await registerResource.get().then(res => {
         _.forEach(res.data.data, function(data, key) {
@@ -474,9 +563,9 @@ export default {
         }
       }
       if (method == 'plan') {
-        this.createNewPlan(planDefinition)
+        this.createCbPlan(planDefinition)
       } else if (method == 'addon') {
-        this.createNewAddon(planDefinition)
+        this.createCbAddon(planDefinition)
       }
       // console.log('>>>>>>>>>>>>>...', planDefinition)
 // OLD CODE FOR SUBSCRIPTION
@@ -508,21 +597,35 @@ export default {
     async deletePlan (plan) {
       let self = this
       this.loading = true
-      await subscriptionPlans.delete(this.plans[plan].id).then(res => {
-        self.$Notice.success({
-          title: '<b>' + self.plans[plan].name + '</b> deleted.',
-          desc: 'Subscription Plan <b>' + self.plans[plan].name + '</b> has been deleted..!'
-        })
-        self.plans.splice(plan, 1)
-      }).catch(err => {
-        self.$Notice.error({
-          duration: 5,
-          title: 'Can not delete <b>' + self.plans[plan].name + '</b>',
-          desc: 'Please try again' + err
-        })
-      })
-      this.loading = false
-      this.confirmDelete = false
+      console.log('this.plans[plan].id :: ', this.plans[plan].id)
+      if (self.activeTab == 'plan') {
+        if (self.plans[plan].status == 'archived') {
+          self.$Notice.error({
+            title: 'Action Denied',
+            desc: 'You can\'t delete Disabled/Archived plan because it may subscribed by users.',
+            duration: 5
+          });
+        } else {
+          self.deleteCbPlan(self.plans[plan].id, plan);
+        }
+      } else {
+        self.deleteCbAddon(self.plans[plan].id, plan);
+      }
+      self.loading = false
+      self.confirmDelete = false
+      // await subscriptionPlans.delete(this.plans[plan].id).then(res => {
+      //   self.$Notice.success({
+      //     title: '<b>' + self.plans[plan].name + '</b> deleted.',
+      //     desc: 'Subscription Plan <b>' + self.plans[plan].name + '</b> has been deleted..!'
+      //   })
+      //   self.plans.splice(plan, 1)
+      // }).catch(err => {
+      //   self.$Notice.error({
+      //     duration: 5,
+      //     title: 'Can not delete <b>' + self.plans[plan].name + '</b>',
+      //     desc: 'Please try again' + err
+      //   })
+      // })
     },
     expand (plan) {
       $('#plan_'+plan).slideToggle(function() {
@@ -566,9 +669,9 @@ export default {
       } else if (this.plans[index].id != undefined) {
         delete dataObj.class          
         if (self.activeTab == 'plan') {
-          self.updatePlan(self.plans[index].id, dataObj);
+          self.updateCbPlan(self.plans[index].id, dataObj);
         } else {
-          self.updateAddon(self.plans[index].id, dataObj);
+          self.updateCbAddon(self.plans[index].id, dataObj);
         }
         //OLD CODE FOR UPDATE PLAN DETAILS
         /* subscriptionPlans.put(this.plans[index].id, dataObj).then(res => {
@@ -593,53 +696,203 @@ export default {
         }) */
       }
     },
-    createNewPlan(planDefinition) {
+    createCbPlan(planDefinition) {
       let self = this
       cbPlan.post(planDefinition).then(res => {
-        if (res.data.api_error_code == 'duplicate_entry') {
-          self.$Notice.error({
-            title: 'Plan Already Exist.',
-            duration: 5,
-            desc: res.data.message
-          })
+        if (res.data.api_error_code) {
+          if (res.data.api_error_code == 'duplicate_entry') {
+            self.$Notice.error({
+              title: 'Plan Already Exist.',
+              duration: 5,
+              desc: res.data.message
+            });
+          } else {
+            self.$Notice.error({
+              title: 'Error: ' + res.data.api_error_code,
+              duration: 5,
+              desc: res.data.message
+            });
+          }
+          self.addPlanLoading = false
         } else {
           self.$Notice.success({
             title: '<b>New Plan</b>',
             desc: '<b>New Subscription Plan</b> has been created..!'
-          })
-          res.data.class = 'ivu-table-row-highlight'
+          });
+          res.data.price /= 100;
+          res.data.class = 'ivu-table-row-highlight';
+          self.plans.splice(0, 0, res.data);
+          self.addPlanLoading = false;
+        }
+        console.log('Create Plan :: ', res)
+      }).catch(err => {
+        console.log('Error Create Plan :: ', err)
+      });
+    },
+    createCbAddon(planDefinition) {
+      let self = this;
+      planDefinition.name = 'Addon';
+      planDefinition.invoice_name = "Addon";
+      planDefinition.type = 'on_off';
+      planDefinition.period_unit = 'month';
+      planDefinition.charge_type = 'recurring';
+      delete planDefinition.status;
+      
+      cbAddon.post(planDefinition).then(res => {
+        if (res.data.api_error_code) {
+          if (res.data.api_error_code == 'duplicate_entry') {
+            self.$Notice.error({
+              title: 'Addon Already Exist.',
+              duration: 5,
+              desc: res.data.message
+            });
+          } else {
+            self.$Notice.error({
+              title: 'Error: ' + res.data.api_error_code,
+              duration: 5,
+              desc: res.data.message
+            });
+          }
+          self.addPlanLoading = false
+        } else {
+          self.$Notice.success({
+            title: '<b>New Addon</b>',
+            desc: '<b>New Addon Plan</b> has been created..!'
+          });
+          res.data.price /= 100;
+          res.data.class = 'ivu-table-row-highlight';
           self.plans.splice(0, 0, res.data);
           self.addPlanLoading = false
         }
-        console.log('res>>>', res)
-      }).catch(err => {
-        console.log('Error Plan: ', err)
       });
     },
-    createNewAddon(planDefinition) {
-      let self = this
-    },
-    updatePlan(id, data) {
+    updateCbPlan(id, data) {
+      console.log('>>data', data)
       let self = this;
       let convertedPrice = data.price * 100;
       let updateDefinition = {
         "name": data.name,
         "description": data.description,
         "invoice_name": data.name,
+        "period": data.period,
         "price": convertedPrice,
         "meta_data": {
-          "details": data.details
+          "details": data.meta_data.details
         }
-      }
+      };
       cbPlan.put(id, updateDefinition).then(res => {
-        console.log('UpdatedPlan :: ',res)
-        self.$Notice.success({
-          title: '<b>' + data.name + '</b> saved.',
-          desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been saved..!'
-        })
+        console.log('UpdatedPlan :: ', res)
+        if (res.data.api_error_code) {
+          self.$Notice.error({
+            title: 'Error: ' + res.data.api_error_code,
+            duration: 5,
+            desc: res.data.message
+          });
+        } else {
+          self.$Notice.success({
+            title: '<b>' + res.data.name + '</b> saved.',
+            desc: 'Subscription Plan <b>' + res.data.name + '</b> has been saved..!'
+          });
+        }
       }).catch(err => {
-        cosole.log('UpdatePlan Error:')
-      })
+        cosole.log('UpdatePlan Error:', err);
+      });
+    },
+    updateCbAddon(id, data) {
+      let self = this;
+      let convertedPrice = data.price * 100;
+      let updateDefination = {
+        "name": data.name,
+        "invoice_name": data.name,
+        "price": convertedPrice,
+        "period": data.period,
+        "meta_data": {
+          "details": data.meta_data.details
+        }
+      };
+      cbAddon.put(id, updateDefination).then(res => {
+        console.log('UpdatedAddon :: ', res);
+        if (res.data.api_error_code) {
+          self.$Notice.error({
+            title: 'Error: ' + res.data.api_error_code,
+            duration: 5,
+            desc: res.data.message
+          });
+        } else { 
+           self.$Notice.success({
+            title: '<b>' + res.data.name + '</b> saved.',
+            desc: 'Addon <b>' + res.data.name + '</b> has been saved..!'
+          });
+        }
+      }).catch(err => {
+        cosole.log('UpdateAddon Error:', err);
+      });
+    },
+    deleteCbPlan(id, index) {
+      let self = this;
+      cbPlan.delete(id).then(res => {
+        console.log('Delete Plan Error: : ', res);
+        if (res.data.api_error_code) {
+          if (res.data.api_error_code == 'resource_not_found') {
+            self.$Notice.error({
+              title: 'You can\'t delete ' + self.plans[index].name,
+              duration: 5,
+              desc: res.data.message
+            });
+          } else {
+            self.$Notice.error({
+              title: 'Error: ' + res.data.api_error_code,
+              duration: 5,
+              desc: res.data.message
+            });
+          }
+        } else {
+          self.$Notice.success({
+            title: '<b>' + self.plans[index].name + '</b> deleted.',
+            desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been deleted..!'
+          })
+          self.plans.splice(index, 1);
+          let newIndex = self.planData.map((itm) => itm.id).indexOf(id);
+          self.planData.splice(newIndex, 1);
+        }
+      }).catch(err => {
+        console.log('Delete Plan Catch Error: ', err);
+      });
+
+      self.loading = false
+      self.confirmDelete = false
+    },
+    deleteCbAddon(id, index) {
+      let self = this;
+      cbAddon.delete(id).then(res => {
+        console.log('Delete Addon Error: : ', res);
+        if (res.data.api_error_code) {
+          if (res.data.api_error_code == 'resource_not_found') {
+            self.$Notice.error({
+              title: 'You can\'t delete ' + self.plans[index].name,
+              duration: 5,
+              desc: res.data.message
+            });
+          } else {
+            self.$Notice.error({
+              title: 'Error: ' + res.data.api_error_code,
+              duration: 5,
+              desc: res.data.message
+            });
+          }
+        } else {
+          self.$Notice.success({
+            title: '<b>' + self.plans[index].name + '</b> deleted.',
+            desc: 'Addon Plan <b>' + self.plans[index].name + '</b> has been deleted..!'
+          })
+          self.plans.splice(index, 1);
+          let newIndex = self.addonData.map((itm) => itm.id).indexOf(id);
+          self.addonData.splice(newIndex, 1);
+        }
+      }).catch(err => {
+        console.log('Delete Addon Catch Error: ', err);
+      });
+      return 
     }
   }
 }
@@ -865,5 +1118,20 @@ table {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   font-size: 14px;
+}
+
+ #overlay {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 2;
+    cursor: pointer;
+    padding-left: 50%;
+    padding-top: 25%;
 }
 </style>

@@ -16,6 +16,6 @@ export default {
         return api.request('put', '/' + model + '/' + id, data);
     },
     delete: (id) => {
-        return api.request('delete', '/' + model, id);
+        return api.request('delete', '/' + model + '/' + id);
     }
 }
