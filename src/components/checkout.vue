@@ -135,6 +135,7 @@ import subscriptionPlans from '@/api/subscription-plans';
 import { setTimeout } from 'timers';
 import transactions from '@/api/transactions';
 import userDetails from '@/api/userdetails';
+import config from '../config';
 
 export default {
   props: {
@@ -308,9 +309,9 @@ export default {
       } else {
         if (res.data.api_error_code == 'resource_not_found') {
           self.savedCard = false
-          }
+        }
       }
-      console.log('Res of customer details', res)
+      // console.log('Res of customer details', res)
     }).catch(err => {
       console.log('Error While geting customer details', err)
     });
@@ -352,7 +353,7 @@ export default {
   methods: {
     getPlanDetails (id) {
       return cbPlan.get(id).then(res => {
-        console.log('>>>>', id,res.data)
+        // console.log('>>>>', id,res.data)
         return res.data;
       }).catch(err => {
         if (err.response && err.response.data.message == 'User authentication fail') {
@@ -452,6 +453,7 @@ export default {
                 "auto_collection": "on"
               },
               "card": {
+                "gateway_account_id": config.gatewayAccountId,
                 "number": self.payDetail.cardNumber,
                 "expiry_month": self.payDetail.expiryMM,
                 "expiry_year": self.payDetail.expiryYY,
@@ -544,31 +546,17 @@ export default {
       }
   },
   async subscribeCbPlan(subDetails) {
-      /* this.$Notice.error({
-        title: 'User Details Not Found',
-        desc: userDetails.message,
-        duration: 5
-      }); */
     let self = this
     if (!this.savedCard) {
       subDetails.id = this.userDetails._id;
       subDetails.customer.first_name = this.userDetails.firstname;
       subDetails.customer.last_name = this.userDetails.lastname;
       subDetails.customer.email = this.userDetails.email;
-      console.log(subDetails)
       cbSubscription.post(subDetails).then(res => {
         if (res.data.api_error_code) {
-          self.updatePayMessage('alert alert-danger', 'Error..! ', res.data.message);
-          self.$Notice.error({
-            title: 'Error: ' + res.data.api_error_code,
-            duration: 5,
-            desc: res.data.message
-          });
+          self.throwNewError(res);
         } else {
-          self.updatePayMessage('alert alert-success', 'Success..! ', 'Successfully purchased.');
-          Cookies.set('welcomeMsg', 'Thanks You For Subscribing...!');
-          console.log('Subscription Details', res);
-          this.$router.push({ name: 'planDetails' });
+          self.subscriptionDone(res);
         }
         self.payloading = false
       }).catch(err => {
@@ -577,20 +565,11 @@ export default {
         self.payloading = false;
       });
     } else {
-      console.log(subDetails)
       cbSubscription.patch(this.userDetails._id, subDetails).then(res => {
         if (res.data.api_error_code) {
-          self.updatePayMessage('alert alert-danger', 'Error..! ', res.data.message);
-          self.$Notice.error({
-            title: 'Error: ' + res.data.api_error_code,
-            duration: 5,
-            desc: res.data.message
-          });
+          self.throwNewError(res);
         } else {
-          self.updatePayMessage('alert alert-success', 'Success..! ', 'Successfully purchased.');
-          Cookies.set('welcomeMsg', 'Thank You For Subscribing...!');
-          console.log('Res of sub for customer:: ', res);
-          this.$router.push({ name: 'planDetails' });
+          self.subscriptionDone(res);
         }
         self.payloading = false;
       }).catch(err => {
@@ -604,17 +583,9 @@ export default {
     let self = this
     cbSubscription.put(self.basicPlan, subDetails).then(res => {
       if (res.data.api_error_code) {
-        self.updatePayMessage('alert alert-danger', 'Error..! ', res.data.message);
-        self.$Notice.error({
-          title: 'Error: ' + res.data.api_error_code,
-          duration: 5,
-          desc: res.data.message
-        });
+        self.throwNewError(res);
       } else {
-        self.updatePayMessage('alert alert-success', 'Success..! ', 'Successfully purchased.');
-        Cookies.set('welcomeMsg', 'Thank You For Subscribing...!');
-        console.log('Res of addon for customer:: ', res);
-        this.$router.push({ name: 'planDetails' });
+        self.subscriptionDone(res);
       }
       self.payloading = false;
     }).catch(err => {
@@ -630,6 +601,33 @@ export default {
       console.log('>>>>Erro in user details', err);
       return err;
     });
+  },
+  throwNewError(res) {
+    let self = this;
+    let msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':')+1);
+    let ttl = res.data.api_error_code.replace(/_/gi, ' ');
+    ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1);
+    self.updatePayMessage('alert alert-danger', 'Error..! ', msg);
+    /* if (res.data.error_code == 'add_card_error') {
+      self.$Notice.error({
+        title: ttl,
+        duration: 5,
+        desc: msg
+      });
+      self.updatePayMessage('alert alert-danger', 'Error..! ', 'Your card is expire.');
+    } else { */
+      self.$Notice.error({
+        title: ttl,
+        duration: 5,
+        desc: msg
+      });
+    /* } */
+  },
+  subscriptionDone(res) {
+    self.updatePayMessage('alert alert-success', 'Success..! ', 'Successfully purchased.');
+    Cookies.set('welcomeMsg', 'Thanks You For Subscribing...!');
+    console.log('Subscription Details', res);
+    this.$router.push({ name: 'planDetails' });
   }
 },
   'watch': {

@@ -4,5 +4,6 @@ const prodEnv = require('./prod.env')
 
 module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
-  domainkey: JSON.stringify(process.env.domainkey)
+  domainkey: JSON.stringify(process.env.domainkey),
+  gatewayAccountId: JSON.stringify(process.env.gatewayid)
 });
