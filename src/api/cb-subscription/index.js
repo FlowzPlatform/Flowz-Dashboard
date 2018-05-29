@@ -12,6 +12,9 @@ export default {
     getOwn: (id) => {
         return api.request('get', '/' + model + '?limit=100&customer_id=' + id);
     },
+    getSubscribed: (id) => {
+        return api.request('get', '/' + model + '?limit=100&plan_id=' + id);
+    },
     post: (data) => {
         return api.request('post', '/' + model, data);
     },

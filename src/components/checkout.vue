@@ -100,7 +100,10 @@
           </div>
           <div class="panel-footer">
             <Row type="flex" justify="space-around">
-                <Col span="11">
+                <Col span="5">
+                  <p v-if="mainData[1]" class="sv-card">PAY {{ mainData[1].price }} USD</p>
+                </Col>
+                <Col span="6">
                     <!-- set attribute to Col span="16" offset="4" 
                     <Button title="PayPal" type="success" :loading="payloading" @click="payFunction('payDetail')"><i class="fa fa-paypal" aria-hidden="true"></i></Button>
                     <Button title="Stripe" type="success" :loading="payloading" @click="payFunction('payDetail')"><i class="fa fa-cc-stripe" aria-hidden="true"></i></Button>
@@ -534,10 +537,11 @@ export default {
         }
         let result
         if (self.basicPlan != undefined) {
+          //IF CHANGES IN subDetails OBJECT THEN ALSO CHANGE CODE OF AN CB-SUBSCRIPTION's UPDATE METHOD
           subDetails = {
             "addons": [{
-              'id': self.sub_id 
-            }] 
+              'id': self.sub_id
+            }]
           }
           result = await self.subscribeCbAddon(subDetails);
         } else {
@@ -598,7 +602,7 @@ export default {
     return userDetails.get().then(res => {
       return res.data.data;
     }).catch(err => {
-      console.log('>>>>Erro in user details', err);
+      console.log('>>>>Error in user details', err);
       return err;
     });
   },
@@ -624,9 +628,16 @@ export default {
     /* } */
   },
   subscriptionDone(res) {
+    let self = this;
+    console.log('FINAL RES>>', res)
     self.updatePayMessage('alert alert-success', 'Success..! ', 'Successfully purchased.');
     Cookies.set('welcomeMsg', 'Thanks You For Subscribing...!');
-    console.log('Subscription Details', res);
+    self.$Notice.success({
+      title: 'Subscription Id',
+      duration: 0,
+      desc: res.data.subscription.id
+    })
+    // console.log('Subscription Details', res);
     this.$router.push({ name: 'planDetails' });
   }
 },

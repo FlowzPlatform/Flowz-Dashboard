@@ -84,22 +84,21 @@ export default {
     },
     methods: {
         async changePage (pageNo) {
-            this.planList = await this.makeChunk(pageNo, this.pageSize)
+            this.planList = await this.makeChunk(pageNo, this.pageSize);
         },
         async makeChunk (pageNo, size) {
             let chunk = []
             for (let i=(pageNo - 1) * size; i < size + (pageNo - 1) * size; i++) {
                 if(this.planListData[i] != undefined) {
-                    await chunk.push(this.planListData[i])
+                    await chunk.push(this.planListData[i]);
                 }
             }
-            return chunk.slice()
-
+            return chunk.slice();
         },
-        async getPlanName(itm) {
+        getPlanName(itm) {
             return cbPlan.get(itm.subscription.plan_id).then(res => {
                 return res.data.name;
-            })
+            });
         }
     },
     async mounted() {
@@ -133,7 +132,7 @@ export default {
             console.log('>>>Getting user details', err);
         });
         cbSubscription.getOwn(self.userDetails._id).then(async res => {
-            console.log('Res of cb-subscription:: ', res)
+            // console.log('Res of cb-subscription:: ', res)
             
             let obj = res.data.map(async (itm) => {
                 itm.subscription.plan_unit_price /= 100;
@@ -141,7 +140,7 @@ export default {
                 itm.subscription.current_term_end = moment.unix(itm.subscription.current_term_end).format("DD MMM YYYY");
                 itm.subscription.plan_name = await self.getPlanName(itm);
                 Promise.resolve(itm.subscription.plan_name);
-                return itm.subscription
+                return itm.subscription;
             });
             Promise.all(obj).then(async res => {
                 self.planListData = res;

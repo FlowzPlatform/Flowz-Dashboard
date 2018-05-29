@@ -85,7 +85,7 @@ export default {
         },
         currentRow(currentRow) {
             console.log('CurrentRow', currentRow)
-            this.$emit('selectedSubscription', [currentRow.id, currentRow.plan_id])
+            this.$emit('selectedSubscription', [currentRow.id, currentRow.plan_id, currentRow.plan_unit_price])
         },
         async getPlanName(itm) {
             return cbPlan.get(itm.subscription.plan_id).then(res => {
@@ -121,7 +121,7 @@ export default {
             console.log('>>>Getting user details', err);
         });
         cbSubscription.getOwn(self.userDetails._id).then(async res => {
-            console.log('Res of cb-subscription:: ', res)
+            // console.log('Res of cb-subscription:: ', res)
             
             let obj = res.data.map(async (itm) => {
                 itm.subscription.plan_unit_price /= 100;

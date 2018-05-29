@@ -22,6 +22,7 @@
                   <table cellspacing="0" cellpadding="0" border="0" style="width: 100%;">
                      <colgroup>
                           <col width="22">
+                            <col width="8">
                               <col width="22">
                                   <col width="22">
                                       <!-- <col width="15"> -->
@@ -29,18 +30,23 @@
                       </colgroup>
                       <thead>
                           <tr>
-                              <th class="ivu-table-column">
+                              <th class="ivu-table-column-center">
                                   <div class="ivu-table-cell">
                                       <span v-if="activeTab === 'plan'">Plan Name</span>
                                       <span v-else>Addon Name</span>
                                   </div>
                               </th>
-                              <th class="ivu-table-column">
+                              <th class="ivu-table-column-center">
+                                <div class="ivu-table-cell">
+                                    <span>Active User</span>
+                                  </div>
+                              </th>
+                              <th class="ivu-table-column-center">
                                   <div class="ivu-table-cell">
                                       <span>Validity <span style="color:gray;font-size:10px">(Month)</span></span>
                                   </div>
                               </th>
-                              <th class="ivu-table-column">
+                              <th class="ivu-table-column-center">
                                   <div class="ivu-table-cell"><span>Price <span style="color:gray;font-size:10px">(USD)</span></span>
                                   </div>
                               </th>
@@ -56,21 +62,28 @@
                       </thead>
                       <tbody class="ivu-table-tbody" v-for="(plan, pIndex) in plans" :id="'plans_'+pIndex">
                           <tr v-bind:class="plan.class">
-                              <td class="">
+                              <td class="ivu-table-column-center">
                                 <div class="ivu-table-cell">
                                   <Tooltip content="Plan Name" placement="bottom">
                                     <input class="form-control" v-model="plan.name" placeholder="*Plan Name" ></input>
                                   </Tooltip>
                                 </div>
                               </td>
-                              <td class="">
+                              <td class="ivu-table-column-center">
+                                <div class="ivu-table-cell">
+                                  <Tooltip content="Current User" placement="bottom">
+                                    {{ plan.users }}
+                                  </Tooltip>
+                                </div>
+                              </td>
+                              <td class="ivu-table-column-center">
                                 <div class="ivu-table-cell">
                                   <Tooltip content="Validity" placement="bottom">
                                     <input  type="text" class="description form-control" v-model="plan.period" min=1 v-on:keyup="validateValidity(plan.period, pIndex)" placeholder="*Validity"></input>
                                   </Tooltip>
                                 </div>
                               </td>
-                              <td class="">
+                              <td class="ivu-table-column-center">
                                   <div class="ivu-table-cell">
                                     <Tooltip content="Price" placement="bottom">
                                       <input type="text" class="description form-control" v-model="plan.price" v-on:keyup="validatePrice(plan.price, pIndex)" placeholder="*Price"></input>
@@ -122,7 +135,7 @@
                                         </Modal>
                                       </a>
                                     </Col>
-                                    <Col span="3" v-if="activeTab === 'plan'">
+                                    <Col span="3">
                                       <a v-if="plan.period >= getDefaultPlan('validity', pIndex) && plan.price >= getDefaultPlan('price', pIndex)">
                                         <Tooltip content="Enable" placement="top">
                                           <i-switch @on-change="makePlanArchived(plan.status, pIndex)" size="small" true-value="active" false-value="archived" v-model="plan.status"></i-switch>
@@ -150,7 +163,7 @@
                               </td>
                           </tr>
                           <tr class="ivu-table-row">
-                            <td colspan="4" class="hidden-td">
+                            <td colspan="5" class="hidden-td">
                               <div :id="'plan_'+pIndex" class="outer-toggle">
                                 <Row>
                                   <Col span="22" push="1">
@@ -255,9 +268,10 @@
         <Row type="flex" justify="center">
           <Col span="4" style="margin-top:5px;">
             <Spin v-if="planLoding" size="large"></Spin>
-            <h5 v-else-if="!planLoding && plans.length == 0"><span v-if="activeTab === 'plan'">Plans</span><span v-else>Addons</span> not available</h5>
+            <h5 v-else-if="!planLoding && plans.length == 0"><span v-if="activeTab === 'plan'">Plans</span><span v-else>Addons</span> Not available</h5>
           </Col>
         </Row>
+        <span>Note: if any plan / addon is subscribed by any user then you can't update validity.</span>
       </Card>
     </Col>
     <div id="overlay" v-show="showOverlay">
@@ -271,6 +285,8 @@ const uuidv1 = require('uuid/v1');
 import subscriptionPlans from '@/api/subscription-plans';
 import cbPlan from '@/api/cb-plan';
 import cbAddon from '@/api/cb-addon';
+import cbSubscription from '@/api/cb-subscription';
+import cbAddonUser from '@/api/cb-addons-user';
 import roles from '@/api/roles';
 import registerResource from '@/api/register-resource';
 import Icon from 'vue-awesome/components/Icon';
@@ -294,7 +310,7 @@ Vue.component('icon', Icon);
 
 export default {
   name: 'createPlan',
-  data(){
+  data() {
     return {
       services: [],
       plans: [],
@@ -329,20 +345,20 @@ export default {
     this.showOverlay = true;
     roles.get().then(res => {
       this.planLoding = true
-      let data5 = []
   
       // NEW SUBSCRIPTION CODE WITH CHARGEBEE
       cbPlan.get().then(res => {
-        /* for(let i in res.data) {
-          res.data[i].plan.price /= 100 
-          self.planData.push(res.data[i].plan);
-        } */
-        res.data.map((itm) => {
+        let obj = res.data.map(async (itm) => {
           itm.plan.price /= 100;
-          self.planData.push(itm.plan)
-        })
-        self.plans = self.planData;
-        self.planLoding = false;
+          itm.plan.users = await self.getSubscribedUser(itm.plan.id);
+          Promise.resolve(itm.plan.users);
+          return itm.plan;
+        });
+        Promise.all(obj).then(async res => {
+          self.planData = res
+          self.plans = self.planData;
+          self.planLoding = false;
+        });
       }).catch(err => {
         let location = psl.parse(window.location.hostname)
         location = location.domain === null ? location.input : location.domain
@@ -367,15 +383,20 @@ export default {
       });
   
       cbAddon.get().then(res => {
-        res.data.map((itm) => {
+        let obj = res.data.map(async (itm) => {
           itm.addon.price /= 100;
-          if (itm.addon.status == 'active')
-            self.addonData.push(itm.addon);
-        })
+          // if (itm.addon.status == 'active')
+          itm.addon.users = await self.getAddonUser(itm.addon.id);
+          Promise.resolve(itm.addon.users);
+          return itm.addon;
+        });
+        Promise.all(obj).then(async res => {
+          self.addonData = res;
+        });
       }).catch(err => {
         console.log('Error Addon : ', err)
       });
-      this.showOverlay = false
+      this.showOverlay = false;
     }).catch(err => {
       if(err.response.status == 403) {
         self.$Modal.warning({
@@ -386,7 +407,7 @@ export default {
           }
         });
       }
-    })
+    });
 
     // OLD CODE FOR SUBSCRIPTION
     /* subscriptionPlans.get().then(res => {
@@ -410,6 +431,16 @@ export default {
     }); */
   },
   methods: {
+    getSubscribedUser(plan_id) {
+      return cbSubscription.getSubscribed(plan_id).then(res => {
+        return res.data.length
+      });
+    },
+    getAddonUser(addon_id) {
+      return cbAddonUser.get(addon_id).then(res => {
+        return res.data.length;
+      });
+    },
     changeActiveTab (name) {
       this.plans = name === 'plan' ? this.planData : this.addonData;
     },
@@ -462,61 +493,17 @@ export default {
     makePlanArchived (val, index) {
       let self = this;
       if (val == 'archived') {
-        cbPlan.delete(self.plans[index].id).then(res => {
-          if (res.data.api_error_code) {
-            if (res.data.api_error_code == 'resource_not_found') {
-              self.$Notice.error({
-                title: 'You can\'t disable ' + self.plans[index].name,
-                duration: 5,
-                desc: res.data.message
-              });
-            } else {
-              self.$Notice.error({
-                title: 'Error: ' + res.data.api_error_code,
-                duration: 5,
-                desc: res.data.message
-              });
-            }
-            self.plans[index].status = 'active';
-          } else {
-            self.$Notice.success({
-              title: '<b>' + self.plans[index].name + '</b> Plan Disabled.',
-              desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been disabled..!'
-            })
-          }
-          console.log('Plan archived :: ', res)
-        }).catch(err => {
-          self.plans[index].status = 'active';
-          console.log('Plan archived erro ::', err)
-        });
+        if (self.activeTab == 'plan') {
+          self.disablePlan(index);
+        } else {
+          self.disableAddon(index);
+        }
       } else if (val == 'active') {
-        cbPlan.patch(self.plans[index].id).then(res => {
-          if (res.data.api_error_code) {
-            if (res.data.api_error_code == 'resource_not_found') {
-              self.$Notice.error({
-                title: 'You can\'t enable ' + self.plans[index].name,
-                duration: 5,
-                desc: res.data.message
-              });
-            } else {
-              self.$Notice.error({
-                title: 'Error: ' + res.data.api_error_code,
-                duration: 5,
-                desc: res.data.message
-              });
-            }
-            self.plans[index].status = 'archived';
-          } else {
-            self.$Notice.success({
-              title: '<b>' + self.plans[index].name + '</b> Plan Enabled.',
-              desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been enabled..!'
-            })
-          }
-          console.log('Plan unarchived :: ', res);
-        }).catch(err => {
-          self.plans[index].status = 'archived';
-          console.log('Plan unarchived error ::', err)
-        });
+        if (self.activeTab == 'plan') {
+          self.enablePlan(index);
+        } else {
+          self.enableAddon(index);
+        }
       }
     },
     async createPlan (method) {
@@ -707,11 +694,7 @@ export default {
               desc: res.data.message
             });
           } else {
-            self.$Notice.error({
-              title: 'Error: ' + res.data.api_error_code,
-              duration: 5,
-              desc: res.data.message
-            });
+            self.throwNewError(res);
           }
           self.addPlanLoading = false
         } else {
@@ -747,11 +730,7 @@ export default {
               desc: res.data.message
             });
           } else {
-            self.$Notice.error({
-              title: 'Error: ' + res.data.api_error_code,
-              duration: 5,
-              desc: res.data.message
-            });
+            self.throwNewError(res);
           }
           self.addPlanLoading = false
         } else {
@@ -767,7 +746,6 @@ export default {
       });
     },
     updateCbPlan(id, data) {
-      console.log('>>data', data)
       let self = this;
       let convertedPrice = data.price * 100;
       let updateDefinition = {
@@ -780,14 +758,13 @@ export default {
           "details": data.meta_data.details
         }
       };
+      if (data.users > 0) {
+        delete updateDefinition.period;
+      }
       cbPlan.put(id, updateDefinition).then(res => {
         console.log('UpdatedPlan :: ', res)
         if (res.data.api_error_code) {
-          self.$Notice.error({
-            title: 'Error: ' + res.data.api_error_code,
-            duration: 5,
-            desc: res.data.message
-          });
+          self.throwNewError(res);
         } else {
           self.$Notice.success({
             title: '<b>' + res.data.name + '</b> saved.',
@@ -799,9 +776,10 @@ export default {
       });
     },
     updateCbAddon(id, data) {
+      console.log('>>data', data)
       let self = this;
       let convertedPrice = data.price * 100;
-      let updateDefination = {
+      let updateDefinition = {
         "name": data.name,
         "invoice_name": data.name,
         "price": convertedPrice,
@@ -810,14 +788,13 @@ export default {
           "details": data.meta_data.details
         }
       };
-      cbAddon.put(id, updateDefination).then(res => {
+      if (data.users > 0) {
+        delete updateDefinition.period;
+      }
+      cbAddon.put(id, updateDefinition).then(res => {
         console.log('UpdatedAddon :: ', res);
         if (res.data.api_error_code) {
-          self.$Notice.error({
-            title: 'Error: ' + res.data.api_error_code,
-            duration: 5,
-            desc: res.data.message
-          });
+          self.throwNewError(res);
         } else { 
            self.$Notice.success({
             title: '<b>' + res.data.name + '</b> saved.',
@@ -831,7 +808,7 @@ export default {
     deleteCbPlan(id, index) {
       let self = this;
       cbPlan.delete(id).then(res => {
-        console.log('Delete Plan Error: : ', res);
+        console.log('Delete Plan Res: : ', res);
         if (res.data.api_error_code) {
           if (res.data.api_error_code == 'resource_not_found') {
             self.$Notice.error({
@@ -840,20 +817,17 @@ export default {
               desc: res.data.message
             });
           } else {
-            self.$Notice.error({
-              title: 'Error: ' + res.data.api_error_code,
-              duration: 5,
-              desc: res.data.message
-            });
+            self.throwNewError(res);
           }
         } else {
           self.$Notice.success({
             title: '<b>' + self.plans[index].name + '</b> deleted.',
             desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been deleted..!'
-          })
+          });
           self.plans.splice(index, 1);
-          let newIndex = self.planData.map((itm) => itm.id).indexOf(id);
-          self.planData.splice(newIndex, 1);
+          //BUG SOLVE : SHOW TWO DELETED ITEMS
+          // let newIndex = self.planData.map((itm) => itm.id).indexOf(id);
+          // self.planData.splice(newIndex, 1);
         }
       }).catch(err => {
         console.log('Delete Plan Catch Error: ', err);
@@ -874,25 +848,177 @@ export default {
               desc: res.data.message
             });
           } else {
-            self.$Notice.error({
-              title: 'Error: ' + res.data.api_error_code,
-              duration: 5,
-              desc: res.data.message
-            });
+            self.throwNewError(res);
           }
         } else {
           self.$Notice.success({
             title: '<b>' + self.plans[index].name + '</b> deleted.',
             desc: 'Addon Plan <b>' + self.plans[index].name + '</b> has been deleted..!'
-          })
+          });
           self.plans.splice(index, 1);
-          let newIndex = self.addonData.map((itm) => itm.id).indexOf(id);
-          self.addonData.splice(newIndex, 1);
+          //BUG SOLVE : SHOW TWO DELETED ITEMS
+          // let newIndex = self.addonData.map((itm) => itm.id).indexOf(id);
+          // self.addonData.splice(newIndex, 1);
         }
       }).catch(err => {
         console.log('Delete Addon Catch Error: ', err);
       });
       return 
+    },
+    disablePlan(id) {
+      let self = this;
+      let msg, ttl;
+      cbPlan.delete(self.plans[index].id).then(res => { 
+        if (res.data.api_error_code) {
+          msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':')+1);
+          ttl = res.data.api_error_code.replace(/_/gi, ' ');
+          ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1);
+          if (res.data.api_error_code == 'resource_not_found') {
+            self.$Notice.error({
+              title: 'You can\'t disable ' + self.plans[index].name,
+              duration: 5,
+              desc: msg
+            });
+          } else {
+            self.$Notice.error({
+              title: ttl,
+              duration: 5,
+              desc: msg
+            });
+          }
+          self.plans[index].status = 'active';
+        } else {
+          self.$Notice.success({
+            title: '<b>' + self.plans[index].name + '</b> Plan Disabled.',
+            desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been disabled..!'
+          })
+        }
+        console.log('Plan archived :: ', res)
+      }).catch(err => {
+        self.plans[index].status = 'active';
+        console.log('Plan archived error ::', err)
+      });
+    },
+    disableAddon(index) {
+      let self = this;
+      let msg, ttl;
+      cbAddon.delete(self.plans[index].id).then(res => {
+        if (res.data.api_error_code) {
+          msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':')+1);
+          ttl = res.data.api_error_code.replace(/_/gi, ' ');
+          ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1);
+          if (res.data.api_error_code == 'resource_not_found') {
+            self.$Notice.error({
+              title: 'You can\'t disable ' + self.plans[index].name,
+              duration: 5,
+              desc: msg
+            });
+          } else {
+            self.$Notice.error({
+              title: ttl,
+              duration: 5,
+              desc: msg
+            });
+          }
+          self.plans[index].status = 'active';
+        } else {
+          self.$Notice.success({
+            title: '<b>' + self.plans[index].name + '</b> Addon Disabled.',
+            desc: 'Addon Plan <b>' + self.plans[index].name + '</b> has been disabled..!'
+          })
+        }
+        console.log('Addon archived :: ', res)
+      }).catch(err => {
+        self.plans[index].status = 'active';
+        console.log('Addon archived error ::', err)
+      });
+    },
+    enablePlan(index) {
+      let self = this;
+      let msg, ttl;
+      cbPlan.patch(self.plans[index].id).then(res => {
+        if (res.data.api_error_code) {
+          msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':')+1);
+          ttl = res.data.api_error_code.replace(/_/gi, ' ');
+          ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1);
+          if (res.data.api_error_code == 'resource_not_found') {
+            self.$Notice.error({
+              title: 'You can\'t enable ' + self.plans[index].name,
+              duration: 5,
+              desc: msg
+            });
+          } else {
+            self.$Notice.error({
+              title: ttl,
+              duration: 5,
+              desc: msg
+            });
+          }
+          self.plans[index].status = 'archived';
+        } else {
+          self.$Notice.success({
+            title: '<b>' + self.plans[index].name + '</b> Plan Enabled.',
+            desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been enabled..!'
+          })
+        }
+        console.log('Plan unarchived :: ', res);
+      }).catch(err => {
+        self.plans[index].status = 'archived';
+        console.log('Plan unarchived error ::', err)
+      });
+    },
+    enableAddon(index) {
+      let self = this;
+      let msg, ttl;
+      cbAddon.patch(self.plans[index].id).then(res => {
+        if (res.data.api_error_code) {
+          msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':')+1);
+          ttl = res.data.api_error_code.replace(/_/gi, ' ');
+          ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1);
+          if (res.data.api_error_code == 'resource_not_found') {
+            self.$Notice.error({
+              title: 'You can\'t enable ' + self.plans[index].name,
+              duration: 5,
+              desc: msg
+            });
+          } else {
+            self.$Notice.error({
+              title: ttl,
+              duration: 5,
+              desc: msg
+            });
+          }
+          self.plans[index].status = 'archived';
+        } else {
+          self.$Notice.success({
+            title: '<b>' + self.plans[index].name + '</b> Addon Enabled.',
+            desc: 'Addon Plan <b>' + self.plans[index].name + '</b> has been enabled..!'
+          })
+        }
+        console.log('Addon unarchived :: ', res);
+      }).catch(err => {
+        self.plans[index].status = 'archived';
+        console.log('Addon unarchived error ::', err)
+      });
+    },
+    throwNewError(res) {
+      let self = this;
+      let msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':')+1);
+      let ttl = res.data.api_error_code.replace(/_/gi, ' ');
+      ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1);
+      // if (res.data.api_error_code == 'duplicate_entry') {
+      //   self.$Notice.error({
+      //     title: 'Plan Already Exist.',
+      //     duration: 5,
+      //     desc: msg
+      //   });
+      // } else {
+        self.$Notice.error({
+          title: ttl,
+          duration: 5,
+          desc: msg
+        });
+      // }
     }
   }
 }

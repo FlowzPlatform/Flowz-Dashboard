@@ -49,6 +49,7 @@
   <Modal title="My Plan" v-model="showPlanSelection" :mask-closable="false" @on-ok="makeAddon()" width="60%" :loading="validateModal">
     <p style="margin-bottom:0px">Select basic plan which you wants to extend.</p>
     <my-plan style="padding:35px" v-on:selectedSubscription="setSelectedSubscription"></my-plan>
+    <p v-if="assuredSum != null">Your monthly payment will be {{ planPrice }} + {{ addonPrice }} = {{ assuredSum }}</p>
   </Modal>
 </div>
 </template>
@@ -83,7 +84,10 @@ import cbAddon from '@/api/cb-addon';
           "type": "html"
         }, {
             "key": "value"
-        }]
+        }],
+        assuredSum: null,
+        planPrice: null,
+        addonPrice: null
       }
     },
     methods: {
@@ -95,7 +99,7 @@ import cbAddon from '@/api/cb-addon';
           self.basicPlans = res.data.map((itm) => {
             return itm.plan
           });
-          console.log('Plan List', self.basicPlans);
+          // console.log('Plan List', self.basicPlans);
         }).catch(err => {
           self.$Notice.error({
             duration: 5,
@@ -110,7 +114,7 @@ import cbAddon from '@/api/cb-addon';
           self.addOns = res.data.map(itm => {
             return itm.addon;
           });
-          console.log('Addon List', self.addOns);
+          // console.log('Addon List', self.addOns);
         }).catch(err => {
           self.$Notice.error({
             duration: 5,
@@ -224,6 +228,12 @@ import cbAddon from '@/api/cb-addon';
       setSelectedSubscription(id) {
         this.selectedBasicPlan = id[0]
         this.selectedBasicSubId = id[1]
+        let details = this.addOns.filter(itm => {
+          return itm.id == this.selectedAddon
+        });
+        this.planPrice = id[2];
+        this.addonPrice = details[0].price;
+        this.assuredSum = id[2] + details[0].price;
       }
     },
     mounted () {
