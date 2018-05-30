@@ -39,7 +39,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     //   sourceMap: config.build.productionSourceMap,
     //   parallel: true
     // }),
-    new webpack.EnvironmentPlugin(['domainkey']),
+    new webpack.EnvironmentPlugin(['domainkey', 'gatewayid']),
     // extract css into its own file
     new ExtractTextPlugin({
       filename: utils.assetsPath('css/[name].[contenthash].css'),

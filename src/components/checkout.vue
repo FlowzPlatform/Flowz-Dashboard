@@ -1,110 +1,109 @@
 <template>
 	<Row class="setMiddle" type="flex" justify="center" align="middle">
-    <Col span="16" push="6">
-      <section class="third lift plan-tier lift.active" v-for="(item, index) in mainData">
-        <h4>{{item.name.toUpperCase()}}</h4>
-        <h5><sup class="superscript">US$</sup><span class="plan-price">{{item.price}}</span>
-            <sub><div v-if="item.validity > 1">
-                  <p>{{item.validity}} months</p>
-                  </div>
-                  <div v-else="item.validity > 1">
-                        <p>/mo</p>
-                  </div>
-            </sub>
-        </h5>
-        <ul>
-          <li v-for="(itemDec, indexDec) in item.description"><strong>{{itemDec}}</strong></li>
-        </ul>
+    <Col span="16" push="2">
+      <div class="third " v-for="(item, index) in mainData">
+      <h3 class="type-header" v-if="item.object == 'plan' && basicPlan != undefined">Basic</h3>
+      <h3 class="type-header" v-if="item.object == 'addon'">Add-on</h3>
+      <section class="plan-tier lift">
+          <h4>{{item.name.toUpperCase()}}</h4>
+          <h5><sup class="superscript">US$</sup><span class="plan-price">{{item.price}}</span>
+              <sub><div v-if="item.validity > 1">
+                    <p>{{item.validity}} months</p>
+                    </div>
+                    <div v-else="item.validity > 1">
+                      <p>/mo</p>
+                    </div>
+              </sub>
+          </h5>
+          <ul>
+            <li v-for="itemDec in item.description"><strong>{{itemDec}}</strong></li>
+          </ul>
       </section>
+      <div class="plus" v-if="mainData.length > 0 && index !== (mainData.length -1)">
+        <i class="fa fa-plus-circle"></i>
+      </div>
+    </div>
     </Col>
     <Col span="8" pull="6">
       <div class="panel panel-custom">
           <div class="panel-heading">
-              <h3 class="text-center">Payment Details</h3></div>
+            <h3 class="text-center"><span v-if="!savedCard">Payment Details</span><span v-else>Saved Card Details</span></h3>
+          </div>
           <div class="panel-body" style="text-allign:left">
-              <Form ref="payDetail" :model="payDetail" :rules="payDetailRule">
-               <div class="pull-right ">
-                   <!--  <RadioGroup v-model="payDetail.cardtype" size="large">
-                      <Radio label="apple">   v-if="userCard == 'Visa'"  -->
-                        <span id="Visa"><img class="pay-icon" src="../../static/visa.png"></img></span>
-                     <!--  </Radio> -->
-                      <!-- <Radio label="android">     v-if="userCard == 'MasterCard'"  -->
-                         <span id="MasterCard"><img class="pay-icon" src="../../static/master-card.png"></img></span>
-                      <!-- </Radio> -->
-                      <!-- <Radio label="windows">   v-if="userCard == 'Discover'"  -->
-                         <span id="Discover"><img class="pay-icon" src="../../static/discover.png"></img></span>
-                      <!-- </Radio> -->
-                  <!-- </RadioGroup> -->
-                </div>
-                 <!-- 
-                <Row>
-                  <Col span="10">
-                    <div class="form-group" style="text-align:left">
-                        <div>
-                          <FormItem prop="cardtype" label="CARD TYPE">
-                            <Select v-model="payDetail.cardtype">
-                              <Option value="Visa">Visa</Option>
-                              <Option value="MasterCard">MasterCard</Option>
-                              <Option value="Discover">Discover</Option>
-                            </Select> 
-                          </FormItem>
-                        </div>
-                    </div>
-                  </Col>
-                </Row> -->
-                <!-- <div class="form-group">
-                      <select v-model="payDetail.cardType" class="form-control" name="cardtype" id="cardType" style="margin-bottom: 15px">
-                        <option name="" value="0">Select Card Type</option>
-                        <option name="Visa" value="Visa">Visa</option>
-                        <option name="MasterCard" value="MasterCard">MasterCard</option>
-                        <option name="RuPay" value="RuPay">RuPay</option>
-                        <option name="Maestro" value="Maestro">Maestro</option>
-                        <option name="American Express" value="American Express">American Express</option>
-                    </select>
-                </div> -->
-                <Row>
-                  <Col>
-                    <FormItem prop="cardNumber" label="CARD NUMBER">
-                      <Input v-model="payDetail.cardNumber" type="text" id="cardNumber" placeholder="Valid Card Number" icon="card"></Input>
-                    </FormItem>
-                  </Col>
-                </Row>
-                <label class="ivu-form-item-label">VALID THRU</label>
-                <Row align="bottom" type="flex">
-                  <Col span="10" pull="4">
-                    <Row type="flex" justify="space-around">
-                      <Col span="11">
-                        <FormItem prop="expiryMM">
-                          <Select v-model="payDetail.expiryMM"  placeholder="MM">
-                            <Option v-for="item in expiryMonth" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                          </Select>
-                        </FormItem>
-                      </Col>
-                      <Col span="12">
-                        <FormItem prop="expiryYY">
-                          <Select v-model="payDetail.expiryYY"  placeholder="YYYY">
-                            <Option v-for="item in expiryYear" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                          </Select>
-                        </FormItem>
-                      </Col>
-                      <!--<DatePicker format="yy-MM"  @on-change="getMMYYYY" type="month" :options="validMonth" placeholder="Select Month and Year" style="width: 200px"></DatePicker>-->
-                    </Row>
-                  </Col>
-                  <Col span="8" offset="6">
-                    <FormItem prop="cvCode" label="CVV CODE">
-                      <Input v-model="payDetail.cvCode" type="password" placeholder="CVV Code" >
-                        <Poptip slot="append" trigger="hover" title="CVV info" placement="right" content="CVV code is a 3 digit number on the back side of your card.">
-                          <Icon type="help-circled"></Icon>
-                        </Poptip>
-                      </Input> 
-                    </FormItem>
-                  </Col>
-                </Row>
+            <Form v-if="!savedCard" ref="payDetail" :model="payDetail" :rules="payDetailRule">
+              <div class="pull-right">
+                <span id="Visa"><img class="pay-icon" src="../../static/visa.png"></img></span>
+                <span id="MasterCard"><img class="pay-icon" src="../../static/master-card.png"></img></span>
+                <span id="Discover"><img class="pay-icon" src="../../static/discover.png"></img></span>
+              </div>
+              <Row>
+                <Col>
+                  <FormItem prop="cardNumber" label="CARD NUMBER">
+                    <Input v-model="payDetail.cardNumber" type="text" id="cardNumber" placeholder="Valid Card Number" icon="card"></Input>
+                  </FormItem>
+                </Col>
+              </Row>
+              <label class="ivu-form-item-label">VALID THRU</label>
+              <Row align="bottom" type="flex">
+                <Col span="10" pull="4">
+                  <Row type="flex" justify="space-around">
+                    <Col span="11">
+                      <FormItem prop="expiryMM">
+                        <Select v-model="payDetail.expiryMM"  placeholder="MM">
+                          <Option v-for="item in expiryMonth" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        </Select>
+                      </FormItem>
+                    </Col>
+                    <Col span="12">
+                      <FormItem prop="expiryYY">
+                        <Select v-model="payDetail.expiryYY"  placeholder="YYYY">
+                          <Option v-for="item in expiryYear" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        </Select>
+                      </FormItem>
+                    </Col>
+                  </Row>
+                </Col>
+                <Col span="8" offset="6">
+                  <FormItem prop="cvCode" label="CVV CODE">
+                    <Input v-model="payDetail.cvCode" type="password" placeholder="CVV Code" >
+                      <Poptip slot="append" trigger="hover" title="CVV info" placement="right" content="CVV code is a 3 digit number on the back side of your card.">
+                        <Icon type="help-circled"></Icon>
+                      </Poptip>
+                    </Input> 
+                  </FormItem>
+                </Col>
+              </Row>
+            </Form>
+            <Form v-else :model="payDetail">
+              <Row>
+                <Col>
+                  <FormItem label="CARD NUMBER">
+                    <span class="sv-card">{{payDetail.cardNumber}}</span>
+                  </FormItem>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <FormItem label="VALID THRU">
+                    <span class="sv-card">{{ payDetail.expiryMM }} / {{ payDetail.expiryYY }}</span>
+                  </FormItem>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <FormItem label="CARD TYPE">
+                    <span class="sv-card">{{ payDetail.cardType }}</span>
+                  </FormItem>
+                </Col>
+              </Row>
             </Form>
           </div>
           <div class="panel-footer">
             <Row type="flex" justify="space-around">
-                <Col span="11">
+                <Col span="5">
+                  <p v-if="mainData[1]" class="sv-card">PAY {{ mainData[1].price }} USD</p>
+                </Col>
+                <Col span="6">
                     <!-- set attribute to Col span="16" offset="4" 
                     <Button title="PayPal" type="success" :loading="payloading" @click="payFunction('payDetail')"><i class="fa fa-paypal" aria-hidden="true"></i></Button>
                     <Button title="Stripe" type="success" :loading="payloading" @click="payFunction('payDetail')"><i class="fa fa-cc-stripe" aria-hidden="true"></i></Button>
@@ -128,13 +127,24 @@
 </template>
 <script>
 // import axios from 'axios'
-import checkout from '@/api/checkout'
-import Cookies from 'js-cookie'
-import subscriptionPlans from '@/api/subscription-plans'  
+import checkout from '@/api/checkout';
+import cbSubscription from '@/api/cb-subscription';
+import cbPlan from '@/api/cb-plan';
+import cbAddon from '@/api/cb-addon';
+import cbCustomer from '@/api/cb-customer';
+import Cookies from 'js-cookie';
+import psl from 'psl';
+import subscriptionPlans from '@/api/subscription-plans';  
 import { setTimeout } from 'timers';
-import transactions from '@/api/transactions'
+import transactions from '@/api/transactions';
+import userDetails from '@/api/userdetails';
+import config from '../config';
 
 export default {
+  props: {
+    basicPlan: String,
+    basicSubId: String
+  },
   name: 'checkout',
   data () {
     const validateCardNumber = (rule, value, callback) => {
@@ -178,7 +188,6 @@ export default {
         callback();
       }
     };
-
     return {
       mainData: [],
 			payloading: false,
@@ -190,8 +199,8 @@ export default {
       payDetail: {
         cardType: '0',
         cardNumber: '',
-        expiryMM: '',
-        expiryYY: '',
+        expiryMM: null,
+        expiryYY: null,
         cvCode: ''
       },
       payDetailRule: {
@@ -273,13 +282,49 @@ export default {
           label: '12'
         }
       ],
-      expiryYear: []
+      expiryYear: [],
+      userDetails: null,
+      savedCard: false
     }
   },
-  mounted () {
-    let self = this
-    this.sub_id = this.$route.params.id
-    subscriptionPlans.getThis( this.sub_id).then(res => {
+  async mounted () {
+    let self = this;
+    let data = [];
+    let arry = [];
+
+    this.sub_id = this.$route.params.id;
+
+    self.userDetails = await this.getUserDetails()
+    if (this.basicPlan != undefined) {
+      data.push(await this.getPlanDetails(this.basicSubId));
+      data.push(await this.getAddonDetails(this.sub_id));
+    } else {
+      data.push(await this.getPlanDetails(this.sub_id));
+    }
+
+    cbCustomer.get(self.userDetails._id).then(res => {
+      if (!res.data.api_error_code) {
+        self.savedCard = true;
+        self.payDetail.cardNumber = res.data.card.iin + '******' + res.data.card.last4;
+        self.payDetail.expiryMM = res.data.card.expiry_month;
+        self.payDetail.expiryYY = res.data.card.expiry_year;
+        self.payDetail.cardType = res.data.card.card_type;
+      } else {
+        if (res.data.api_error_code == 'resource_not_found') {
+          self.savedCard = false
+        }
+      }
+      // console.log('Res of customer details', res)
+    }).catch(err => {
+      console.log('Error While geting customer details', err)
+    });
+    this.mapData(data);
+    /* cbSubscription.get(self.userDetails._id).then(res => {
+      console.log('>>>RES', res);
+    }).catch(err => {
+      console.log('Error While geting customer from ', err)
+    }); */
+    /* subscriptionPlans.getThis( this.sub_id).then(res => {
       self.mainData.push(res.data)
       self.mainData.sort(function(a, b) {
         return a.price-b.price
@@ -301,13 +346,66 @@ export default {
           title: 'Fetching subscription plan',
           desc: err.response.data.message
       });
-    })
-    for(let j=0; j <= 20; j++ ){
-      let yy = new Date().getFullYear()+j
-      self.expiryYear.push({label: yy.toString(),value: yy.toString()})
+    }); */
+
+    for(let j=0; j <= 20; j++ ) {
+      let yy = new Date().getFullYear() + j;
+      self.expiryYear.push({label: yy.toString(),value: yy.toString()});
     }
   },
   methods: {
+    getPlanDetails (id) {
+      return cbPlan.get(id).then(res => {
+        // console.log('>>>>', id,res.data)
+        return res.data;
+      }).catch(err => {
+        if (err.response && err.response.data.message == 'User authentication fail') {
+          this.$Message.error({
+            content: 'Your session has been expired please login again.',
+            duration: 7,
+            closable: true
+          });
+          let location = psl.parse(window.location.hostname)
+          location = location.domain === null ? location.input : location.domain;
+          Cookies.remove('auth_token', {domain: location});
+          Cookies.remove('access', {domain: location});
+          Cookies.remove('user', {domain: location});
+          self.$router.push({ name: 'login' });
+        } else {
+          self.$Notice.error({
+            duration: 5,
+            title: 'Fetching subscription plan',
+            desc: err.message
+          });
+        }
+        console.log('>>>Error geting subscriptions', err);
+      });
+    },
+    getAddonDetails (id) {
+      return cbAddon.get(id).then(res => {
+        return res.data
+      }).catch(err => {
+        console.log('Error :: ', err)
+      })
+    },
+    mapData(data) {
+      data.map((itm) => {
+      if (itm.description)
+        itm.description = itm.description.split('\n');
+      itm.price /= 100;
+      if (itm.meta_data && itm.meta_data.details) {
+        itm.details = _.chain(itm.meta_data.details).filter(function (o) {
+          o.value = parseInt(o.value)
+            return o.value > 0
+        }).map(function(d) {
+          let str = d.module.charAt(0).toUpperCase() + d.module.slice(1)
+            let str2 = d.service.charAt(0).toUpperCase() + d.service.slice(1)
+            return {'key':'<i class="ivu-icon ivu-icon-android-checkmark-circle"></i> <b>'+str+'</b> '+str2, 'value': d.value}
+        }).value()
+      }
+    });
+    this.mainData = data
+    },
     checkCardType (val) {
       let result = []
       if(val != '') {
@@ -330,114 +428,217 @@ export default {
     backFunction () {
       this.$router.push('/subscription-list')
     },
-    payFunction (name) {
-    let self = this
-    let paymentStatus, transactionStatus
-    this.$refs[name].validate((valid) => {
-      if (valid) {  
-				self.payloading = true
-        // this.paying = true
-        this.payDone = true
-        this.payInfo.class = 'alert alert-warning'
-        this.payInfo.msgType = 'Processing Payment..!'
-        this.payInfo.msg = 'Please do not refresh page or do not go back.'
-        // let auth_token = this.$cookie.get('auth_token')2128
-        var sObj = {
-          sub_id: this.sub_id,
-          login_token: this.login_token,
-          payDetail: this.payDetail
-        }
-
-        checkout.post(sObj).then(async res => {
-          await transactions.get(res.data.transaction_id).then(res => {
-            transactionStatus = res.data.transaction_status
-            paymentStatus = res.data.payment_status
-          }).catch(err => {
-            console.log('ERR', err)
-          })
-          if (res.data.hasOwnProperty('error')) {
-            this.payInfo.class = 'alert alert-danger'
-            this.payInfo.msgType = 'Error..! '
-            if(res.data.error === 'NotAuthenticated') {
-              self.payInfo.msg = res.data.message + ' You will automatically logout in 5 sec.'
-              setTimeout(function() {
-                Cookies.remove('auth_token');
-                Cookies.remove('user');
-                self.$router.push({
-                  name: 'login'
-                })
-              }, 5000)
-            } else if (res.data.error === 'ReqlDriverError') {
-              self.payInfo.msg = 'Transaction failed, RethinkDB service unavailable.'
-              self.payloading = false
-            } else {
-              if(paymentStatus == true) {
-                this.$Modal.warning({
-                  title: 'Warning',
-                  content: '<p>Your <b>PAYMENT</b> has been done, but subscription process not completed.</p><br><p> So, Please contact support team with transaction id<br><b> ' + res.data.transaction_id + '</b></p>'
-                });
-              }                
-              this.payInfo.msg = res.data.message
-              self.payloading = false
+    updatePayMessage (cls, type, msg) {
+      this.payDone = true;
+      this.payInfo.class = cls;
+      this.payInfo.msgType = type;
+      this.payInfo.msg = msg;
+      return;
+    },
+    async payFunction (name) {
+      let self = this;
+      let paymentStatus, transactionStatus;
+      if(!self.savedCard) {
+        this.$refs[name].validate(async (valid) => {
+          if (valid) {  
+            self.payloading = true;
+            self.updatePayMessage('alert alert-warning', 'Processing Payment..!', 'Please do not refresh page or do not go back.');
+            // OLD CODE FOR SUBSCRIPTION
+            /* var sObj = {
+              sub_id: this.sub_id,
+              login_token: this.login_token,
+              payDetail: this.payDetail
+            }; */
+            let subDetails = {
+              "plan_id": self.sub_id,
+              "auto_collection": "on",
+              "customer": {
+                "auto_collection": "on"
+              },
+              "card": {
+                "gateway_account_id": config.gatewayAccountId,
+                "number": self.payDetail.cardNumber,
+                "expiry_month": self.payDetail.expiryMM,
+                "expiry_year": self.payDetail.expiryYY,
+                "cvv": self.payDetail.cvCode
+              }
             }
-          } else if (res.data != undefined && res.data.transaction_id != undefined) {
-            this.payInfo.class = 'alert alert-success'
-            this.payInfo.msgType = 'Success..! '
-            this.$Notice.success({
-              title: 'Your Last Transaction id',
-              desc: 'Please note down for your further reference <b>' + res.data.transaction_id + '</b>',
-              duration: 0
-            })
-            this.payInfo.msg = res.data.outcome.seller_message
-            Cookies.set('welcomeMsg', 'Thank You For Subscribing...!')
-            this.$router.push({
-              name: 'planDetails'
-            })
-					}
-          // self.paying = false
-        }).catch(err => {
-          self.$Notice.error({
-            duration: 5,
-            title: 'Payment Fail..!',
-            desc: err + ' Please Try Again After Sometime.'
-          })
-          self.payInfo.class = 'alert alert-danger'
-          self.payInfo.msgType = 'Error..! '
-          self.payInfo.msg = 'Server connection lost, try after some time.'
-          self.paying = false
-					self.payloading = false
-        })
 
-        // axios({
-        // 				method:'post',
-        // 				url:"http://localhost:3030/checkout",
-        // 				headers: {'authorization': auth_token},
-        // 				data:sObj
-        // 			}).then(res => {
-        // 				console.log("response.....",res)
-        // 				this.payDone = true
-        //         if (res.data.hasOwnProperty('error')) {
-        //           this.payInfo.class = 'alert alert-danger'
-        //           this.payInfo.msgType = 'Error!'
-        //           this.payInfo.msg = 'Payment Not Done.'
-        //         } else {
-        //           this.payInfo.class = 'alert alert-success'
-        //           this.payInfo.msgType = 'Success!'
-        //           this.payInfo.msg = 'Payment successfully Done.'
-        // 					this.$router.push('/plan-details/' + this.sub_id)
-        //         }
-        //         self.paying = false
-        // 		 })
-        // 		 .catch(function (error) {
-        // 			 self.$Notice.error({
-        // 					 duration: 5,
-        // 					 title: 'Payment fail..!',
-        //            desc: 'Please try again or after some time.'
-        // 			 });
-        //        self.paying = false
-        // 		 });
+            let result = await self.subscribeCbPlan(subDetails);
+            
+            //OLD CODE FOR SUBSCRIPTION
+            /* checkout.post(sObj).then(async res => {
+              await transactions.get(res.data.transaction_id).then(res => {
+                transactionStatus = res.data.transaction_status
+                paymentStatus = res.data.payment_status
+              }).catch(err => {
+                console.log('ERR', err)
+              })
+              if (res.data.hasOwnProperty('error')) {
+                this.payInfo.class = 'alert alert-danger'
+                this.payInfo.msgType = 'Error..! '
+                if(res.data.error === 'NotAuthenticated') {
+                  self.payInfo.msg = res.data.message + ' You will automatically logout in 5 sec.'
+                  setTimeout(function() {
+                    Cookies.remove('auth_token');
+                    Cookies.remove('user');
+                    self.$router.push({
+                      name: 'login'
+                    })
+                  }, 5000)
+                } else if (res.data.error === 'ReqlDriverError') {
+                  self.payInfo.msg = 'Transaction failed, RethinkDB service unavailable.'
+                  self.payloading = false
+                } else {
+                  if(paymentStatus == true) {
+                    this.$Modal.warning({
+                      title: 'Warning',
+                      content: '<p>Your <b>PAYMENT</b> has been done, but subscription process not completed.</p><br><p> So, Please contact support team with transaction id<br><b> ' + res.data.transaction_id + '</b></p>'
+                    });
+                  }                
+                  this.payInfo.msg = res.data.message
+                  self.payloading = false
+                }
+              } else if (res.data != undefined && res.data.transaction_id != undefined) {
+                this.payInfo.class = 'alert alert-success'
+                this.payInfo.msgType = 'Success..! '
+                this.$Notice.success({
+                  title: 'Your Last Transaction id',
+                  desc: 'Please note down for your further reference <b>' + res.data.transaction_id + '</b>',
+                  duration: 0
+                })
+                this.payInfo.msg = res.data.outcome.seller_message
+                Cookies.set('welcomeMsg', 'Thank You For Subscribing...!')
+                this.$router.push({
+                  name: 'planDetails'
+                })
+              }
+              // self.paying = false
+            }).catch(err => {
+              self.$Notice.error({
+                duration: 5,
+                title: 'Payment Fail..!',
+                desc: err + ' Please Try Again After Sometime.'
+              })
+              self.payInfo.class = 'alert alert-danger'
+              self.payInfo.msgType = 'Error..! '
+              self.payInfo.msg = 'Server connection lost, try after some time.'
+              self.paying = false
+              self.payloading = false
+            }); */
+          }
+        });
+      } else {
+        self.payloading = true;
+        self.updatePayMessage('alert alert-warning', 'Processing Payment..!', 'Please do not refresh page or do not go back.');
+        let subDetails = {
+          "plan_id": self.sub_id,
+          "auto_collection": "on"
+        }
+        let result
+        if (self.basicPlan != undefined) {
+          //IF CHANGES IN subDetails OBJECT THEN ALSO CHANGE CODE OF AN CB-SUBSCRIPTION's UPDATE METHOD
+          subDetails = {
+            "addons": [{
+              'id': self.sub_id
+            }]
+          }
+          result = await self.subscribeCbAddon(subDetails);
+        } else {
+          result = await self.subscribeCbPlan(subDetails);
+        }
       }
+  },
+  async subscribeCbPlan(subDetails) {
+    let self = this
+    if (!this.savedCard) {
+      subDetails.id = this.userDetails._id;
+      subDetails.customer.first_name = this.userDetails.firstname;
+      subDetails.customer.last_name = this.userDetails.lastname;
+      subDetails.customer.email = this.userDetails.email;
+      cbSubscription.post(subDetails).then(res => {
+        if (res.data.api_error_code) {
+          self.throwNewError(res);
+        } else {
+          self.subscriptionDone(res);
+        }
+        self.payloading = false
+      }).catch(err => {
+        self.updatePayMessage('alert alert-danger', 'Error..! ', null);
+        console.log('Error while subscribing plan:: ', err);
+        self.payloading = false;
+      });
+    } else {
+      cbSubscription.patch(this.userDetails._id, subDetails).then(res => {
+        if (res.data.api_error_code) {
+          self.throwNewError(res);
+        } else {
+          self.subscriptionDone(res);
+        }
+        self.payloading = false;
+      }).catch(err => {
+        self.updatePayMessage('alert alert-danger', 'Error..! ', null);
+        console.log('Error while sub for customer:: ', err);
+        self.payloading = false;
+      });
+    }
+  },
+  subscribeCbAddon(subDetails) {
+    let self = this
+    cbSubscription.put(self.basicPlan, subDetails).then(res => {
+      if (res.data.api_error_code) {
+        self.throwNewError(res);
+      } else {
+        self.subscriptionDone(res);
+      }
+      self.payloading = false;
+    }).catch(err => {
+      self.updatePayMessage('alert alert-danger', 'Error..! ', null);
+      console.log('Error while sub for customer:: ', err);
+      self.payloading = false;
+    });
+  },
+  getUserDetails() {
+    return userDetails.get().then(res => {
+      return res.data.data;
+    }).catch(err => {
+      console.log('>>>>Error in user details', err);
+      return err;
+    });
+  },
+  throwNewError(res) {
+    let self = this;
+    let msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':')+1);
+    let ttl = res.data.api_error_code.replace(/_/gi, ' ');
+    ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1);
+    self.updatePayMessage('alert alert-danger', 'Error..! ', msg);
+    /* if (res.data.error_code == 'add_card_error') {
+      self.$Notice.error({
+        title: ttl,
+        duration: 5,
+        desc: msg
+      });
+      self.updatePayMessage('alert alert-danger', 'Error..! ', 'Your card is expire.');
+    } else { */
+      self.$Notice.error({
+        title: ttl,
+        duration: 5,
+        desc: msg
+      });
+    /* } */
+  },
+  subscriptionDone(res) {
+    let self = this;
+    console.log('FINAL RES>>', res)
+    self.updatePayMessage('alert alert-success', 'Success..! ', 'Successfully purchased.');
+    Cookies.set('welcomeMsg', 'Thanks You For Subscribing...!');
+    self.$Notice.success({
+      title: 'Subscription Id',
+      duration: 0,
+      desc: res.data.subscription.id
     })
+    // console.log('Subscription Details', res);
+    this.$router.push({ name: 'planDetails' });
   }
 },
   'watch': {
@@ -459,6 +660,24 @@ export default {
   background-color: #081944b5;
     border-color: #081944b5;
 } */
+.plus{
+  color: #fff;
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  left: 21%;
+  font-size: 25px;
+}
+.type-header {
+  color: #464c5b;
+  font-weight: bold;
+  border-radius: 5px;
+  font-family: "Source Sans Pro", "helvetica", sans-serif;
+}
+.sv-card {
+  font-size: 16px;
+  font-weight: bold;
+}
 .pay-icon {
   width: 55px;
   padding: 5px;
@@ -487,7 +706,7 @@ export default {
 	}
   h4 {
     margin-bottom: 12px;
-    font-size: 1.25em;
+    font-size: 1.50em;
     font-weight: 400;
     text-transform: uppercase;
     text-align: center;
@@ -545,6 +764,9 @@ strong {
   margin: 0 0px 0 0;
   display: inline-block;
   float:left;
+  top:50%;
+  margin-right: 4%;
+  text-align: center;
 }
 
 .plan-tier {
@@ -579,13 +801,8 @@ strong {
   background: #00a55f;
   color: white;
 }
-
-.plan-tier:nth-child(1) h4 {background: #00a55f}
-.plan-tier:nth-child(2) h4 {background: #6BBAA7;}
-.plan-tier:nth-child(3) h4 {background: #FBA100;}
-.plan-tier:nth-child(4) h4 {background: #6C648B;}
-.plan-tier:nth-child(5) h4 {background: #B6A19E;}
-
+.third:nth-child(1) h4 {background: #FBA100;}
+.third:nth-child(2) h4 {background: #6BBAA7;}
 .plan-tier {
   text-align: center;
   border-right: solid 1px #e7f2f0;
