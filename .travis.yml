@@ -24,13 +24,13 @@ jobs:
             docker push $DOCKER_USERNAME_FLOWZ/flowz_dashboard_fronted_flowz:latest;
         elif [ ${TRAVIS_BRANCH} = "develop" ]; then
             docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-            docker build -t flowz_dashboard_fronted_flowz:dev --build-arg domainkey="$DOMAINKEY_DEVELOP" --build-arg gatewayid="$GATEWAYID_DEVELOP".;
+            docker build -t flowz_dashboard_fronted_flowz:dev --build-arg domainkey="$DOMAINKEY_DEVELOP" --build-arg gatewayid="$GATEWAYID_DEVELOP" .;
             docker images;
             docker tag flowz_dashboard_fronted_flowz:dev $DOCKER_USERNAME/flowz_dashboard_fronted_flowz:dev;
             docker push $DOCKER_USERNAME/flowz_dashboard_fronted_flowz:dev;
         elif [ ${TRAVIS_BRANCH} = "staging" ]; then
             docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-            docker build -t flowz_dashboard_fronted_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER --build-arg domainkey="$DOMAINKEY_STAGING" --build-arg gatewayid="$GATEWAYID_STAGING".;
+            docker build -t flowz_dashboard_fronted_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER --build-arg domainkey="$DOMAINKEY_STAGING" --build-arg gatewayid="$GATEWAYID_STAGING" .;
             docker tag flowz_dashboard_fronted_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER $DOCKER_USERNAME/flowz_dashboard_fronted_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER;
             docker tag flowz_dashboard_fronted_flowz:$TRAVIS_BRANCH-$TRAVIS_BUILD_NUMBER $DOCKER_USERNAME/flowz_dashboard_fronted_flowz:staging;
             docker images;
