@@ -1,6 +1,7 @@
 FROM ubuntu:16.04
 
 ARG domainkey
+ARG gatewayid
 
 # install dependencies
 #RUN apt-get update \
