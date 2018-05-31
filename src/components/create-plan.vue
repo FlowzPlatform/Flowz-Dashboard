@@ -6,7 +6,7 @@
           <Col span="4">
             <Tabs v-model="activeTab" @on-click="changeActiveTab">
               <TabPane label="Plan" name="plan"></TabPane>
-              <TabPane label="Addon" name="addon"></TabPane>
+              <TabPane :disabled="planLoding" label="Addon" name="addon"></TabPane>
             </Tabs>
           </Col>
           <Col span="3" offset="17" class-name="action-button">
@@ -116,7 +116,7 @@
                                       </a>
                                     </Col>
                                     <Col span="3">
-                                      <a @click="confirmDelete = true, deleteIndex = pIndex">
+                                      <a @click="confirmDelete = true, deleteIndex = pIndex, currentPlanName = plan.name">
                                         <Tooltip content="Delete plan" placement="top">
                                           <Icon type="trash-b" size="23" color="#e84c3c"></Icon>
                                         </Tooltip>
@@ -126,8 +126,8 @@
                                             <span>Delete confirmation</span>
                                           </p>
                                           <div style="text-align:center">
-                                              <p v-if="activeTab === 'plan'"><b>{{ plan.name }}</b> will be delete permanently only if it is not subscribed by any user otherwise it will disabled.</p>
-                                              <p v-else>Confirm action to permanently delete <b>{{ plan.name }}.<br></b> After deleting this addon will not accessible.</p>
+                                              <p><b>{{ currentPlanName }}</b> will be delete permanently only if it is not subscribed by any user otherwise it will disabled.</p>
+                                              <!-- <p v-if="activeTab === 'plan'" v-else>Confirm action to permanently delete <b>{{ plan.name }}.<br></b> After deleting this addon will not accessible.</p> -->
                                           </div>
                                           <div slot="footer">
                                               <Button type="error" size="large" long :loading="loading" @click="deletePlan(deleteIndex)">Delete</Button>
@@ -178,8 +178,8 @@
                                       </Row>
                                       <div class="schema-form ivu-table-wrapper">
                                         <div class="ivu-table ivu-table-border">
-                                          <div class="ivu-table-body" style="max-height:450px;">
-                                              <table cellspacing="0" cellpadding="0" border="0" style="width: 100%;overflow-y:auto;">
+                                          <div class="ivu-table-body" style="max-height:450px;overflow-y:  auto;">
+                                              <table cellspacing="0" cellpadding="0" border="0" style="width: 100%;">
                                                   <thead>
                                                       <tr>
                                                           <th class="">
@@ -324,6 +324,7 @@ export default {
       confirmDelete: false,
       loading: false,
       deleteIndex: 0,
+      currentPlanName: null,
       activeTab: 'plan',
       process: {
         cursor: ''
@@ -494,9 +495,29 @@ export default {
       let self = this;
       if (val == 'archived') {
         if (self.activeTab == 'plan') {
-          self.disablePlan(index);
+          if (self.plans[index].users < 1 ) {
+            self.$Modal.confirm({
+              title: 'Disable confirmation',
+              content: '<p><b>'+ self.plans[index].name +'</b> is not subscribed by any user so it will be delete permanently.</p>',
+              onOk: () => {
+                self.disablePlan(index);
+              }
+            });
+          } else {
+            self.disablePlan(index);
+          }
         } else {
-          self.disableAddon(index);
+          if (self.plans[index].users < 1 ) {
+            self.$Modal.confirm({
+              title: 'Disable confirmation',
+              content: '<p><b>'+ self.plans[index].name +'</b> is not subscribed by any user so it will be delete permanently.</p>',
+              onOk: () => {
+                self.disableAddon(index);
+              }
+            });
+          } else {
+            self.disableAddon(index);
+          }
         }
       } else if (val == 'active') {
         if (self.activeTab == 'plan') {
@@ -581,11 +602,24 @@ export default {
         }
       }) */
     },
-    async deletePlan (plan) {
-      let self = this
-      this.loading = true
-      console.log('this.plans[plan].id :: ', this.plans[plan].id)
-      if (self.activeTab == 'plan') {
+    deletePlan (plan) {
+      let self = this;
+      this.loading = true;
+      
+      if (self.plans[plan].status == 'archived') {
+        self.$Notice.error({
+          title: 'Action Denied',
+          desc: 'You can\'t delete Disabled/Archived plan because it may subscribed by users.',
+          duration: 5
+        });
+      } else {
+        if (self.activeTab == 'plan') {
+          self.deleteCbPlan(self.plans[plan].id, plan);
+        } else {
+          self.deleteCbAddon(self.plans[plan].id, plan);
+        }
+      }
+      /* if (self.activeTab == 'plan') {
         if (self.plans[plan].status == 'archived') {
           self.$Notice.error({
             title: 'Action Denied',
@@ -597,22 +631,9 @@ export default {
         }
       } else {
         self.deleteCbAddon(self.plans[plan].id, plan);
-      }
-      self.loading = false
-      self.confirmDelete = false
-      // await subscriptionPlans.delete(this.plans[plan].id).then(res => {
-      //   self.$Notice.success({
-      //     title: '<b>' + self.plans[plan].name + '</b> deleted.',
-      //     desc: 'Subscription Plan <b>' + self.plans[plan].name + '</b> has been deleted..!'
-      //   })
-      //   self.plans.splice(plan, 1)
-      // }).catch(err => {
-      //   self.$Notice.error({
-      //     duration: 5,
-      //     title: 'Can not delete <b>' + self.plans[plan].name + '</b>',
-      //     desc: 'Please try again' + err
-      //   })
-      // })
+      } */
+      self.loading = false;
+      self.confirmDelete = false;
     },
     expand (plan) {
       $('#plan_'+plan).slideToggle(function() {
@@ -623,31 +644,32 @@ export default {
       this.process.cursor = 'progress!important'
       let self = this
       let dataObj = this.plans[index]
+      console.log('Addon Data::', dataObj.price); 
       if (dataObj.name == '') {
         this.$Notice.error({
           duration: 5,
           title: 'Plan Name is NULL.',
           desc: '<b>Plan Name</b> should not be null..!'
         })
-      } else if(dataObj.type == 'basic' && dataObj.validity < this.defaultPlan.validity) {
+      } else if(dataObj.object == 'plan' && dataObj.period < this.defaultPlan.validity) {
         this.$Notice.error({
           duration: 5,
           title: 'Please Correct Validity',
           desc: 'Validity should be greater than '+ this.defaultPlan.validity + ' ' + this.defaultPlan.time_unit
         })
-      } else if (dataObj.type == 'addon' && dataObj.validity == '') {
+      } else if (dataObj.object == 'addon' && dataObj.period == '') {
         this.$Notice.error({
           duration: 5,
           title: 'Please Correct Validity',
           desc: 'Validity can not be empty'
         })
-      } else if (dataObj.type == 'basic' && dataObj.price < this.defaultPlan.price) {
+      } else if (dataObj.object == 'plan' && dataObj.price < this.defaultPlan.price) {
         this.$Notice.error({
           duration: 5,
           title: 'Please Correct Price',
           desc: 'Price should be greater than ' + this.defaultPlan.price + '$'
         })
-      } else if (dataObj.type == 'addon' && dataObj.price == '') {
+      } else if (dataObj.object == 'addon' && dataObj.price.toString().trim() == '') {
         this.$Notice.error({
           duration: 5,
           title: 'Please Correct Price',
@@ -719,7 +741,7 @@ export default {
       planDefinition.type = 'on_off';
       planDefinition.period_unit = 'month';
       planDefinition.charge_type = 'recurring';
-      delete planDefinition.status;
+      // delete planDefinition.status;
       
       cbAddon.post(planDefinition).then(res => {
         if (res.data.api_error_code) {
@@ -747,6 +769,7 @@ export default {
     },
     updateCbPlan(id, data) {
       let self = this;
+      document.body.style.cursor = 'wait';
       let convertedPrice = data.price * 100;
       let updateDefinition = {
         "name": data.name,
@@ -765,19 +788,23 @@ export default {
         console.log('UpdatedPlan :: ', res)
         if (res.data.api_error_code) {
           self.throwNewError(res);
+          document.body.style.cursor = 'default';
         } else {
           self.$Notice.success({
             title: '<b>' + res.data.name + '</b> saved.',
             desc: 'Subscription Plan <b>' + res.data.name + '</b> has been saved..!'
           });
+          document.body.style.cursor = 'default';
         }
       }).catch(err => {
+        document.body.style.cursor = 'default';
         cosole.log('UpdatePlan Error:', err);
       });
     },
     updateCbAddon(id, data) {
-      console.log('>>data', data)
+      // console.log('>>data', data)
       let self = this;
+      document.body.style.cursor = 'wait';
       let convertedPrice = data.price * 100;
       let updateDefinition = {
         "name": data.name,
@@ -795,18 +822,22 @@ export default {
         console.log('UpdatedAddon :: ', res);
         if (res.data.api_error_code) {
           self.throwNewError(res);
+          document.body.style.cursor = 'default';
         } else { 
            self.$Notice.success({
             title: '<b>' + res.data.name + '</b> saved.',
             desc: 'Addon <b>' + res.data.name + '</b> has been saved..!'
           });
+          document.body.style.cursor = 'default';
         }
       }).catch(err => {
+        document.body.style.cursor = 'default';
         cosole.log('UpdateAddon Error:', err);
       });
     },
     deleteCbPlan(id, index) {
       let self = this;
+      document.body.style.cursor = 'wait';
       cbPlan.delete(id).then(res => {
         console.log('Delete Plan Res: : ', res);
         if (res.data.api_error_code) {
@@ -819,27 +850,27 @@ export default {
           } else {
             self.throwNewError(res);
           }
+          document.body.style.cursor = 'default';
         } else {
           self.$Notice.success({
             title: '<b>' + self.plans[index].name + '</b> deleted.',
             desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been deleted..!'
           });
           self.plans.splice(index, 1);
-          //BUG SOLVE : SHOW TWO DELETED ITEMS
-          // let newIndex = self.planData.map((itm) => itm.id).indexOf(id);
-          // self.planData.splice(newIndex, 1);
+          document.body.style.cursor = 'default';
         }
       }).catch(err => {
         console.log('Delete Plan Catch Error: ', err);
+        document.body.style.cursor = 'default';
       });
-
       self.loading = false
       self.confirmDelete = false
     },
     deleteCbAddon(id, index) {
       let self = this;
+      document.body.style.cursor = 'wait';
       cbAddon.delete(id).then(res => {
-        console.log('Delete Addon Error: : ', res);
+        console.log('Delete Addon Res: : ', res);
         if (res.data.api_error_code) {
           if (res.data.api_error_code == 'resource_not_found') {
             self.$Notice.error({
@@ -850,24 +881,24 @@ export default {
           } else {
             self.throwNewError(res);
           }
+          document.body.style.cursor = 'default';
         } else {
           self.$Notice.success({
             title: '<b>' + self.plans[index].name + '</b> deleted.',
             desc: 'Addon Plan <b>' + self.plans[index].name + '</b> has been deleted..!'
           });
           self.plans.splice(index, 1);
-          //BUG SOLVE : SHOW TWO DELETED ITEMS
-          // let newIndex = self.addonData.map((itm) => itm.id).indexOf(id);
-          // self.addonData.splice(newIndex, 1);
+          document.body.style.cursor = 'default';
         }
       }).catch(err => {
+        document.body.style.cursor = 'default';
         console.log('Delete Addon Catch Error: ', err);
       });
-      return 
     },
-    disablePlan(id) {
+    disablePlan(index) {
       let self = this;
       let msg, ttl;
+      document.body.style.cursor = 'wait';
       cbPlan.delete(self.plans[index].id).then(res => { 
         if (res.data.api_error_code) {
           msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':')+1);
@@ -887,21 +918,25 @@ export default {
             });
           }
           self.plans[index].status = 'active';
+          document.body.style.cursor = 'default';
         } else {
           self.$Notice.success({
             title: '<b>' + self.plans[index].name + '</b> Plan Disabled.',
             desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been disabled..!'
           })
+          document.body.style.cursor = 'default';
         }
         console.log('Plan archived :: ', res)
       }).catch(err => {
         self.plans[index].status = 'active';
+        document.body.style.cursor = 'default';
         console.log('Plan archived error ::', err)
       });
     },
     disableAddon(index) {
       let self = this;
       let msg, ttl;
+      document.body.style.cursor = 'wait';
       cbAddon.delete(self.plans[index].id).then(res => {
         if (res.data.api_error_code) {
           msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':')+1);
@@ -921,21 +956,25 @@ export default {
             });
           }
           self.plans[index].status = 'active';
+          document.body.style.cursor = 'default';
         } else {
           self.$Notice.success({
             title: '<b>' + self.plans[index].name + '</b> Addon Disabled.',
             desc: 'Addon Plan <b>' + self.plans[index].name + '</b> has been disabled..!'
           })
+          document.body.style.cursor = 'default';
         }
         console.log('Addon archived :: ', res)
       }).catch(err => {
         self.plans[index].status = 'active';
+        document.body.style.cursor = 'default';
         console.log('Addon archived error ::', err)
       });
     },
     enablePlan(index) {
       let self = this;
       let msg, ttl;
+      document.body.style.cursor = 'wait';
       cbPlan.patch(self.plans[index].id).then(res => {
         if (res.data.api_error_code) {
           msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':')+1);
@@ -955,21 +994,25 @@ export default {
             });
           }
           self.plans[index].status = 'archived';
+          document.body.style.cursor = 'default';
         } else {
           self.$Notice.success({
             title: '<b>' + self.plans[index].name + '</b> Plan Enabled.',
             desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been enabled..!'
           })
+          document.body.style.cursor = 'default';
         }
         console.log('Plan unarchived :: ', res);
       }).catch(err => {
         self.plans[index].status = 'archived';
+        document.body.style.cursor = 'default';
         console.log('Plan unarchived error ::', err)
       });
     },
     enableAddon(index) {
       let self = this;
       let msg, ttl;
+      document.body.style.cursor = 'wait';
       cbAddon.patch(self.plans[index].id).then(res => {
         if (res.data.api_error_code) {
           msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':')+1);
@@ -989,15 +1032,18 @@ export default {
             });
           }
           self.plans[index].status = 'archived';
+          document.body.style.cursor = 'default';
         } else {
           self.$Notice.success({
             title: '<b>' + self.plans[index].name + '</b> Addon Enabled.',
             desc: 'Addon Plan <b>' + self.plans[index].name + '</b> has been enabled..!'
-          })
+          });
+          document.body.style.cursor = 'default';
         }
         console.log('Addon unarchived :: ', res);
       }).catch(err => {
         self.plans[index].status = 'archived';
+        document.body.style.cursor = 'default';
         console.log('Addon unarchived error ::', err)
       });
     },
