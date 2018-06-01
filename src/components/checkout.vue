@@ -2,27 +2,28 @@
 	<Row class="setMiddle" type="flex" justify="center" align="middle">
     <Col span="16" push="2">
       <div class="third " v-for="(item, index) in mainData">
-      <h3 class="type-header" v-if="item.object == 'plan' && basicPlan != undefined">Basic</h3>
-      <h3 class="type-header" v-if="item.object == 'addon'">Add-on</h3>
-      <section class="plan-tier lift">
+        <h3 class="type-header" v-if="item.object == 'plan' && basicPlan != undefined">Basic</h3>
+        <h3 class="type-header" v-if="item.object == 'addon'">Add-on</h3>
+        <section class="plan-tier lift">
           <h4>{{item.name.toUpperCase()}}</h4>
-          <h5><sup class="superscript">US$</sup><span class="plan-price">{{item.price}}</span>
+          <h5>
+            <sup class="superscript">US$</sup><span class="plan-price">{{item.price}}</span>
               <sub><div v-if="item.validity > 1">
-                    <p>{{item.validity}} months</p>
-                    </div>
-                    <div v-else="item.validity > 1">
-                      <p>/mo</p>
-                    </div>
+                <p>{{item.validity}} months</p>
+                </div>
+                <div v-else="item.validity > 1">
+                  <p>/mo</p>
+                </div>
               </sub>
           </h5>
           <ul>
             <li v-for="itemDec in item.description"><strong>{{itemDec}}</strong></li>
           </ul>
-      </section>
-      <div class="plus" v-if="mainData.length > 0 && index !== (mainData.length -1)">
-        <i class="fa fa-plus-circle"></i>
+        </section>
+        <div class="plus" v-if="mainData.length > 0 && index !== (mainData.length -1)">
+          <i class="fa fa-plus-circle"></i>
+        </div>
       </div>
-    </div>
     </Col>
     <Col span="8" pull="6">
       <div class="panel panel-custom">
@@ -101,7 +102,10 @@
           <div class="panel-footer">
             <Row type="flex" justify="space-around">
                 <Col span="5">
-                  <p v-if="mainData[1]" class="sv-card">PAY {{ mainData[1].price }} USD</p>
+                  <p v-if="mainData[1]" class="pay-info">PAY {{ mainData[1].price * mainData[0].period }} USD
+                  <Poptip slot="append" trigger="hover" title="Pay Info" placement="bottom" :content="'Basic Plan Validity Multiply By Addon Price( ' + mainData[0].period + ' * ' + mainData[1].price + ' = ' + mainData[1].price * mainData[0].period + ' )'">
+                    <Icon type="help-circled"></Icon>
+                  </Poptip></p>
                 </Col>
                 <Col span="6">
                     <!-- set attribute to Col span="16" offset="4" 
@@ -284,7 +288,8 @@ export default {
       ],
       expiryYear: [],
       userDetails: null,
-      savedCard: false
+      savedCard: false,
+      loadingPlans: true
     }
   },
   async mounted () {
@@ -293,7 +298,22 @@ export default {
     let arry = [];
 
     this.sub_id = this.$route.params.id;
-
+    this.$Spin.show({
+      render: (h) => {
+        return h('div', [
+          h('Icon', {
+            style: {
+              animation: 'ani-demo-spin 1s linear infinite'
+            },
+            props: {
+              type: 'load-c',
+              size: 24
+            }
+          }),
+          h('div','Processing Your Request.')
+        ])
+      }
+    });
     self.userDetails = await this.getUserDetails()
     if (this.basicPlan != undefined) {
       data.push(await this.getPlanDetails(this.basicSubId));
@@ -309,10 +329,12 @@ export default {
         self.payDetail.expiryMM = res.data.card.expiry_month;
         self.payDetail.expiryYY = res.data.card.expiry_year;
         self.payDetail.cardType = res.data.card.card_type;
+        self.$Spin.hide();
       } else {
         if (res.data.api_error_code == 'resource_not_found') {
           self.savedCard = false
         }
+        self.$Spin.hide();
       }
       // console.log('Res of customer details', res)
     }).catch(err => {
@@ -594,7 +616,7 @@ export default {
       self.payloading = false;
     }).catch(err => {
       self.updatePayMessage('alert alert-danger', 'Error..! ', null);
-      console.log('Error while sub for customer:: ', err);
+      console.log('Error while subscribeCbAddon() ', err);
       self.payloading = false;
     });
   },
@@ -602,7 +624,7 @@ export default {
     return userDetails.get().then(res => {
       return res.data.data;
     }).catch(err => {
-      console.log('>>>>Error in user details', err);
+      console.log('Error while getUserDetails() ', err);
       return err;
     });
   },
@@ -629,7 +651,7 @@ export default {
   },
   subscriptionDone(res) {
     let self = this;
-    console.log('FINAL RES>>', res)
+    // console.log('FINAL RES>>', res)
     self.updatePayMessage('alert alert-success', 'Success..! ', 'Successfully purchased.');
     Cookies.set('welcomeMsg', 'Thanks You For Subscribing...!');
     self.$Notice.success({
@@ -676,6 +698,10 @@ export default {
 }
 .sv-card {
   font-size: 16px;
+  font-weight: bold;
+}
+.pay-info {
+  font-size: 14px;
   font-weight: bold;
 }
 .pay-icon {
