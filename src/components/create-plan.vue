@@ -395,7 +395,7 @@ export default {
           self.addonData = res;
         });
       }).catch(err => {
-        console.log('Error Addon : ', err)
+        console.log('Error Addon : ', err);
       });
       this.showOverlay = false;
     }).catch(err => {
@@ -548,13 +548,13 @@ export default {
         })
         self.defaultPlan.details = data5
       }).catch(function (error) {
-        console.log('ERROR:::', error)
+        console.log('Error while getting register resource', error);
         self.$Notice.error({
           duration: 5,
           title: 'Trying to create subscription plan',
           desc: 'Please try again ' + err
         })
-      })
+      });
       let convertedPrice = self.defaultPlan.price * 100
       let id = uuidv1();
       let planDefinition = {
@@ -576,7 +576,8 @@ export default {
         this.createCbAddon(planDefinition)
       }
       // console.log('>>>>>>>>>>>>>...', planDefinition)
-// OLD CODE FOR SUBSCRIPTION
+      
+      // OLD CODE FOR SUBSCRIPTION
       /* subscriptionPlans.post(self.defaultPlan).then(res => {
         self.$Notice.success({
           title: '<b>New Plan</b>',
@@ -644,7 +645,7 @@ export default {
       this.process.cursor = 'progress!important'
       let self = this
       let dataObj = this.plans[index]
-      console.log('Addon Data::', dataObj.price); 
+      console.log('Updating Addon Data: ', dataObj.price); 
       if (dataObj.name == '') {
         this.$Notice.error({
           duration: 5,
