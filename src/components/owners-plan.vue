@@ -1,18 +1,8 @@
 <template>
-<Row style="margin-top:30px;">
-    <Col span="14" push="5">
-        <Card>
-            <!-- <h3>Thank You for Subscribing...!</h3> -->
-            <div style="font-size: x-large;">My Plan</div><br>
-                <Row>
-                    <Col span="22" push="1">
-                        <Table :loading="loading" class='dataTable' :columns="planDetails" :data="planList" no-data-text="No Data"></Table>
-                        <Page v-if="planListData.length > pageSize" style="margin-top:10px;" class="pull-right" :total="planListData.length" :page-size="pageSize" :current="currentPage" @on-change="changePage"></Page>
-                    </Col>
-                </Row>
-        </Card>
-    </Col>
-</Row>
+    <div>
+        <Table highlight-row :loading="loading" class='dataTable' :columns="planDetails" :data="planList" no-data-text="No Data" @on-current-change="currentRow"></Table>
+        <Page v-if="planListData.length > pageSize" size="small" show-total style="margin-top:10px;" class="pull-right" :total="planListData.length" :page-size="pageSize" :current="currentPage" @on-change="changePage"></Page>
+    </div>
 </template>
 <script>
 /*eslint-disable*/
@@ -20,31 +10,33 @@ import getUserDetails from '@/api/userdetails';
 import userSubscription from '@/api/user-subscription';
 import cbSubscription from '@/api/cb-subscription';
 import cbPlan from '@/api/cb-plan';
-import Cookies from 'js-cookie';
-import addOn from './add-on.vue';
-import _ from 'lodash';
+import expandRow from './add-on.vue';
+import Cookies from 'js-cookie'
+import _ from 'lodash'
 var moment = require('moment');
 moment().format();
 // import Emitter from '@/mixins/emitter'
 let index
 export default {
-    components: { addOn },
+    components: {
+        expandRow
+    },
     name: 'planDetails',
     data () {
         return {
             loading: true,
             planDetails: [
-                {
-                    type: 'expand',
-                    width: 50,
-                    render: (h, params) => {
-                        return h(addOn, {
-                            props: {
-                                row: params.row
-                            }
-                        })
-                    }
-                },
+                // {
+                //     type: 'expand',
+                //     width: 50,
+                //     render: (h, params) => {
+                //         return h(expandRow, {
+                //             props: {
+                //                 row: params.row
+                //             }
+                //         })
+                //     }
+                // },
                 {
                     title: 'Plan',
                     key: 'plan_name'
@@ -68,10 +60,6 @@ export default {
                     title: 'Expiry Date',
                     key: 'current_term_end',
                     sortable: true
-                },
-                {
-                    title: 'Status',
-                    key: 'status'
                 }
             ],
             planListData: [],
@@ -79,34 +67,35 @@ export default {
             moment : moment,
             userDetails: null,
             currentPage: 1,
-            pageSize: 10
+            pageSize: 10 
         }
     },
-    methods: {
+    methods:{
         async changePage (pageNo) {
-            this.planList = await this.makeChunk(pageNo, this.pageSize);
+            this.planList = await this.makeChunk(pageNo, this.pageSize)
         },
         async makeChunk (pageNo, size) {
             let chunk = []
             for (let i=(pageNo - 1) * size; i < size + (pageNo - 1) * size; i++) {
                 if(this.planListData[i] != undefined) {
-                    await chunk.push(this.planListData[i]);
+                    await chunk.push(this.planListData[i])
                 }
             }
-            return chunk.slice();
+            return chunk.slice()
         },
-        getPlanName(itm) {
+        currentRow(currentRow) {
+            console.log('CurrentRow', currentRow)
+            this.$emit('selectedSubscription', [currentRow.id, currentRow.plan_id, currentRow.plan_unit_price])
+        },
+        async getPlanName(itm) {
             return cbPlan.get(itm.subscription.plan_id).then(res => {
                 return res.data.name;
-            });
+            })
         }
     },
     async mounted() {
         let self = this
-        if(Cookies.get('welcomeMsg')) {
-            this.$Message.success(Cookies.get('welcomeMsg'));
-            Cookies.remove('welcomeMsg')
-        }
+
         await getUserDetails.get().then(res => {
             self.userDetails = res.data.data;
         }).catch(err => {
@@ -140,7 +129,7 @@ export default {
                 itm.subscription.current_term_end = moment.unix(itm.subscription.current_term_end).format("DD MMM YYYY");
                 itm.subscription.plan_name = await self.getPlanName(itm);
                 Promise.resolve(itm.subscription.plan_name);
-                return itm.subscription;
+                return itm.subscription
             });
             Promise.all(obj).then(async res => {
                 self.planListData = res;
@@ -150,19 +139,20 @@ export default {
         }).catch(err => {
             self.loading = false
         });
-        //OLD CODE FOR SUBSCRIPTION
-        /* userSubscription.getOwn().then(async res => {
-            res.data.data = await _.orderBy(res.data.data, 'createdAt', 'desc')
-            await res.data.data.filter(function(o) { 
+
+       /*  userSubscription.getOwn().then(async res => {
+            res.data = await _.orderBy(res.data, 'createdAt', 'desc')
+            await res.data.filter(function(o) { 
                 o.expiredOn = moment(o.expiredOn).format("DD-MMM-YYYY")
                 o.createdAt = moment(o.createdAt).fromNow()
             })
-            self.planListData = res.data.data
+            self.planListData = res.data
             self.planList = await self.makeChunk(self.currentPage, self.pageSize)
             // if(self.planList.length > 0) {
             self.loading = false
             // }
         }).catch(err => {
+            console.log(err)
             if(err.message == 'Network Error'){
                 self.$Notice.error({
                     duration: 5,

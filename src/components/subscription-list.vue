@@ -1,82 +1,243 @@
 <template>
-<section class="layer plans">
-  <section class="backWhite">
-    <section @click="checkoutFunction(item.id)" class="third lift plan-tier lift.active" v-for="(item, index) in mainData">
-      <h4>{{item.name.toUpperCase()}}</h4>
-      <h5><sup class="superscript">US$</sup><span class="plan-price">{{item.price}}</span>
-          <sub><div v-if="item.validity > 1">
-                <p>{{item.validity}} months</p>
-                </div>
-                <div v-else="item.validity > 1">
-                      <p>/mo</p>
-                </div>
-          </sub>
-      </h5>
-      <ul>
-        <li v-for="(itemDec, indexDec) in item.description"><strong>{{itemDec}}</strong></li>
-      </ul>
+<div>
+  <section v-if="basicPlans.length > 0" class="layer plans">
+    <section class="backWhite">
+    <div class="type-header">
+      <p>Basic Plans</p>
+    </div>
+      <section @click="checkoutFunction(item.id)" class="third lift plan-tier lift.active" v-for="(item, index) in basicPlans">
+        <h4>{{item.name.toUpperCase()}}</h4>
+        <h5><sup class="superscript">US$</sup><span class="plan-price">{{item.price}}</span>
+            <sub><div v-if="item.validity > 1">
+                  <p>{{item.validity}} months</p>
+                  </div>
+                  <div v-else="item.validity > 1">
+                        <p>/mo</p>
+                  </div>
+            </sub>
+        </h5>
+        <ul>
+          <li v-for="(itemDec, indexDec) in item.description"><strong>{{itemDec}}</strong></li>
+        </ul>
+      </section>
+      <div style="clear: both"></div>
     </section>
-    <div style="clear: both"></div>
   </section>
-</section>
+  <section v-if="addOns.length > 0" class="layer plans">
+    <section class="backWhite">
+    <div class="type-header">
+      <p>Add-on</p>
+    </div>
+      <section @click="checkoutAddonFunction(item.id)" class="third lift plan-tier lift.active" v-for="(item, index) in addOns">
+        <h4>{{item.name.toUpperCase()}}</h4>
+        <h5><sup class="superscript">US$</sup><span class="plan-price">{{item.price}}</span>
+            <sub><div v-if="item.validity > 1">
+                  <p>{{item.validity}} months</p>
+                  </div>
+                  <div v-else="item.validity > 1">
+                        <p>/mo</p>
+                  </div>
+            </sub>
+        </h5>
+        <ul>
+          <li v-for="(itemDec, indexDec) in item.description"><strong>{{itemDec}}</strong></li>
+        </ul>
+      </section>
+      <div style="clear: both"></div>
+    </section>
+  </section>
+  <Modal title="My Plan" v-model="showPlanSelection" :mask-closable="false" @on-ok="makeAddon()" width="60%" :loading="validateModal">
+    <p style="margin-bottom:0px">Select basic plan which you wants to extend.</p>
+    <my-plan style="padding:35px" v-on:selectedSubscription="setSelectedSubscription"></my-plan>
+    <p v-if="assuredSum != null">Your monthly payment will be {{ planPrice }} + {{ addonPrice }} = {{ assuredSum }}</p>
+  </Modal>
+</div>
 </template>
 <script>
 // import defaultSubscription from '@/api/default-subscription'
 // import axios from 'axios'
-import subscriptionPlans from '@/api/subscription-plans'
+import subscriptionPlans from '@/api/subscription-plans';
+import myPlans from './owners-plan.vue';
+import { loadavg } from 'os';
+import cbPlan from '@/api/cb-plan';
+import cbAddon from '@/api/cb-addon';
 
   export default {
+    components: {
+      'my-plan': myPlans
+    },
     name: 'subscriptionList',
     data () {
       return {
         showDetails:'0',
         mainData: [],
+        basicPlans: [],
+        addOns: [],
+        showPlanSelection: false,
+        selectedAddon: '',
+        selectedBasicPlan: '',
+        selectedBasicSubId: '',
+        validateModal: true,
         details: [{
-            "key": "key",
-            "width": 230,
-            "type": "html"
+          "key": "key",
+          "width": 230,
+          "type": "html"
         }, {
             "key": "value"
-        }]
+        }],
+        assuredSum: null,
+        planPrice: null,
+        addonPrice: null
       }
     },
     methods: {
       init () {
-
         let self = this
-        subscriptionPlans.get().then(res => {
-            self.mainData = res.data.data
-           self.mainData = _.filter(self.mainData, function(o) {
-                    return o.status === true
-                })
-            self.mainData.sort(function(a, b){
-                return a.price-b.price
-            })
-            for(let i = 0; i < self.mainData.length; i++) {
-                self.mainData[i].description = self.mainData[i].description.split('\n')
-                self.mainData[i].details = _.chain(self.mainData[i].details).filter(function(o) {
-                    o.value = parseInt(o.value)
-                    return o.value > 0
-                }).map(function(d) {
-                    let str = d.module.charAt(0).toUpperCase() + d.module.slice(1)
-                    let str2 = d.service.charAt(0).toUpperCase() + d.service.slice(1)
-                    return {'key':'<i class="ivu-icon ivu-icon-android-checkmark-circle"></i> <b>'+str+'</b> '+str2, 'value': d.value}
-                }).value()
-                // console.log(self.mainData[i])
-            }
+
+        cbPlan.get().then(async (res) => {
+          res.data = await self.createPlanList(res.data, 'plan');
+          self.basicPlans = res.data.map((itm) => {
+            return itm.plan
+          });
+          // console.log('Plan List', self.basicPlans);
         }).catch(err => {
+          self.$Notice.error({
+            duration: 5,
+            title: 'Fetching subscription plans',
+            desc: err.message
+          });
+          console.log('ERR Plan ::', err);
+        });
+
+        cbAddon.get().then(async (res) => {
+          res.data = await self.createPlanList(res.data, 'addon');
+          self.addOns = res.data.map(itm => {
+            return itm.addon;
+          });
+          // console.log('Addon List', self.addOns);
+        }).catch(err => {
+          self.$Notice.error({
+            duration: 5,
+            title: 'Fetching subscription plans',
+            desc: err.message
+          });
+          console.log('ERR ADDon ::', err);
+        });
+
+        //OLD CODE FOR SUBSCRIPTION LIST
+        /* subscriptionPlans.get().then(res => {
+          self.mainData = res.data.data
+          self.mainData = _.filter(self.mainData, function(o) {
+            return o.status === true
+          })
+          self.mainData.sort(function(a, b){
+              return a.price-b.price
+          })
+          for(let i = 0; i < self.mainData.length; i++) {
+            self.mainData[i].description = self.mainData[i].description.split('\n')
+            self.mainData[i].details = _.chain(self.mainData[i].details).filter(function(o) {
+                o.value = parseInt(o.value)
+                return o.value > 0
+            }).map(function(d) {
+                let str = d.module.charAt(0).toUpperCase() + d.module.slice(1)
+                let str2 = d.service.charAt(0).toUpperCase() + d.service.slice(1)
+                return {'key':'<i class="ivu-icon ivu-icon-android-checkmark-circle"></i> <b>'+str+'</b> '+str2, 'value': d.value}
+            }).value()
+            // console.log(self.mainData[i])
+          }
+          self.addOns = _.filter(self.mainData, function(o) {
+            return o.type === 'addon'
+          })
+          self.basicPlans = _.filter(self.mainData, function(o) {
+            return o.type === 'basic'
+          })
+          console.log('self.basicPlans', self.basicPlans)
+
+        }).catch(err => {
+          if(err.response != undefined) {
+            self.$Notice.error({
+                duration: 5,
+                title: 'Fetching subscription plans',
+                desc: err.response.data.message
+            });
+          } else if(err.message == 'Network Error'){
+            self.$Notice.error({
+                duration: 5,
+                title: 'Fetching subscription plans',
+                desc: 'API service unavailable.'
+            });
+          } else {
             self.$Notice.error({
                 duration: 5,
                 title: 'Fetching subscription plans',
                 desc: err
             });
-        })
+          }
+        }); */
+      },
+      createPlanList(data, x) {
+        data = _.filter(data, function (itm) {
+            return itm[x].status === 'active'
+          });
+          data.map((itm) => {
+            itm[x].price /= 100;
+            if (itm[x].description)
+              itm[x].description = itm[x].description.split('\n');
+            if (itm[x].meta_data && itm[x].meta_data.details) {
+              itm[x].meta_data.details = _.chain(itm[x].meta_data.details).filter(function(o) {
+                o.value = parseInt(o.value);
+                  return o.value > 0;
+              }).map(function(d) {
+                let str = d.module.charAt(0).toUpperCase() + d.module.slice(1);
+                  let str2 = d.service.charAt(0).toUpperCase() + d.service.slice(1);
+                  return {'key':'<i class="ivu-icon ivu-icon-android-checkmark-circle"></i> <b>'+str+'</b> '+str2, 'value': d.value};
+              }).value();
+            }
+          });
+          data.sort((val1, val2) => {
+            return val1.price - val2.price;
+          });
+          return data;
       },
       checkoutFunction (sub_id) {
         this.$router.push('/checkout/' + sub_id)
+      },
+      checkoutAddonFunction(addon_id) {
+        console.log('addon id', addon_id)
+        this.selectedAddon = addon_id
+        this.showPlanSelection = true
+      },
+      makeAddon() {
+        if (this.selectedBasicPlan == '') {
+          this.$Message.error({ content: 'Please select basic plan.'})
+          this.validateModal = false
+          setTimeout(() => {
+            this.validateModal = true
+          }, 100);
+        } else {
+          this.$router.push({
+            name: 'checkout-addon',
+            params: {
+              id: this.selectedAddon,
+              'basicSubId': this.selectedBasicSubId,
+              'basicPlan': this.selectedBasicPlan
+            }
+          })
+        }
+      },
+      setSelectedSubscription(id) {
+        this.selectedBasicPlan = id[0]
+        this.selectedBasicSubId = id[1]
+        let details = this.addOns.filter(itm => {
+          return itm.id == this.selectedAddon
+        });
+        this.planPrice = id[2];
+        this.addonPrice = details[0].price;
+        this.assuredSum = id[2] + details[0].price;
       }
     },
     mounted () {
+      // this.$on('selectedSubscription', this.setSelectedSubscription(id))
       this.init()
     }
   }
@@ -90,7 +251,16 @@ padding: 0;
 box-sizing: border-box;
 -moz-box-sizing: border-box;
 }
-
+.type-header {
+  background-color: #ffffff7c;
+  color: #464c5b;
+  font-weight: bold;
+  border-radius: 5px;
+  font-family: "Source Sans Pro", "helvetica", sans-serif;
+  font-size: 16px;
+  text-align: center;
+  position: sticky;
+}
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary, time, mark, audio, video {
 margin: 0;
 padding: 0;

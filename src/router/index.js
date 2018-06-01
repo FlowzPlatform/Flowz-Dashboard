@@ -1,18 +1,17 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Layout from '@/components/Layout'
-import login from '@/components/login'
-import dashboard from '@/components/dashboard'
-import subscriptionplan from '@/components/subscriptionplan'
-import createPlan from '@/components/create-plan'
-import subscriptionList from '@/components/subscription-list'
-import checkout from '@/components/checkout'
-import planDetails from '@/components/plan-details'
-import Vuetable from '@/components/Vuetable'
-import resetpassword from '@/components/reset-password'
+import Vue from 'vue';
+import Router from 'vue-router';
+import Layout from '@/components/Layout';
+import login from '@/components/login';
+import dashboard from '@/components/dashboard';
+import subscriptionplan from '@/components/subscriptionplan';
+import createPlan from '@/components/create-plan';
+import subscriptionList from '@/components/subscription-list';
+import checkout from '@/components/checkout';
+import planDetails from '@/components/plan-details';
+import Vuetable from '@/components/Vuetable';
+import resetpassword from '@/components/reset-password';
 
-
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   mode: 'history',
@@ -48,15 +47,19 @@ export default new Router({
           name: 'subscriptionplan',
         },
         {
-            path: '/checkout/:id',
-            name: 'checkout',
-            component: checkout,
-            props: {
-              id: Text,
-              required: false
-            },
-            meta: { requiresAuth: true }
-        },
+          path: '/checkout/:id',
+          name: 'checkout',
+          component: checkout,
+          props: true,
+          meta: { requiresAuth: true }
+      },
+      {
+        path: '/checkout/:id/:basicSubId/:basicPlan',
+        name: 'checkout-addon',
+        component: checkout,
+        props: true,
+        meta: { requiresAuth: true }
+      },
         {
            path: '/plan-details',
            name: 'planDetails',

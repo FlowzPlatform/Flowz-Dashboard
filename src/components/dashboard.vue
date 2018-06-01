@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard" >
-  
+
    <div id="myNav" class="overlay">
 	<div v-for="card in cards">
 		<div v-if="position == card.position && index == card.index"  v-bind:class= card.class :style="{background : card1}" >
@@ -19,14 +19,14 @@
    </div>
 
    <div class="dasbma">
-      
+
       <div class="dasund">
          <div class="dasico">
-		 
+
 			<section>
 			  <div class="nav">
 				<ul class="radial-nav" id="radial-nav">
-					
+
 					<li data-content="git"><a href="#"></a></li>
 					<li data-content="grunt"><a href="#"></a></li>
 					<li data-content="yo"><a href="#"></a></li>
@@ -39,11 +39,11 @@
 								<div class="dascutx">
 									<div class="dascufo">
 										<span class="tit">V-Mail </span>
-										<span class="tex">This is a user 
-											friendly (vue based) 
-											email client. It can 
+										<span class="tex">This is a user
+											friendly (vue based)
+											email client. It can
 											receives the email.</span>
-									</div>   
+									</div>
 								</div>
 							   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-3.png"> </div></div>
 							</div>
@@ -56,28 +56,28 @@
 								<div class="dascutx">
 									<div class="dascufo">
 										<span class="tit">Web Builder</span>
-										<span class="tex">Build the website 
-											you desire without 
-											any knowledge 
+										<span class="tex">Build the website
+											you desire without
+											any knowledge
 											of coding.</span>
-									</div>   
+									</div>
 								</div>
 							<div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-2.png"> </div></div>
 							</div>
 						</a>
 					</li>
 					<li data-content="gulp"><a href="javascript:void(0)"></a></li>
-					
+
 					<li class="menu"  @click="openNav1()"><span class="icon-menu"></span> <img src="../assets/images/Website.png" ></li>
 				  </ul>
-			  </div>  
-				
+			  </div>
+
 				<div class="nav">
 					<ul class="radial-nav" id="radial-nav1">
           <li data-content="git"><a href="#"></a></li>
           <!-- uploader -->
 					<li data-content="css">
-						<a href="#" class="menu2-item " @click="goTosubscriptionplan(flowzUploaderUrl)" v-on:mouseover="hoverOnSubmenu('rgba(245, 93, 33, 0.7)', 'right' , 6)"> 
+						<a href="#" class="menu2-item " @click="goTosubscriptionplan(flowzUploaderUrl)" v-on:mouseover="hoverOnSubmenu('rgba(245, 93, 33, 0.7)', 'right' , 6)">
 							<div class="dashcub dbetl">
 								<div class="dascutx">
 									<div class="dascufo">
@@ -86,7 +86,7 @@
 						your databases
 						are automatically
 						created</span>
-									</div>   
+									</div>
 								</div>
 							   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-6.png"> </div></div>
 							</div>
@@ -99,11 +99,11 @@
 								<div class="dascutx">
 									<div class="dascufo">
 										<span class="tit">Accounting / Users</span>
-										<span class="tex">It is a complete suite of 
+										<span class="tex">It is a complete suite of
             managing invoices,
             listing all transactions.
 						</span>
-                  </div>   
+                  </div>
 								</div>
 							   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-5.png"> </div></div>
 							</div>
@@ -111,7 +111,7 @@
           </li>
           <!-- virualshop -->
           <li data-content="css">
-              <a href="#" class="menu2-item " @click="goTosubscriptionplan(flowzVshopDataUrl)" v-on:mouseover="hoverOnSubmenu('rgba(106, 177, 135, 1)', 'right' , 9)"> 
+              <a href="#" class="menu2-item " @click="goTosubscriptionplan(flowzVshopDataUrl)" v-on:mouseover="hoverOnSubmenu('rgba(106, 177, 135, 1)', 'right' , 9)">
                 <div class="dashcub virtualshop">
                   <div class="dascutx">
                     <div class="dascufo">
@@ -120,7 +120,7 @@
               your databases
               are automatically
               created</span>
-                    </div>   
+                    </div>
                   </div>
                    <div class="dascuico"><div class="dasvubot"><img src="../assets/images/virtualshop.png"> </div></div>
                 </div>
@@ -132,16 +132,16 @@
 					<li data-content="yo"><a href="#"></a></li>
 					<li class="menu" @click="openNav()"><span class="icon-menu"></span><img src="../assets/images/CRM.png"></li>
 					</ul>
-				</div>  
+				</div>
 			</section>
-		 
+
          </div>
       </div>
    </div>
 
 </div>
 </template>
-	
+
 
 <script>
 
@@ -177,8 +177,8 @@ export default {
   },
   created() {
     $(document).ready(function() {
-      
-	
+
+
 		/*$('.radial-nav').on('click', function(evt){
 		  //evt.stopPropagation();
 		  //$('.nav, .item').removeClass('active');
@@ -296,9 +296,9 @@ export default {
         this.index = index;
         this.card1 = color
         this.position1 = position
-		
-        
-		
+
+
+
 		if($('.radial-nav').hasClass('expanded')){
 			if (position === 'right') {
 			  $('.overlay').css({'left': '30px','right': 'auto','opacity': '1' })
@@ -308,35 +308,35 @@ export default {
 		} else {
 			 $('.overlay').css({'opacity': '0'})
 		}
-		
-        
-      
+
+
+
     },
-	
+
 	openNav1 : function(){
-	   
-	  
+
+
 		  $('#radial-nav').toggleClass('expanded');
-		  
+
 		  // console.log(this)
 		  $('.overlay').css({'opacity': '0'})
 		if($('#radial-nav').hasClass('expanded')){
 			$('#radial-nav1').removeClass('expanded');
         }
-		
-		
+
+
       },
 	  openNav : function(){
-	   
-	   
+
+
 		  $('#radial-nav1').toggleClass('expanded');
 		 $('.overlay').css({'opacity': '0'})
 		  // console.log(this)
 		if($('#radial-nav1').hasClass('expanded')){
 			$('#radial-nav').removeClass('expanded');
         }
-		
-		
+
+
       },
 
       // clearCard: function() {
@@ -374,7 +374,7 @@ export default {
       //   document.getElementById("icon2").style.display = "block";
       //   this.clearCard()
       // },
-	  
+
       // hello:function(){
       //     var items = document.querySelectorAll('.circle a');
 
