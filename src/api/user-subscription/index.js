@@ -1,12 +1,12 @@
 import api from '../../api'
 let model = 'user-subscription'
 export default {
-  get: (userId) => {
-    return api.request('get', '/' + model + '/' + userId);
-  },
-  getOwn: () => {
-    return api.request('get', '/' + model + '?$limit=100');
-  }
+	get: (userId) => {
+		return api.request('get', '/' + model + '/' + userId)
+	},
+	getOwn: () => {
+		return api.request('get', '/' + model + '?$limit=100')
+	}
 //   getThis: (id) => {
 //     return api.request('get', '/' + model + '/' + id)
 //   },

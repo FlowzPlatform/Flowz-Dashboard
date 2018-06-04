@@ -130,223 +130,222 @@
   </Row>
 </template>
 <script>
-// import axios from 'axios'
-import checkout from '@/api/checkout';
-import cbSubscription from '@/api/cb-subscription';
-import cbPlan from '@/api/cb-plan';
-import cbAddon from '@/api/cb-addon';
-import cbCustomer from '@/api/cb-customer';
-import Cookies from 'js-cookie';
-import psl from 'psl';
-import subscriptionPlans from '@/api/subscription-plans';  
-import { setTimeout } from 'timers';
-import transactions from '@/api/transactions';
-import userDetails from '@/api/userdetails';
-import config from '../config';
+// import checkout from '@/api/checkout'
+import cbSubscription from '@/api/cb-subscription'
+import cbPlan from '@/api/cb-plan'
+import cbAddon from '@/api/cb-addon'
+import cbCustomer from '@/api/cb-customer'
+import Cookies from 'js-cookie'
+import psl from 'psl'
+import _ from 'lodash'
+// import subscriptionPlans from '@/api/subscription-plans'
+// import { setTimeout } from 'timers'
+// import transactions from '@/api/transactions'
+import userDetails from '@/api/userdetails'
+import config from '../config'
 
 export default {
-  props: {
-    basicPlan: String,
-    basicSubId: String
-  },
-  name: 'checkout',
-  data () {
-    const validateCardNumber = (rule, value, callback) => {
-      let self = this
-      let checkPoint = value.slice(0, 5);
-      checkPoint = self.checkCardType(checkPoint)
-      if (checkPoint == 'Visa') {
-        document.getElementById('MasterCard').style = "display: none";
-        document.getElementById('Discover').style = "display: none";
-        document.getElementById('Visa').style = "display: inline-block";
-      } else if(checkPoint == 'MasterCard') {
-        document.getElementById('Visa').style = "display: none";
-        document.getElementById('Discover').style = "display: none";
-        document.getElementById('MasterCard').style = "display: inline-block";
-      } else if(checkPoint == 'Discover') {
-        document.getElementById('Visa').style = "display: none";
-        document.getElementById('Discover').style = "display: inline-block";
-        document.getElementById('MasterCard').style = "display: none";
-      } else {
-        document.getElementById('Visa').style = "display: inline-block";
-        document.getElementById('Discover').style = "display: inline-block";
-        document.getElementById('MasterCard').style = "display: inline-block";
-      }
+	props: {
+		basicPlan: String,
+		basicSubId: String
+	},
+	name: 'checkout',
+	data () {
+		const validateCardNumber = (rule, value, callback) => {
+			let self = this
+			let checkPoint = value.slice(0, 5)
+			checkPoint = self.checkCardType(checkPoint)
+			if (checkPoint == 'Visa') {
+				document.getElementById('MasterCard').style = 'display: none'
+				document.getElementById('Discover').style = 'display: none'
+				document.getElementById('Visa').style = 'display: inline-block'
+			} else if (checkPoint == 'MasterCard') {
+				document.getElementById('Visa').style = 'display: none'
+				document.getElementById('Discover').style = 'display: none'
+				document.getElementById('MasterCard').style = 'display: inline-block'
+			} else if (checkPoint == 'Discover') {
+				document.getElementById('Visa').style = 'display: none'
+				document.getElementById('Discover').style = 'display: inline-block'
+				document.getElementById('MasterCard').style = 'display: none'
+			} else {
+				document.getElementById('Visa').style = 'display: inline-block'
+				document.getElementById('Discover').style = 'display: inline-block'
+				document.getElementById('MasterCard').style = 'display: inline-block'
+			}
 
-      if (!value) {
-        callback(new Error('Please Enter Card Number.'))
-      } else if (isNaN(value)) {
-        callback(new Error('Please Enter Valid Card Number.'))
-      } else if (rule.max != value.length && rule.min != value.length) {
-        callback(new Error('Please Enter Valid 16-Digit Card Number.'))
-      } else {
-        callback();
-      }
-    };
-    const validateCvvNumber = (rule, value, callback) => {
-      if (!value) {
-        callback(new Error('Please Enter CVV Code.'))
-      } else if (isNaN(value)) {
-        callback(new Error('Please Enter Valid CVV Code.'))
-      } else {
-        callback();
-      }
-    };
-    return {
-      mainData: [],
+			if (!value) {
+				callback(new Error('Please Enter Card Number.'))
+			} else if (isNaN(value)) {
+				callback(new Error('Please Enter Valid Card Number.'))
+			} else if (rule.max != value.length && rule.min != value.length) {
+				callback(new Error('Please Enter Valid 16-Digit Card Number.'))
+			} else {
+				callback()
+			}
+		}
+		const validateCvvNumber = (rule, value, callback) => {
+			if (!value) {
+				callback(new Error('Please Enter CVV Code.'))
+			} else if (isNaN(value)) {
+				callback(new Error('Please Enter Valid CVV Code.'))
+			} else {
+				callback()
+			}
+		}
+		return {
+			mainData: [],
 			payloading: false,
-      validMonth: {
-        disabledDate (date) {
-          return date && date.valueOf() < Date.now() - 86400000;
-        }
-      },
-      payDetail: {
-        cardType: '0',
-        cardNumber: '',
-        expiryMM: null,
-        expiryYY: null,
-        cvCode: ''
-      },
-      payDetailRule: {
-        cardNumber : [
-          { required: true, min: 16, max:16, validator: validateCardNumber, trigger: 'blur' }
-        ],
-        expiryMM: [
-          { required: true, message: 'Please Select Expiry Month.', trigger: 'blur' }
-        ],
-        expiryYY: [
-          { required: true, message: 'Please Select Expiry Year.', trigger: 'blur' }
-        ],
-        cvCode: [
-          { required: true, validator: validateCvvNumber, message: '', trigger: 'blur' }
-        ]
-      },
-      userCard: '',
-      cardTypes: [
-        { 'Visa': ['4026', '417500', '4405', '4508', '4844', '4913', '4917', '4'] },
-        { 'Discover': ['6011', '622126', '622925', '644', '649', '65'] },
-        { 'MasterCard': ['55', '50'] }
-      ],
-      sub_id: '',
-      login_token: '',
-      payDone: false,
-      paying: false,
-      payInfo: {
-        msgType: '',
-        msg: '',
-        class: ''
-      },
-      expiryMonth: [
-        {
-          value: '01',
-          label: '01'
-        },
-        {
-          value: '02',
-          label: '02'
-        },
-        {
-          value: '03',
-          label: '03'
-        },
-        {
-          value: '04',
-          label: '04'
-        },
-        {
-          value: '05',
-          label: '05'
-        },
-        {
-          value: '06',
-          label: '06'
-        },
-        {
-          value: '07',
-          label: '07'
-        },
-        {
-          value: '08',
-          label: '08'
-        },
-        {
-          value: '09',
-          label: '09'
-        },
-        {
-          value: '10',
-          label: '10'
-        },
-        {
-          value: '11',
-          label: '11'
-        },
-        {
-          value: '12',
-          label: '12'
-        }
-      ],
-      expiryYear: [],
-      userDetails: null,
-      savedCard: false,
-      loadingPlans: true
-    }
-  },
-  async mounted () {
-    let self = this;
-    let data = [];
-    let arry = [];
+			validMonth: {
+				disabledDate (date) {
+					return date && date.valueOf() < Date.now() - 86400000
+				}
+			},
+			payDetail: {
+				cardType: '0',
+				cardNumber: '',
+				expiryMM: null,
+				expiryYY: null,
+				cvCode: ''
+			},
+			payDetailRule: {
+				cardNumber: [
+					{ required: true, min: 16, max: 16, validator: validateCardNumber, trigger: 'blur' }
+				],
+				expiryMM: [
+					{ required: true, message: 'Please Select Expiry Month.', trigger: 'blur' }
+				],
+				expiryYY: [
+					{ required: true, message: 'Please Select Expiry Year.', trigger: 'blur' }
+				],
+				cvCode: [
+					{ required: true, validator: validateCvvNumber, message: '', trigger: 'blur' }
+				]
+			},
+			userCard: '',
+			cardTypes: [
+				{'Visa': ['4026', '417500', '4405', '4508', '4844', '4913', '4917', '4']},
+				{'Discover': ['6011', '622126', '622925', '644', '649', '65']},
+				{'MasterCard': ['55', '50']}
+			],
+			sub_id: '',
+			login_token: '',
+			payDone: false,
+			paying: false,
+			payInfo: {
+				msgType: '',
+				msg: '',
+				class: ''
+			},
+			expiryMonth: [
+				{
+					value: '01',
+					label: '01'
+				},
+				{
+					value: '02',
+					label: '02'
+				},
+				{
+					value: '03',
+					label: '03'
+				},
+				{
+					value: '04',
+					label: '04'
+				},
+				{
+					value: '05',
+					label: '05'
+				},
+				{
+					value: '06',
+					label: '06'
+				},
+				{
+					value: '07',
+					label: '07'
+				},
+				{
+					value: '08',
+					label: '08'
+				},
+				{
+					value: '09',
+					label: '09'
+				},
+				{
+					value: '10',
+					label: '10'
+				},
+				{
+					value: '11',
+					label: '11'
+				},
+				{
+					value: '12',
+					label: '12'
+				}
+			],
+			expiryYear: [],
+			userDetails: null,
+			savedCard: false,
+			loadingPlans: true
+		}
+	},
+	async mounted () {
+		let self = this
+		let data = []
 
-    this.sub_id = this.$route.params.id;
-    this.$Spin.show({
-      render: (h) => {
-        return h('div', [
-          h('Icon', {
-            style: {
-              animation: 'ani-demo-spin 1s linear infinite'
-            },
-            props: {
-              type: 'load-c',
-              size: 24
-            }
-          }),
-          h('div','Processing Your Request.')
-        ])
-      }
-    });
-    self.userDetails = await this.getUserDetails()
-    if (this.basicPlan != undefined) {
-      data.push(await this.getPlanDetails(this.basicSubId));
-      data.push(await this.getAddonDetails(this.sub_id));
-    } else {
-      data.push(await this.getPlanDetails(this.sub_id));
-    }
+		this.sub_id = this.$route.params.id
+		this.$Spin.show({
+			render: (h) => {
+				return h('div', [
+					h('Icon', {
+						style: {
+							animation: 'ani-demo-spin 1s linear infinite'
+						},
+						props: {
+							type: 'load-c',
+							size: 24
+						}
+					}),
+					h('div', 'Processing Your Request.')
+				])
+			}
+		})
+		self.userDetails = await this.getUserDetails()
+		if (this.basicPlan != undefined) {
+			data.push(await this.getPlanDetails(this.basicSubId))
+			data.push(await this.getAddonDetails(this.sub_id))
+		} else {
+			data.push(await this.getPlanDetails(this.sub_id))
+		}
 
-    cbCustomer.get(self.userDetails._id).then(res => {
-      if (!res.data.api_error_code) {
-        self.savedCard = true;
-        self.payDetail.cardNumber = res.data.card.iin + '******' + res.data.card.last4;
-        self.payDetail.expiryMM = res.data.card.expiry_month;
-        self.payDetail.expiryYY = res.data.card.expiry_year;
-        self.payDetail.cardType = res.data.card.card_type;
-        self.$Spin.hide();
-      } else {
-        if (res.data.api_error_code == 'resource_not_found') {
-          self.savedCard = false
-        }
-        self.$Spin.hide();
-      }
-      // console.log('Res of customer details', res)
-    }).catch(err => {
-      console.log('Error While geting customer details', err)
-    });
-    this.mapData(data);
-    /* cbSubscription.get(self.userDetails._id).then(res => {
+		cbCustomer.get(self.userDetails._id).then(res => {
+			if (!res.data.api_error_code) {
+				self.savedCard = true
+				self.payDetail.cardNumber = res.data.card.iin + '******' + res.data.card.last4
+				self.payDetail.expiryMM = res.data.card.expiry_month
+				self.payDetail.expiryYY = res.data.card.expiry_year
+				self.payDetail.cardType = res.data.card.card_type
+				self.$Spin.hide()
+			} else {
+				if (res.data.api_error_code == 'resource_not_found') {
+					self.savedCard = false
+				}
+				self.$Spin.hide()
+			}
+			// console.log('Res of customer details', res)
+		}).catch(err => {
+			console.log('Error While geting customer details', err)
+		})
+		this.mapData(data)
+		/* cbSubscription.get(self.userDetails._id).then(res => {
       console.log('>>>RES', res);
     }).catch(err => {
       console.log('Error While geting customer from ', err)
     }); */
-    /* subscriptionPlans.getThis( this.sub_id).then(res => {
+		/* subscriptionPlans.getThis( this.sub_id).then(res => {
       self.mainData.push(res.data)
       self.mainData.sort(function(a, b) {
         return a.price-b.price
@@ -370,126 +369,124 @@ export default {
       });
     }); */
 
-    for(let j=0; j <= 20; j++ ) {
-      let yy = new Date().getFullYear() + j;
-      self.expiryYear.push({label: yy.toString(),value: yy.toString()});
-    }
-  },
-  methods: {
-    getPlanDetails (id) {
-      return cbPlan.get(id).then(res => {
-        // console.log('>>>>', id,res.data)
-        return res.data;
-      }).catch(err => {
-        if (err.response && err.response.data.message == 'User authentication fail') {
-          this.$Message.error({
-            content: 'Your session has been expired please login again.',
-            duration: 7,
-            closable: true
-          });
-          let location = psl.parse(window.location.hostname)
-          location = location.domain === null ? location.input : location.domain;
-          Cookies.remove('auth_token', {domain: location});
-          Cookies.remove('access', {domain: location});
-          Cookies.remove('user', {domain: location});
-          self.$router.push({ name: 'login' });
-        } else {
-          self.$Notice.error({
-            duration: 5,
-            title: 'Fetching subscription plan',
-            desc: err.message
-          });
-        }
-        console.log('>>>Error geting subscriptions', err);
-      });
-    },
-    getAddonDetails (id) {
-      return cbAddon.get(id).then(res => {
-        return res.data
-      }).catch(err => {
-        console.log('Error :: ', err)
-      })
-    },
-    mapData(data) {
-      data.map((itm) => {
-      if (itm.description)
-        itm.description = itm.description.split('\n');
-      itm.price /= 100;
-      if (itm.meta_data && itm.meta_data.details) {
-        itm.details = _.chain(itm.meta_data.details).filter(function (o) {
-          o.value = parseInt(o.value)
-            return o.value > 0
-        }).map(function(d) {
-          let str = d.module.charAt(0).toUpperCase() + d.module.slice(1)
-            let str2 = d.service.charAt(0).toUpperCase() + d.service.slice(1)
-            return {'key':'<i class="ivu-icon ivu-icon-android-checkmark-circle"></i> <b>'+str+'</b> '+str2, 'value': d.value}
-        }).value()
-      }
-    });
-    this.mainData = data
-    },
-    checkCardType (val) {
-      let result = []
-      if(val != '') {
-        result = _.filter(this.cardTypes, function(o) {
-          let array = Object.values(o)
-          for(var key in array[0]) {
-            if(val.startsWith(array[0][key])) {
-              return true
-            }
-          }
-        })
-      }
-      return result.length !=0 ? Object.keys(result[0])[0] : null
-    },
-    getMMYYYY (expriry) {
-      let splited = expriry.split('-')
-      this.payDetail.expiryYY = splited[0]
-      this.payDetail.expiryMM = splited[1]
-    },
-    backFunction () {
-      this.$router.push('/subscription-list')
-    },
-    updatePayMessage (cls, type, msg) {
-      this.payDone = true;
-      this.payInfo.class = cls;
-      this.payInfo.msgType = type;
-      this.payInfo.msg = msg;
-      return;
-    },
-    async payFunction (name) {
-      let self = this;
-      let paymentStatus, transactionStatus;
-      if(!self.savedCard) {
-        this.$refs[name].validate(async (valid) => {
-          if (valid) {  
-            self.payloading = true;
-            self.updatePayMessage('alert alert-warning', 'Processing Payment..!', 'Please do not refresh page or do not go back.');
-            // OLD CODE FOR SUBSCRIPTION
-            /* var sObj = {
+		for (let j = 0; j <= 20; j++) {
+			let yy = new Date().getFullYear() + j
+			self.expiryYear.push({label: yy.toString(), value: yy.toString()})
+		}
+	},
+	methods: {
+		getPlanDetails (id) {
+			return cbPlan.get(id).then(res => {
+				// console.log('>>>>', id,res.data)
+				return res.data
+			}).catch(err => {
+				if (err.response && err.response.data.message == 'User authentication fail') {
+					this.$Message.error({
+						content: 'Your session has been expired please login again.',
+						duration: 7,
+						closable: true
+					})
+					let location = psl.parse(window.location.hostname)
+					location = location.domain === null ? location.input : location.domain
+					Cookies.remove('auth_token', {domain: location})
+					Cookies.remove('access', {domain: location})
+					Cookies.remove('user', {domain: location})
+					self.$router.push({ name: 'login' })
+				} else {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Fetching subscription plan',
+						desc: err.message
+					})
+				}
+				console.log('>>>Error geting subscriptions', err)
+			})
+		},
+		getAddonDetails (id) {
+			return cbAddon.get(id).then(res => {
+				return res.data
+			}).catch(err => {
+				console.log('Error :: ', err)
+			})
+		},
+		mapData (data) {
+			data.map((itm) => {
+				if (itm.description) { itm.description = itm.description.split('\n') }
+				itm.price /= 100
+				if (itm.meta_data && itm.meta_data.details) {
+					itm.details = _.chain(itm.meta_data.details).filter(function (o) {
+						o.value = parseInt(o.value)
+						return o.value > 0
+					}).map(function (d) {
+						let str = d.module.charAt(0).toUpperCase() + d.module.slice(1)
+						let str2 = d.service.charAt(0).toUpperCase() + d.service.slice(1)
+						return {'key': '<i class="ivu-icon ivu-icon-android-checkmark-circle"></i> <b>' + str + '</b> ' + str2, 'value': d.value}
+					}).value()
+				}
+			})
+			this.mainData = data
+		},
+		checkCardType (val) {
+			let result = []
+			if (val != '') {
+				result = _.filter(this.cardTypes, function (o) {
+					let array = Object.values(o)
+					for (var key in array[0]) {
+						if (val.startsWith(array[0][key])) {
+							return true
+						}
+					}
+				})
+			}
+			return result.length != 0 ? Object.keys(result[0])[0] : null
+		},
+		getMMYYYY (expriry) {
+			let splited = expriry.split('-')
+			this.payDetail.expiryYY = splited[0]
+			this.payDetail.expiryMM = splited[1]
+		},
+		backFunction () {
+			this.$router.push('/subscription-list')
+		},
+		updatePayMessage (cls, type, msg) {
+			this.payDone = true
+			this.payInfo.class = cls
+			this.payInfo.msgType = type
+			this.payInfo.msg = msg
+		},
+		async payFunction (name) {
+			let self = this
+			// let paymentStatus, transactionStatus
+			if (!self.savedCard) {
+				this.$refs[name].validate(async (valid) => {
+					if (valid) {
+						self.payloading = true
+						self.updatePayMessage('alert alert-warning', 'Processing Payment..!', 'Please do not refresh page or do not go back.')
+						// OLD CODE FOR SUBSCRIPTION
+						/* var sObj = {
               sub_id: this.sub_id,
               login_token: this.login_token,
               payDetail: this.payDetail
             }; */
-            let subDetails = {
-              "plan_id": self.sub_id,
-              "auto_collection": "on",
-              "customer": {
-                "auto_collection": "on"
-              },
-              "card": {
-                "gateway_account_id": config.gatewayAccountId,
-                "number": self.payDetail.cardNumber,
-                "expiry_month": self.payDetail.expiryMM,
-                "expiry_year": self.payDetail.expiryYY,
-                "cvv": self.payDetail.cvCode
-              }
-            }
+						let subDetails = {
+							'plan_id': self.sub_id,
+							'auto_collection': 'on',
+							'customer': {
+								'auto_collection': 'on'
+							},
+							'card': {
+								'gateway_account_id': config.gatewayAccountId,
+								'number': self.payDetail.cardNumber,
+								'expiry_month': self.payDetail.expiryMM,
+								'expiry_year': self.payDetail.expiryYY,
+								'cvv': self.payDetail.cvCode
+							}
+						}
 
-            let result = await self.subscribeCbPlan(subDetails);
-            
-            //OLD CODE FOR SUBSCRIPTION
-            /* checkout.post(sObj).then(async res => {
+						let result = await self.subscribeCbPlan(subDetails) // eslint-disable-line no-unused-vars
+
+						// OLD CODE FOR SUBSCRIPTION
+						/* checkout.post(sObj).then(async res => {
               await transactions.get(res.data.transaction_id).then(res => {
                 transactionStatus = res.data.transaction_status
                 paymentStatus = res.data.payment_status
@@ -517,7 +514,7 @@ export default {
                       title: 'Warning',
                       content: '<p>Your <b>PAYMENT</b> has been done, but subscription process not completed.</p><br><p> So, Please contact support team with transaction id<br><b> ' + res.data.transaction_id + '</b></p>'
                     });
-                  }                
+                  }
                   this.payInfo.msg = res.data.message
                   self.payloading = false
                 }
@@ -548,93 +545,93 @@ export default {
               self.paying = false
               self.payloading = false
             }); */
-          }
-        });
-      } else {
-        self.payloading = true;
-        self.updatePayMessage('alert alert-warning', 'Processing Payment..!', 'Please do not refresh page or do not go back.');
-        let subDetails = {
-          "plan_id": self.sub_id,
-          "auto_collection": "on"
-        }
-        let result
-        if (self.basicPlan != undefined) {
-          //IF CHANGES IN subDetails OBJECT THEN ALSO CHANGE CODE OF AN CB-SUBSCRIPTION's UPDATE METHOD
-          subDetails = {
-            "addons": [{
-              'id': self.sub_id
-            }]
-          }
-          result = await self.subscribeCbAddon(subDetails);
-        } else {
-          result = await self.subscribeCbPlan(subDetails);
-        }
-      }
-  },
-  async subscribeCbPlan(subDetails) {
-    let self = this
-    if (!this.savedCard) {
-      subDetails.id = this.userDetails._id;
-      subDetails.customer.first_name = this.userDetails.firstname;
-      subDetails.customer.last_name = this.userDetails.lastname;
-      subDetails.customer.email = this.userDetails.email;
-      cbSubscription.post(subDetails).then(res => {
-        if (res.data.api_error_code) {
-          self.throwNewError(res);
-        } else {
-          self.subscriptionDone(res);
-        }
-        self.payloading = false
-      }).catch(err => {
-        self.updatePayMessage('alert alert-danger', 'Error..! ', null);
-        console.log('Error while subscribing plan:: ', err);
-        self.payloading = false;
-      });
-    } else {
-      cbSubscription.patch(this.userDetails._id, subDetails).then(res => {
-        if (res.data.api_error_code) {
-          self.throwNewError(res);
-        } else {
-          self.subscriptionDone(res);
-        }
-        self.payloading = false;
-      }).catch(err => {
-        self.updatePayMessage('alert alert-danger', 'Error..! ', null);
-        console.log('Error while sub for customer:: ', err);
-        self.payloading = false;
-      });
-    }
-  },
-  subscribeCbAddon(subDetails) {
-    let self = this
-    cbSubscription.put(self.basicPlan, subDetails).then(res => {
-      if (res.data.api_error_code) {
-        self.throwNewError(res);
-      } else {
-        self.subscriptionDone(res);
-      }
-      self.payloading = false;
-    }).catch(err => {
-      self.updatePayMessage('alert alert-danger', 'Error..! ', null);
-      console.log('Error while subscribeCbAddon() ', err);
-      self.payloading = false;
-    });
-  },
-  getUserDetails() {
-    return userDetails.get().then(res => {
-      return res.data.data;
-    }).catch(err => {
-      console.log('Error while getUserDetails() ', err);
-      return err;
-    });
-  },
-  throwNewError(res) {
-    let self = this;
-    let msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':')+1);
-    let ttl = res.data.api_error_code.replace(/_/gi, ' ');
-    ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1);
-    self.updatePayMessage('alert alert-danger', 'Error..! ', msg);
-    /* if (res.data.error_code == 'add_card_error') {
+					}
+				})
+			} else {
+				self.payloading = true
+				self.updatePayMessage('alert alert-warning', 'Processing Payment..!', 'Please do not refresh page or do not go back.')
+				let subDetails = {
+					'plan_id': self.sub_id,
+					'auto_collection': 'on'
+				}
+				let result // eslint-disable-line no-unused-vars
+				if (self.basicPlan != undefined) {
+					// IF CHANGES IN subDetails OBJECT THEN ALSO CHANGE CODE OF AN CB-SUBSCRIPTION's UPDATE METHOD
+					subDetails = {
+						'addons': [{
+							'id': self.sub_id
+						}]
+					}
+					result = await self.subscribeCbAddon(subDetails)
+				} else {
+					result = await self.subscribeCbPlan(subDetails)
+				}
+			}
+		},
+		async subscribeCbPlan (subDetails) {
+			let self = this
+			if (!this.savedCard) {
+				subDetails.id = this.userDetails._id
+				subDetails.customer.first_name = this.userDetails.firstname
+				subDetails.customer.last_name = this.userDetails.lastname
+				subDetails.customer.email = this.userDetails.email
+				cbSubscription.post(subDetails).then(res => {
+					if (res.data.api_error_code) {
+						self.throwNewError(res)
+					} else {
+						self.subscriptionDone(res)
+					}
+					self.payloading = false
+				}).catch(err => {
+					self.updatePayMessage('alert alert-danger', 'Error..! ', null)
+					console.log('Error while subscribing plan:: ', err)
+					self.payloading = false
+				})
+			} else {
+				cbSubscription.patch(this.userDetails._id, subDetails).then(res => {
+					if (res.data.api_error_code) {
+						self.throwNewError(res)
+					} else {
+						self.subscriptionDone(res)
+					}
+					self.payloading = false
+				}).catch(err => {
+					self.updatePayMessage('alert alert-danger', 'Error..! ', null)
+					console.log('Error while sub for customer:: ', err)
+					self.payloading = false
+				})
+			}
+		},
+		subscribeCbAddon (subDetails) {
+			let self = this
+			cbSubscription.put(self.basicPlan, subDetails).then(res => {
+				if (res.data.api_error_code) {
+					self.throwNewError(res)
+				} else {
+					self.subscriptionDone(res)
+				}
+				self.payloading = false
+			}).catch(err => {
+				self.updatePayMessage('alert alert-danger', 'Error..! ', null)
+				console.log('Error while subscribeCbAddon() ', err)
+				self.payloading = false
+			})
+		},
+		getUserDetails () {
+			return userDetails.get().then(res => {
+				return res.data.data
+			}).catch(err => {
+				console.log('Error while getUserDetails() ', err)
+				return err
+			})
+		},
+		throwNewError (res) {
+			let self = this
+			let msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':') + 1)
+			let ttl = res.data.api_error_code.replace(/_/gi, ' ')
+			ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1)
+			self.updatePayMessage('alert alert-danger', 'Error..! ', msg)
+			/* if (res.data.error_code == 'add_card_error') {
       self.$Notice.error({
         title: ttl,
         duration: 5,
@@ -642,32 +639,32 @@ export default {
       });
       self.updatePayMessage('alert alert-danger', 'Error..! ', 'Your card is expire.');
     } else { */
-      self.$Notice.error({
-        title: ttl,
-        duration: 5,
-        desc: msg
-      });
-    /* } */
-  },
-  subscriptionDone(res) {
-    let self = this;
-    // console.log('FINAL RES>>', res)
-    self.updatePayMessage('alert alert-success', 'Success..! ', 'Successfully purchased.');
-    Cookies.set('welcomeMsg', 'Thanks You For Subscribing...!');
-    self.$Notice.success({
-      title: 'Subscription Id',
-      duration: 0,
-      desc: res.data.subscription.id
-    })
-    // console.log('Subscription Details', res);
-    this.$router.push({ name: 'planDetails' });
-  }
-},
-  'watch': {
-    '$route.params.id': function(newId, oldId) {
-      this.sub_id = newId
-    }
-  }
+			self.$Notice.error({
+				title: ttl,
+				duration: 5,
+				desc: msg
+			})
+			/* } */
+		},
+		subscriptionDone (res) {
+			let self = this
+			// console.log('FINAL RES>>', res)
+			self.updatePayMessage('alert alert-success', 'Success..! ', 'Successfully purchased.')
+			Cookies.set('welcomeMsg', 'Thanks You For Subscribing...!')
+			self.$Notice.success({
+				title: 'Subscription Id',
+				duration: 0,
+				desc: res.data.subscription.id
+			})
+			// console.log('Subscription Details', res);
+			this.$router.push({ name: 'planDetails' })
+		}
+	},
+	'watch': {
+		'$route.params.id': function (newId, oldId) {
+			this.sub_id = newId
+		}
+	}
 }
 </script>
 <style scoped>

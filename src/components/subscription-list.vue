@@ -57,96 +57,93 @@
 </div>
 </template>
 <script>
-// import defaultSubscription from '@/api/default-subscription'
-// import axios from 'axios'
-import subscriptionPlans from '@/api/subscription-plans';
-import myPlans from './owners-plan.vue';
-import { loadavg } from 'os';
-import cbPlan from '@/api/cb-plan';
-import cbAddon from '@/api/cb-addon';
+import myPlans from './owners-plan.vue'
+import cbPlan from '@/api/cb-plan'
+import cbAddon from '@/api/cb-addon'
+import _ from 'lodash'
 
 export default {
-  components: {
-    'my-plan': myPlans
-  },
-  name: 'subscriptionList',
-  data () {
-    return {
-      showDetails:'0',
-      mainData: [],
-      basicPlans: [],
-      addOns: [],
-      showPlanSelection: false,
-      selectedAddon: '',
-      selectedBasicPlan: '',
-      selectedBasicSubId: '',
-      validateModal: true,
-      details: [{
-        "key": "key",
-        "width": 230,
-        "type": "html"
-      }, {
-          "key": "value"
-      }],
-      assuredSum: null,
-      planPrice: null,
-      addonPrice: null
-    }
-  },
-  methods: {
-    init () {
-      let self = this
-      this.$Spin.show({
-        render: (h) => {
-          return h('div', [
-            h('Icon', {
-              style: {
-                animation: 'ani-demo-spin 1s linear infinite'
-              },
-              props: {
-                type: 'load-c',
-                size: 24
-              }
-            }),
-            h('div','Getting Plan Details.')
-          ])
-        }
-      });
+	components: {
+		'my-plan': myPlans
+	},
+	name: 'subscriptionList',
+	data () {
+		return {
+			showDetails: '0',
+			mainData: [],
+			basicPlans: [],
+			addOns: [],
+			showPlanSelection: false,
+			selectedAddon: '',
+			selectedBasicPlan: '',
+			selectedBasicSubId: '',
+			validateModal: true,
+			details: [{
+				'key': 'key',
+				'width': 230,
+				'type': 'html'
+			}, {
+				'key': 'value'
+			}],
+			assuredSum: null,
+			planPrice: null,
+			addonPrice: null
+		}
+	},
+	methods: {
+		init () {
+			let self = this
+			this.$Spin.show({
+				render: (h) => {
+					return h('div', [
+						h('Icon', {
+							style: {
+								animation: 'ani-demo-spin 1s linear infinite'
+							},
+							props: {
+								type: 'load-c',
+								size: 24
+							}
+						}),
+						h('div', 'Getting Plan Details.')
+					])
+				}
+			})
 
-      //getting plan details from the chargeBee api
-      cbPlan.get().then(async (res) => {
-        res.data = await self.createPlanList(res.data, 'plan');
-        self.basicPlans = res.data.map((itm) => {
-          return itm.plan
-        });
-        this.$Spin.hide();
-      }).catch(err => {
-        this.$Spin.hide();
-        self.$Notice.error({
-          duration: 5,
-          title: 'Fetching subscription plans',
-          desc: err.message
-        });
-        console.log('ERR Getting Plan ::', err);
-      });
+			// getting plan details from the chargeBee api
+			cbPlan.get().then(async (res) => {
+				res.data = await self.createPlanList(res.data, 'plan')
+				self.basicPlans = res.data.map((itm) => {
+					return itm.plan
+				})
+				this.$Spin.hide()
+			}).catch(err => {
+				this.$Spin.hide()
+				self.$Notice.error({
+					duration: 5,
+					title: 'Fetching subscription plans',
+					desc: err.message
+				})
+				console.log('ERR Getting Plan ::', err)
+			})
 
-      //getting addon details from the chargeBee api
-      cbAddon.get().then(async (res) => {
-        res.data = await self.createPlanList(res.data, 'addon');
-        self.addOns = res.data.map(itm => {
-          return itm.addon;
-        });
-        // console.log('Addon List', self.addOns);
-      }).catch(err => {
-        self.$Notice.error({
-          duration: 5,
-          title: 'Fetching subscription plans',
-          desc: err.message
-        });
-        console.log('ERR Getting Addon ::', err);
-      });
-      //OLD CODE FOR SUBSCRIPTION LIST
-      /* subscriptionPlans.get().then(res => {
+			// getting addon details from the chargeBee api
+			cbAddon.get().then(async (res) => {
+				res.data = await self.createPlanList(res.data, 'addon')
+				self.addOns = res.data.map(itm => {
+					return itm.addon
+				})
+				// console.log('Addon List', self.addOns);
+			}).catch(err => {
+				self.$Notice.error({
+					duration: 5,
+					title: 'Fetching subscription plans',
+					desc: err.message
+				})
+				console.log('ERR Getting Addon ::', err)
+			})
+			// OLD CODE FOR SUBSCRIPTION LIST
+			/* subscriptionPlans.get().then(res => {
         self.mainData = res.data.data
         self.mainData = _.filter(self.mainData, function(o) {
           return o.status === true
@@ -195,75 +192,74 @@ export default {
           });
         }
       }); */
-    },
-    // Prepare plan and addon data to be display on list where x=plan/addon
-    createPlanList(data, x) {5
-      data = _.filter(data, function (itm) {
-        return itm[x].status === 'active'
-      });
-      data.map((itm) => {
-        itm[x].price /= 100;
-        if (itm[x].description)
-          itm[x].description = itm[x].description.split('\n');
-        if (itm[x].meta_data && itm[x].meta_data.details) {
-          itm[x].meta_data.details = _.chain(itm[x].meta_data.details).filter(function(o) {
-            o.value = parseInt(o.value);
-              return o.value > 0;
-          }).map(function(d) {
-            let str = d.module.charAt(0).toUpperCase() + d.module.slice(1);
-              let str2 = d.service.charAt(0).toUpperCase() + d.service.slice(1);
-              return {'key':'<i class="ivu-icon ivu-icon-android-checkmark-circle"></i> <b>'+str+'</b> '+str2, 'value': d.value};
-          }).value();
-        }
-      });
-      data.sort((val1, val2) => {
-        return val1.price - val2.price;
-      });
-      return data;
-    },
-    // Redirect to payment processing page if basic plan selected
-    checkoutFunction (sub_id) {
-      this.$router.push('/checkout/' + sub_id)
-    },
-    // when select addon then popup modal for basic plan selection
-    checkoutAddonFunction(addon_id) {
-      this.selectedAddon = addon_id
-      this.showPlanSelection = true
-    },
-    // select a basic plan from open modal and validate it
-    makeAddon() {
-      if (this.selectedBasicPlan == '') {
-        this.$Message.error({ content: 'Please select basic plan.'});
-        this.validateModal = false;
-        // to keep modal open when selectedBasicPlan is null
-        setTimeout(() => {
-          this.validateModal = true;
-        }, 100);
-      } else {
-        this.$router.push({
-          name: 'checkout-addon',
-          params: {
-            id: this.selectedAddon,
-            'basicSubId': this.selectedBasicSubId,
-            'basicPlan': this.selectedBasicPlan
-          }
-        });
-      }
-    },
-    setSelectedSubscription(id) {
-      this.selectedBasicPlan = id[0]
-      this.selectedBasicSubId = id[1]
-      let details = this.addOns.filter(itm => {
-        return itm.id == this.selectedAddon
-      });
-      this.planPrice = id[2];
-      this.addonPrice = details[0].price;
-      this.assuredSum = id[2] + details[0].price;
-    }
-  },
-  mounted () {
-    this.init()
-  }
+		},
+		// Prepare plan and addon data to be display on list where x=plan/addon
+		createPlanList (data, x) {
+			data = _.filter(data, function (itm) {
+				return itm[x].status === 'active'
+			})
+			data.map((itm) => {
+				itm[x].price /= 100
+				if (itm[x].description) { itm[x].description = itm[x].description.split('\n') }
+				if (itm[x].meta_data && itm[x].meta_data.details) {
+					itm[x].meta_data.details = _.chain(itm[x].meta_data.details).filter(function (o) {
+						o.value = parseInt(o.value)
+						return o.value > 0
+					}).map(function (d) {
+						let str = d.module.charAt(0).toUpperCase() + d.module.slice(1)
+						let str2 = d.service.charAt(0).toUpperCase() + d.service.slice(1)
+						return {'key': '<i class="ivu-icon ivu-icon-android-checkmark-circle"></i> <b>' + str + '</b> ' + str2, 'value': d.value}
+					}).value()
+				}
+			})
+			data.sort((val1, val2) => {
+				return val1.price - val2.price
+			})
+			return data
+		},
+		// Redirect to payment processing page if basic plan selected
+		checkoutFunction (subId) {
+			this.$router.push('/checkout/' + subId)
+		},
+		// when select addon then popup modal for basic plan selection
+		checkoutAddonFunction (addonId) {
+			this.selectedAddon = addonId
+			this.showPlanSelection = true
+		},
+		// select a basic plan from open modal and validate it
+		makeAddon () {
+			if (this.selectedBasicPlan == '') {
+				this.$Message.error({ content: 'Please select basic plan.' })
+				this.validateModal = false
+				// to keep modal open when selectedBasicPlan is null
+				setTimeout(() => {
+					this.validateModal = true
+				}, 100)
+			} else {
+				this.$router.push({
+					name: 'checkout-addon',
+					params: {
+						id: this.selectedAddon,
+						'basicSubId': this.selectedBasicSubId,
+						'basicPlan': this.selectedBasicPlan
+					}
+				})
+			}
+		},
+		setSelectedSubscription (id) {
+			this.selectedBasicPlan = id[0]
+			this.selectedBasicSubId = id[1]
+			let details = this.addOns.filter(itm => {
+				return itm.id == this.selectedAddon
+			})
+			this.planPrice = id[2]
+			this.addonPrice = details[0].price
+			this.assuredSum = id[2] + details[0].price
+		}
+	},
+	mounted () {
+		this.init()
+	}
 }
 </script>
 <style scoped>

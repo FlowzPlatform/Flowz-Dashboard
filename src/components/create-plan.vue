@@ -281,137 +281,135 @@
 </template>
 
 <script>
-const uuidv1 = require('uuid/v1');
-import subscriptionPlans from '@/api/subscription-plans';
-import cbPlan from '@/api/cb-plan';
-import cbAddon from '@/api/cb-addon';
-import cbSubscription from '@/api/cb-subscription';
-import cbAddonUser from '@/api/cb-addons-user';
-import roles from '@/api/roles';
-import registerResource from '@/api/register-resource';
-import Icon from 'vue-awesome/components/Icon';
-import BootstrapVue from 'bootstrap-vue';
-import Cookies from 'js-cookie';
-import Vue from 'vue';
+// import subscriptionPlans from '@/api/subscription-plans'
+import cbPlan from '@/api/cb-plan'
+import cbAddon from '@/api/cb-addon'
+import cbSubscription from '@/api/cb-subscription'
+import cbAddonUser from '@/api/cb-addons-user'
+import roles from '@/api/roles'
+import registerResource from '@/api/register-resource'
+import Icon from 'vue-awesome/components/Icon'
+import BootstrapVue from 'bootstrap-vue'
+import Cookies from 'js-cookie'
+import Vue from 'vue'
 import psl from 'psl'
-import _ from 'lodash';
-import 'vue-awesome/icons';
-Vue.use(BootstrapVue);
+import _ from 'lodash'
 
-import iView from 'iview';
-import locale from 'iview/dist/locale/en-US';
-import 'iview/dist/styles/iview.css'; // CSS
-Vue.use(iView, { locale });
+import iView from 'iview'
+import locale from 'iview/dist/locale/en-US'
+import 'iview/dist/styles/iview.css'
 
-import 'vue-awesome/icons';
-import $ from 'jquery';
-import { log } from 'util';
-Vue.component('icon', Icon);
+import 'vue-awesome/icons'
+import $ from 'jquery'
+const uuidv1 = require('uuid/v1')
+Vue.use(BootstrapVue) // CSS
+Vue.use(iView, { locale })
+Vue.component('icon', Icon)
 
 export default {
-  name: 'createPlan',
-  data() {
-    return {
-      services: [],
-      plans: [],
-      planData: [],
-      addonData: [],
-      planLoding: false,
-      addPlanLoading: false,
-      currentOpen: [],
-      time_units: ['day/s', 'month/s', 'year/s'],
-      data5: [],
-      confirmDelete: false,
-      loading: false,
-      deleteIndex: 0,
-      currentPlanName: null,
-      activeTab: 'plan',
-      process: {
-        cursor: ''
-      },
-      defaultPlan: {
-        name: 'Base Plan',
-        description: 'Website Builder\n1 eCommerce Site\nNo Virtual & CRM',
-        validity: 1,
-        price: 999,
-        time_unit: 'month',
-        type: 'basic',
-        details: []
-      },
-      showOverlay: false
-    }
-  },
-  created()  {
-    let self = this
-    this.showOverlay = true;
-    roles.get().then(res => {
-      this.planLoding = true
-  
-      // NEW SUBSCRIPTION CODE WITH CHARGEBEE
-      cbPlan.get().then(res => {
-        let obj = res.data.map(async (itm) => {
-          itm.plan.price /= 100;
-          itm.plan.users = await self.getSubscribedUser(itm.plan.id);
-          Promise.resolve(itm.plan.users);
-          return itm.plan;
-        });
-        Promise.all(obj).then(async res => {
-          self.planData = res
-          self.plans = self.planData;
-          self.planLoding = false;
-        });
-      }).catch(err => {
-        let location = psl.parse(window.location.hostname)
-        location = location.domain === null ? location.input : location.domain
-        if (err.message == 'Network Error') {
-          self.$Notice.error({
-            duration: 5,
-            title: 'Loading created plans',
-            desc: 'API service unavailable.'
-          });
-        } else if (err.response.data.message == 'User authentication fail') {
-          self.$Notice.error({
-            duration: 5,
-            title: 'Your session has been expired.',
-            desc: err.response.data.message + ', please login again.'
-          });
-          Cookies.remove('auth_token', {domain: location});
-          Cookies.remove('user', {domain: location});
-          self.$router.push({ name: 'login' });
-        } else {
-          self.$Message.error(err.response.data.message);
-        }
-      });
-  
-      cbAddon.get().then(res => {
-        let obj = res.data.map(async (itm) => {
-          itm.addon.price /= 100;
-          // if (itm.addon.status == 'active')
-          itm.addon.users = await self.getAddonUser(itm.addon.id);
-          Promise.resolve(itm.addon.users);
-          return itm.addon;
-        });
-        Promise.all(obj).then(async res => {
-          self.addonData = res;
-        });
-      }).catch(err => {
-        console.log('Error Addon : ', err);
-      });
-      this.showOverlay = false;
-    }).catch(err => {
-      if(err.response.status == 403) {
-        self.$Modal.warning({
-          title: "Warning",
-          content: "You are not authorized to see ",
-          onOk: () => {
-            self.$router.go(-1);
-          }
-        });
-      }
-    });
+	name: 'createPlan',
+	data () {
+		return {
+			services: [],
+			plans: [],
+			planData: [],
+			addonData: [],
+			planLoding: false,
+			addPlanLoading: false,
+			currentOpen: [],
+			time_units: ['day/s', 'month/s', 'year/s'],
+			data5: [],
+			confirmDelete: false,
+			loading: false,
+			deleteIndex: 0,
+			currentPlanName: null,
+			activeTab: 'plan',
+			process: {
+				cursor: ''
+			},
+			defaultPlan: {
+				name: 'Base Plan',
+				description: 'Website Builder\n1 eCommerce Site\nNo Virtual & CRM',
+				validity: 1,
+				price: 999,
+				time_unit: 'month',
+				type: 'basic',
+				details: []
+			},
+			showOverlay: false
+		}
+	},
+	created () {
+		let self = this
+		this.showOverlay = true
+		roles.get().then(res => {
+			this.planLoding = true
 
-    // OLD CODE FOR SUBSCRIPTION
-    /* subscriptionPlans.get().then(res => {
+			// NEW SUBSCRIPTION CODE WITH CHARGEBEE
+			cbPlan.get().then(res => {
+				let obj = res.data.map(async (itm) => {
+					itm.plan.price /= 100
+					itm.plan.users = await self.getSubscribedUser(itm.plan.id)
+					Promise.resolve(itm.plan.users)
+					return itm.plan
+				})
+				Promise.all(obj).then(async res => {
+					self.planData = res
+					self.plans = self.planData
+					self.planLoding = false
+				})
+			}).catch(err => {
+				let location = psl.parse(window.location.hostname)
+				location = location.domain === null ? location.input : location.domain
+				if (err.message == 'Network Error') {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Loading created plans',
+						desc: 'API service unavailable.'
+					})
+				} else if (err.response.data.message == 'User authentication fail') {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Your session has been expired.',
+						desc: err.response.data.message + ', please login again.'
+					})
+					Cookies.remove('auth_token', {domain: location})
+					Cookies.remove('user', {domain: location})
+					self.$router.push({ name: 'login' })
+				} else {
+					self.$Message.error(err.response.data.message)
+				}
+			})
+
+			cbAddon.get().then(res => {
+				let obj = res.data.map(async (itm) => {
+					itm.addon.price /= 100
+					// if (itm.addon.status == 'active')
+					itm.addon.users = await self.getAddonUser(itm.addon.id)
+					Promise.resolve(itm.addon.users)
+					return itm.addon
+				})
+				Promise.all(obj).then(async res => {
+					self.addonData = res
+				})
+			}).catch(err => {
+				console.log('Error Addon : ', err)
+			})
+			this.showOverlay = false
+		}).catch(err => {
+			if (err.response.status == 403) {
+				self.$Modal.warning({
+					title: 'Warning',
+					content: 'You are not authorized to see ',
+					onOk: () => {
+						self.$router.go(-1)
+					}
+				})
+			}
+		})
+
+		// OLD CODE FOR SUBSCRIPTION
+		/* subscriptionPlans.get().then(res => {
       self.plans = res.data.data
       self.planLoding = false
     }).catch(err => {
@@ -430,155 +428,153 @@ export default {
         }
       self.planLoding = false
     }); */
-  },
-  methods: {
-    getSubscribedUser(plan_id) {
-      return cbSubscription.getSubscribed(plan_id).then(res => {
-        return res.data.length
-      });
-    },
-    getAddonUser(addon_id) {
-      return cbAddonUser.get(addon_id).then(res => {
-        return res.data.length;
-      });
-    },
-    changeActiveTab (name) {
-      this.plans = name === 'plan' ? this.planData : this.addonData;
-    },
-    getDefaultPlan (idx, pIndex) {
-      return this.plans[pIndex].object == 'plan' ? this.defaultPlan[idx] : 0
-      // return this.defaultPlan[idx]
-    },
-    validateValidity (validity, pIndex) {
-      validity = validity.toString();
-      var num = validity.match(/^[0-9]+$/);
-      if (num === null) {
-        this.plans[pIndex].period = ''
-        /* if(validity < this.defaultPlan.validity) {
+	},
+	methods: {
+		getSubscribedUser (planId) {
+			return cbSubscription.getSubscribed(planId).then(res => {
+				return res.data.length
+			})
+		},
+		getAddonUser (addonId) {
+			return cbAddonUser.get(addonId).then(res => {
+				return res.data.length
+			})
+		},
+		changeActiveTab (name) {
+			this.plans = name === 'plan' ? this.planData : this.addonData
+		},
+		getDefaultPlan (idx, pIndex) {
+			return this.plans[pIndex].object == 'plan' ? this.defaultPlan[idx] : 0
+			// return this.defaultPlan[idx]
+		},
+		validateValidity (validity, pIndex) {
+			validity = validity.toString()
+			var num = validity.match(/^[0-9]+$/)
+			if (num === null) {
+				this.plans[pIndex].period = ''
+				/* if(validity < this.defaultPlan.validity) {
           this.$Notice.error({
             duration: 5,
             title: 'Validity Validation Error',
             desc: 'Validity should be greater than '+ this.defaultPlan.validity + ' ' + this.defaultPlan.time_unit
           })
         } */
-      }
-    },
-    validatePrice (price,pIndex) {
-      if (isNaN(price)) {
-        this.plans[pIndex].price = ''
-        /* if(price < this.defaultPlan.price) {
+			}
+		},
+		validatePrice (price, pIndex) {
+			if (isNaN(price)) {
+				this.plans[pIndex].price = ''
+				/* if(price < this.defaultPlan.price) {
           this.$Notice.error({
             duration: 5,
             title: 'Price Validation Error',
             desc: 'Price should be greater than ' + this.defaultPlan.price + '$'
           })
         } */
-      }
-    },
-    checkOpen (index) {
-      // if (_.intersection(this.currentOpen,[index]).length > 0)) return true
-        return true
-    },
-    checkAnyMethodAvailable (methods) {
-      for (let i=0; i<methods.length; i++) {
-        if (methods[i].active) return true
-      }
-      return false
-    },
-    checkAnyRouteAvailable (routes) {
-      for (let i=0; i<routes.length; i++) {
-        if (this.checkAnyMethodAvailable(routes[i].methods)) return true
-      }
-      return false
-    },
-    makePlanArchived (val, index) {
-      let self = this;
-      if (val == 'archived') {
-        if (self.activeTab == 'plan') {
-          if (self.plans[index].users < 1 ) {
-            self.$Modal.confirm({
-              title: 'Disable confirmation',
-              content: '<p><b>'+ self.plans[index].name +'</b> is not subscribed by any user so it will be delete permanently.</p>',
-              onOk: () => {
-                self.disablePlan(index);
-              }
-            });
-          } else {
-            self.disablePlan(index);
-          }
-        } else {
-          if (self.plans[index].users < 1 ) {
-            self.$Modal.confirm({
-              title: 'Disable confirmation',
-              content: '<p><b>'+ self.plans[index].name +'</b> is not subscribed by any user so it will be delete permanently.</p>',
-              onOk: () => {
-                self.disableAddon(index);
-              }
-            });
-          } else {
-            self.disableAddon(index);
-          }
-        }
-      } else if (val == 'active') {
-        if (self.activeTab == 'plan') {
-          self.enablePlan(index);
-        } else {
-          self.enableAddon(index);
-        }
-      }
-    },
-    async createPlan (method) {
-      let self = this
-      self.addPlanLoading = true
-      let data5 = []
-      let keys = []
-      let modules = ['crm','uploader','webbuilder','subscription']
-      
-      self.plans.filter( function (o) {
-        o.class = 'ivu-table-row'
-      });
+			}
+		},
+		checkOpen (index) {
+			// if (_.intersection(this.currentOpen,[index]).length > 0)) return true
+			return true
+		},
+		checkAnyMethodAvailable (methods) {
+			for (let i = 0; i < methods.length; i++) {
+				if (methods[i].active) return true
+			}
+			return false
+		},
+		checkAnyRouteAvailable (routes) {
+			for (let i = 0; i < routes.length; i++) {
+				if (this.checkAnyMethodAvailable(routes[i].methods)) return true
+			}
+			return false
+		},
+		makePlanArchived (val, index) {
+			let self = this
+			if (val == 'archived') {
+				if (self.activeTab == 'plan') {
+					if (self.plans[index].users < 1) {
+						self.$Modal.confirm({
+							title: 'Disable confirmation',
+							content: '<p><b>' + self.plans[index].name + '</b> is not subscribed by any user so it will be delete permanently.</p>',
+							onOk: () => {
+								self.disablePlan(index)
+							}
+						})
+					} else {
+						self.disablePlan(index)
+					}
+				} else {
+					if (self.plans[index].users < 1) {
+						self.$Modal.confirm({
+							title: 'Disable confirmation',
+							content: '<p><b>' + self.plans[index].name + '</b> is not subscribed by any user so it will be delete permanently.</p>',
+							onOk: () => {
+								self.disableAddon(index)
+							}
+						})
+					} else {
+						self.disableAddon(index)
+					}
+				}
+			} else if (val == 'active') {
+				if (self.activeTab == 'plan') {
+					self.enablePlan(index)
+				} else {
+					self.enableAddon(index)
+				}
+			}
+		},
+		async createPlan (method) {
+			let self = this
+			self.addPlanLoading = true
+			let data5 = []
+			let modules = ['crm', 'uploader', 'webbuilder', 'subscription']
 
-      await registerResource.get().then(res => {
-        _.forEach(res.data.data, function(data, key) {
-          if(modules.includes(data.module)) {
-            for(let action in data.actions[0]) {
-              data5.push({"module":data.module,"service":data.service,"action":action,"value":0})
-            }
-          }
-        })
-        self.defaultPlan.details = data5
-      }).catch(function (error) {
-        console.log('Error while getting register resource', error);
-        self.$Notice.error({
-          duration: 5,
-          title: 'Trying to create subscription plan',
-          desc: 'Please try again ' + err
-        })
-      });
-      let convertedPrice = self.defaultPlan.price * 100
-      let id = uuidv1();
-      let planDefinition = {
-        "id": id,
-        "name": self.defaultPlan.name,
-        "description": self.defaultPlan.description,
-        "invoice_name": self.defaultPlan.name,
-        "price": convertedPrice,
-        "status": "archived",
-        "period": self.defaultPlan.validity,
-        "period_unit": "month",
-        "meta_data": {
-          "details": self.defaultPlan.details
-        }
-      }
-      if (method == 'plan') {
-        this.createCbPlan(planDefinition)
-      } else if (method == 'addon') {
-        this.createCbAddon(planDefinition)
-      }
-      // console.log('>>>>>>>>>>>>>...', planDefinition)
-      
-      // OLD CODE FOR SUBSCRIPTION
-      /* subscriptionPlans.post(self.defaultPlan).then(res => {
+			self.plans.filter(function (o) {
+				o.class = 'ivu-table-row'
+			})
+
+			await registerResource.get().then(res => {
+				_.forEach(res.data.data, function (data, key) {
+					if (modules.includes(data.module)) {
+						for (let action in data.actions[0]) {
+							data5.push({'module': data.module, 'service': data.service, 'action': action, 'value': 0})
+						}
+					}
+				})
+				self.defaultPlan.details = data5
+			}).catch(function (error) {
+				self.$Notice.error({
+					duration: 5,
+					title: 'Trying to create subscription plan',
+					desc: 'Please try again ' + error.message
+				})
+			})
+			let convertedPrice = self.defaultPlan.price * 100
+			let id = uuidv1()
+			let planDefinition = {
+				'id': id,
+				'name': self.defaultPlan.name,
+				'description': self.defaultPlan.description,
+				'invoice_name': self.defaultPlan.name,
+				'price': convertedPrice,
+				'status': 'archived',
+				'period': self.defaultPlan.validity,
+				'period_unit': 'month',
+				'meta_data': {
+					'details': self.defaultPlan.details
+				}
+			}
+			if (method == 'plan') {
+				this.createCbPlan(planDefinition)
+			} else if (method == 'addon') {
+				this.createCbAddon(planDefinition)
+			}
+			// console.log('>>>>>>>>>>>>>...', planDefinition)
+
+			// OLD CODE FOR SUBSCRIPTION
+			/* subscriptionPlans.post(self.defaultPlan).then(res => {
         self.$Notice.success({
           title: '<b>New Plan</b>',
           desc: '<b>New Subscription Plan</b> has been created..!'
@@ -602,25 +598,25 @@ export default {
           })
         }
       }) */
-    },
-    deletePlan (plan) {
-      let self = this;
-      this.loading = true;
-      
-      if (self.plans[plan].status == 'archived') {
-        self.$Notice.error({
-          title: 'Action Denied',
-          desc: 'You can\'t delete Disabled/Archived plan because it may subscribed by users.',
-          duration: 5
-        });
-      } else {
-        if (self.activeTab == 'plan') {
-          self.deleteCbPlan(self.plans[plan].id, plan);
-        } else {
-          self.deleteCbAddon(self.plans[plan].id, plan);
-        }
-      }
-      /* if (self.activeTab == 'plan') {
+		},
+		deletePlan (plan) {
+			let self = this
+			this.loading = true
+
+			if (self.plans[plan].status == 'archived') {
+				self.$Notice.error({
+					title: 'Action Denied',
+					desc: 'You can\'t delete Disabled/Archived plan because it may subscribed by users.',
+					duration: 5
+				})
+			} else {
+				if (self.activeTab == 'plan') {
+					self.deleteCbPlan(self.plans[plan].id, plan)
+				} else {
+					self.deleteCbAddon(self.plans[plan].id, plan)
+				}
+			}
+			/* if (self.activeTab == 'plan') {
         if (self.plans[plan].status == 'archived') {
           self.$Notice.error({
             title: 'Action Denied',
@@ -633,58 +629,58 @@ export default {
       } else {
         self.deleteCbAddon(self.plans[plan].id, plan);
       } */
-      self.loading = false;
-      self.confirmDelete = false;
-    },
-    expand (plan) {
-      $('#plan_'+plan).slideToggle(function() {
-        $(this).is(':hidden') ? 'hidden' : 'visible'
-      })
-    },
-    update (index) {
-      this.process.cursor = 'progress!important'
-      let self = this
-      let dataObj = this.plans[index]
-      console.log('Updating Addon Data: ', dataObj.price); 
-      if (dataObj.name == '') {
-        this.$Notice.error({
-          duration: 5,
-          title: 'Plan Name is NULL.',
-          desc: '<b>Plan Name</b> should not be null..!'
-        })
-      } else if(dataObj.object == 'plan' && dataObj.period < this.defaultPlan.validity) {
-        this.$Notice.error({
-          duration: 5,
-          title: 'Please Correct Validity',
-          desc: 'Validity should be greater than '+ this.defaultPlan.validity + ' ' + this.defaultPlan.time_unit
-        })
-      } else if (dataObj.object == 'addon' && dataObj.period == '') {
-        this.$Notice.error({
-          duration: 5,
-          title: 'Please Correct Validity',
-          desc: 'Validity can not be empty'
-        })
-      } else if (dataObj.object == 'plan' && dataObj.price < this.defaultPlan.price) {
-        this.$Notice.error({
-          duration: 5,
-          title: 'Please Correct Price',
-          desc: 'Price should be greater than ' + this.defaultPlan.price + '$'
-        })
-      } else if (dataObj.object == 'addon' && dataObj.price.toString().trim() == '') {
-        this.$Notice.error({
-          duration: 5,
-          title: 'Please Correct Price',
-          desc: 'Price can not be empty'
-        })
-      } else if (this.plans[index].id != undefined) {
-        delete dataObj.class          
-        if (self.activeTab == 'plan') {
-          self.updateCbPlan(self.plans[index].id, dataObj);
-        } else {
-          self.updateCbAddon(self.plans[index].id, dataObj);
-        }
-        //OLD CODE FOR UPDATE PLAN DETAILS
-        /* subscriptionPlans.put(this.plans[index].id, dataObj).then(res => {
+			self.loading = false
+			self.confirmDelete = false
+		},
+		expand (plan) {
+			$('#plan_' + plan).slideToggle(function () {
+				$(this).is(':hidden') ? 'hidden' : 'visible' // eslint-disable-line no-unused-expressions
+			})
+		},
+		update (index) {
+			this.process.cursor = 'progress!important'
+			let self = this
+			let dataObj = this.plans[index]
+			console.log('Updating Addon Data: ', dataObj.price)
+			if (dataObj.name == '') {
+				this.$Notice.error({
+					duration: 5,
+					title: 'Plan Name is NULL.',
+					desc: '<b>Plan Name</b> should not be null..!'
+				})
+			} else if (dataObj.object == 'plan' && dataObj.period < this.defaultPlan.validity) {
+				this.$Notice.error({
+					duration: 5,
+					title: 'Please Correct Validity',
+					desc: 'Validity should be greater than ' + this.defaultPlan.validity + ' ' + this.defaultPlan.time_unit
+				})
+			} else if (dataObj.object == 'addon' && dataObj.period == '') {
+				this.$Notice.error({
+					duration: 5,
+					title: 'Please Correct Validity',
+					desc: 'Validity can not be empty'
+				})
+			} else if (dataObj.object == 'plan' && dataObj.price < this.defaultPlan.price) {
+				this.$Notice.error({
+					duration: 5,
+					title: 'Please Correct Price',
+					desc: 'Price should be greater than ' + this.defaultPlan.price + '$'
+				})
+			} else if (dataObj.object == 'addon' && dataObj.price.toString().trim() == '') {
+				this.$Notice.error({
+					duration: 5,
+					title: 'Please Correct Price',
+					desc: 'Price can not be empty'
+				})
+			} else if (this.plans[index].id != undefined) {
+				delete dataObj.class
+				if (self.activeTab == 'plan') {
+					self.updateCbPlan(self.plans[index].id, dataObj)
+				} else {
+					self.updateCbAddon(self.plans[index].id, dataObj)
+				}
+				// OLD CODE FOR UPDATE PLAN DETAILS
+				/* subscriptionPlans.put(this.plans[index].id, dataObj).then(res => {
           self.$Notice.success({
             title: '<b>' + self.plans[index].name + '</b> saved.',
             desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been saved..!'
@@ -704,370 +700,377 @@ export default {
             })
           }
         }) */
-      }
-    },
-    createCbPlan(planDefinition) {
-      let self = this
-      cbPlan.post(planDefinition).then(res => {
-        if (res.data.api_error_code) {
-          if (res.data.api_error_code == 'duplicate_entry') {
-            self.$Notice.error({
-              title: 'Plan Already Exist.',
-              duration: 5,
-              desc: res.data.message
-            });
-          } else {
-            self.throwNewError(res);
-          }
-          self.addPlanLoading = false
-        } else {
-          self.$Notice.success({
-            title: '<b>New Plan</b>',
-            desc: '<b>New Subscription Plan</b> has been created..!'
-          });
-          res.data.price /= 100;
-          res.data.class = 'ivu-table-row-highlight';
-          self.plans.splice(0, 0, res.data);
-          self.addPlanLoading = false;
-        }
-        console.log('Create Plan :: ', res)
-      }).catch(err => {
-        console.log('Error Create Plan :: ', err)
-      });
-    },
-    createCbAddon(planDefinition) {
-      let self = this;
-      planDefinition.name = 'Addon';
-      planDefinition.invoice_name = "Addon";
-      planDefinition.type = 'on_off';
-      planDefinition.period_unit = 'month';
-      planDefinition.charge_type = 'recurring';
-      // delete planDefinition.status;
-      
-      cbAddon.post(planDefinition).then(res => {
-        if (res.data.api_error_code) {
-          if (res.data.api_error_code == 'duplicate_entry') {
-            self.$Notice.error({
-              title: 'Addon Already Exist.',
-              duration: 5,
-              desc: res.data.message
-            });
-          } else {
-            self.throwNewError(res);
-          }
-          self.addPlanLoading = false
-        } else {
-          self.$Notice.success({
-            title: '<b>New Addon</b>',
-            desc: '<b>New Addon Plan</b> has been created..!'
-          });
-          res.data.price /= 100;
-          res.data.class = 'ivu-table-row-highlight';
-          self.plans.splice(0, 0, res.data);
-          self.addPlanLoading = false
-        }
-      });
-    },
-    updateCbPlan(id, data) {
-      let self = this;
-      document.body.style.cursor = 'wait';
-      let convertedPrice = data.price * 100;
-      let updateDefinition = {
-        "name": data.name,
-        "description": data.description,
-        "invoice_name": data.name,
-        "period": data.period,
-        "price": convertedPrice,
-        "meta_data": {
-          "details": data.meta_data.details
-        }
-      };
-      if (data.users > 0) {
-        delete updateDefinition.period;
-      }
-      cbPlan.put(id, updateDefinition).then(res => {
-        console.log('UpdatedPlan :: ', res)
-        if (res.data.api_error_code) {
-          self.throwNewError(res);
-          document.body.style.cursor = 'default';
-        } else {
-          self.$Notice.success({
-            title: '<b>' + res.data.name + '</b> saved.',
-            desc: 'Subscription Plan <b>' + res.data.name + '</b> has been saved..!'
-          });
-          document.body.style.cursor = 'default';
-        }
-      }).catch(err => {
-        document.body.style.cursor = 'default';
-        cosole.log('UpdatePlan Error:', err);
-      });
-    },
-    updateCbAddon(id, data) {
-      // console.log('>>data', data)
-      let self = this;
-      document.body.style.cursor = 'wait';
-      let convertedPrice = data.price * 100;
-      let updateDefinition = {
-        "name": data.name,
-        "invoice_name": data.name,
-        "price": convertedPrice,
-        "period": data.period,
-        "meta_data": {
-          "details": data.meta_data.details
-        }
-      };
-      if (data.users > 0) {
-        delete updateDefinition.period;
-      }
-      cbAddon.put(id, updateDefinition).then(res => {
-        console.log('UpdatedAddon :: ', res);
-        if (res.data.api_error_code) {
-          self.throwNewError(res);
-          document.body.style.cursor = 'default';
-        } else { 
-           self.$Notice.success({
-            title: '<b>' + res.data.name + '</b> saved.',
-            desc: 'Addon <b>' + res.data.name + '</b> has been saved..!'
-          });
-          document.body.style.cursor = 'default';
-        }
-      }).catch(err => {
-        document.body.style.cursor = 'default';
-        cosole.log('UpdateAddon Error:', err);
-      });
-    },
-    deleteCbPlan(id, index) {
-      let self = this;
-      document.body.style.cursor = 'wait';
-      cbPlan.delete(id).then(res => {
-        console.log('Delete Plan Res: : ', res);
-        if (res.data.api_error_code) {
-          if (res.data.api_error_code == 'resource_not_found') {
-            self.$Notice.error({
-              title: 'You can\'t delete ' + self.plans[index].name,
-              duration: 5,
-              desc: res.data.message
-            });
-          } else {
-            self.throwNewError(res);
-          }
-          document.body.style.cursor = 'default';
-        } else {
-          self.$Notice.success({
-            title: '<b>' + self.plans[index].name + '</b> deleted.',
-            desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been deleted..!'
-          });
-          self.plans.splice(index, 1);
-          document.body.style.cursor = 'default';
-        }
-      }).catch(err => {
-        console.log('Delete Plan Catch Error: ', err);
-        document.body.style.cursor = 'default';
-      });
-      self.loading = false
-      self.confirmDelete = false
-    },
-    deleteCbAddon(id, index) {
-      let self = this;
-      document.body.style.cursor = 'wait';
-      cbAddon.delete(id).then(res => {
-        console.log('Delete Addon Res: : ', res);
-        if (res.data.api_error_code) {
-          if (res.data.api_error_code == 'resource_not_found') {
-            self.$Notice.error({
-              title: 'You can\'t delete ' + self.plans[index].name,
-              duration: 5,
-              desc: res.data.message
-            });
-          } else {
-            self.throwNewError(res);
-          }
-          document.body.style.cursor = 'default';
-        } else {
-          self.$Notice.success({
-            title: '<b>' + self.plans[index].name + '</b> deleted.',
-            desc: 'Addon Plan <b>' + self.plans[index].name + '</b> has been deleted..!'
-          });
-          self.plans.splice(index, 1);
-          document.body.style.cursor = 'default';
-        }
-      }).catch(err => {
-        document.body.style.cursor = 'default';
-        console.log('Delete Addon Catch Error: ', err);
-      });
-    },
-    disablePlan(index) {
-      let self = this;
-      let msg, ttl;
-      document.body.style.cursor = 'wait';
-      cbPlan.delete(self.plans[index].id).then(res => { 
-        if (res.data.api_error_code) {
-          msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':')+1);
-          ttl = res.data.api_error_code.replace(/_/gi, ' ');
-          ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1);
-          if (res.data.api_error_code == 'resource_not_found') {
-            self.$Notice.error({
-              title: 'You can\'t disable ' + self.plans[index].name,
-              duration: 5,
-              desc: msg
-            });
-          } else {
-            self.$Notice.error({
-              title: ttl,
-              duration: 5,
-              desc: msg
-            });
-          }
-          self.plans[index].status = 'active';
-          document.body.style.cursor = 'default';
-        } else {
-          self.$Notice.success({
-            title: '<b>' + self.plans[index].name + '</b> Plan Disabled.',
-            desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been disabled..!'
-          })
-          document.body.style.cursor = 'default';
-        }
-        console.log('Plan archived :: ', res)
-      }).catch(err => {
-        self.plans[index].status = 'active';
-        document.body.style.cursor = 'default';
-        console.log('Plan archived error ::', err)
-      });
-    },
-    disableAddon(index) {
-      let self = this;
-      let msg, ttl;
-      document.body.style.cursor = 'wait';
-      cbAddon.delete(self.plans[index].id).then(res => {
-        if (res.data.api_error_code) {
-          msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':')+1);
-          ttl = res.data.api_error_code.replace(/_/gi, ' ');
-          ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1);
-          if (res.data.api_error_code == 'resource_not_found') {
-            self.$Notice.error({
-              title: 'You can\'t disable ' + self.plans[index].name,
-              duration: 5,
-              desc: msg
-            });
-          } else {
-            self.$Notice.error({
-              title: ttl,
-              duration: 5,
-              desc: msg
-            });
-          }
-          self.plans[index].status = 'active';
-          document.body.style.cursor = 'default';
-        } else {
-          self.$Notice.success({
-            title: '<b>' + self.plans[index].name + '</b> Addon Disabled.',
-            desc: 'Addon Plan <b>' + self.plans[index].name + '</b> has been disabled..!'
-          })
-          document.body.style.cursor = 'default';
-        }
-        console.log('Addon archived :: ', res)
-      }).catch(err => {
-        self.plans[index].status = 'active';
-        document.body.style.cursor = 'default';
-        console.log('Addon archived error ::', err)
-      });
-    },
-    enablePlan(index) {
-      let self = this;
-      let msg, ttl;
-      document.body.style.cursor = 'wait';
-      cbPlan.patch(self.plans[index].id).then(res => {
-        if (res.data.api_error_code) {
-          msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':')+1);
-          ttl = res.data.api_error_code.replace(/_/gi, ' ');
-          ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1);
-          if (res.data.api_error_code == 'resource_not_found') {
-            self.$Notice.error({
-              title: 'You can\'t enable ' + self.plans[index].name,
-              duration: 5,
-              desc: msg
-            });
-          } else {
-            self.$Notice.error({
-              title: ttl,
-              duration: 5,
-              desc: msg
-            });
-          }
-          self.plans[index].status = 'archived';
-          document.body.style.cursor = 'default';
-        } else {
-          self.$Notice.success({
-            title: '<b>' + self.plans[index].name + '</b> Plan Enabled.',
-            desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been enabled..!'
-          })
-          document.body.style.cursor = 'default';
-        }
-        console.log('Plan unarchived :: ', res);
-      }).catch(err => {
-        self.plans[index].status = 'archived';
-        document.body.style.cursor = 'default';
-        console.log('Plan unarchived error ::', err)
-      });
-    },
-    enableAddon(index) {
-      let self = this;
-      let msg, ttl;
-      document.body.style.cursor = 'wait';
-      cbAddon.patch(self.plans[index].id).then(res => {
-        if (res.data.api_error_code) {
-          msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':')+1);
-          ttl = res.data.api_error_code.replace(/_/gi, ' ');
-          ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1);
-          if (res.data.api_error_code == 'resource_not_found') {
-            self.$Notice.error({
-              title: 'You can\'t enable ' + self.plans[index].name,
-              duration: 5,
-              desc: msg
-            });
-          } else {
-            self.$Notice.error({
-              title: ttl,
-              duration: 5,
-              desc: msg
-            });
-          }
-          self.plans[index].status = 'archived';
-          document.body.style.cursor = 'default';
-        } else {
-          self.$Notice.success({
-            title: '<b>' + self.plans[index].name + '</b> Addon Enabled.',
-            desc: 'Addon Plan <b>' + self.plans[index].name + '</b> has been enabled..!'
-          });
-          document.body.style.cursor = 'default';
-        }
-        console.log('Addon unarchived :: ', res);
-      }).catch(err => {
-        self.plans[index].status = 'archived';
-        document.body.style.cursor = 'default';
-        console.log('Addon unarchived error ::', err)
-      });
-    },
-    throwNewError(res) {
-      let self = this;
-      let msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':')+1);
-      let ttl = res.data.api_error_code.replace(/_/gi, ' ');
-      ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1);
-      // if (res.data.api_error_code == 'duplicate_entry') {
-      //   self.$Notice.error({
-      //     title: 'Plan Already Exist.',
-      //     duration: 5,
-      //     desc: msg
-      //   });
-      // } else {
-        self.$Notice.error({
-          title: ttl,
-          duration: 5,
-          desc: msg
-        });
-      // }
-    }
-  }
+			}
+		},
+		createCbPlan (planDefinition) {
+			let self = this
+			cbPlan.post(planDefinition).then(res => {
+				if (res.data.api_error_code) {
+					if (res.data.api_error_code == 'duplicate_entry') {
+						self.$Notice.error({
+							title: 'Plan Already Exist.',
+							duration: 5,
+							desc: res.data.message
+						})
+					} else {
+						self.throwNewError(res)
+					}
+					self.addPlanLoading = false
+				} else {
+					self.$Notice.success({
+						title: '<b>New Plan</b>',
+						desc: '<b>New Subscription Plan</b> has been created..!'
+					})
+					res.data.price /= 100
+					res.data.class = 'ivu-table-row-highlight'
+					self.plans.splice(0, 0, res.data)
+					self.addPlanLoading = false
+				}
+				console.log('Create Plan :: ', res)
+			}).catch(err => {
+				console.log('Error Create Plan :: ', err)
+			})
+		},
+		createCbAddon (planDefinition) {
+			let self = this
+			planDefinition.name = 'Addon'
+			planDefinition.invoice_name = 'Addon'
+			planDefinition.type = 'on_off'
+			planDefinition.period_unit = 'month'
+			planDefinition.charge_type = 'recurring'
+			// delete planDefinition.status;
+
+			cbAddon.post(planDefinition).then(res => {
+				if (res.data.api_error_code) {
+					if (res.data.api_error_code == 'duplicate_entry') {
+						self.$Notice.error({
+							title: 'Addon Already Exist.',
+							duration: 5,
+							desc: res.data.message
+						})
+					} else {
+						self.throwNewError(res)
+					}
+					self.addPlanLoading = false
+				} else {
+					self.$Notice.success({
+						title: '<b>New Addon</b>',
+						desc: '<b>New Addon Plan</b> has been created..!'
+					})
+					res.data.price /= 100
+					res.data.class = 'ivu-table-row-highlight'
+					self.plans.splice(0, 0, res.data)
+					self.addPlanLoading = false
+				}
+			})
+		},
+		updateCbPlan (id, data) {
+			let self = this
+			document.body.style.cursor = 'wait'
+			let convertedPrice = data.price * 100
+			let updateDefinition = {
+				'name': data.name,
+				'description': data.description,
+				'invoice_name': data.name,
+				'period': data.period,
+				'price': convertedPrice,
+				'meta_data': {
+					'details': data.meta_data.details
+				}
+			}
+			if (data.users > 0) {
+				delete updateDefinition.period
+			}
+			cbPlan.put(id, updateDefinition).then(res => {
+				console.log('UpdatedPlan :: ', res)
+				if (res.data.api_error_code) {
+					self.throwNewError(res)
+					document.body.style.cursor = 'default'
+				} else {
+					self.$Notice.success({
+						title: '<b>' + res.data.name + '</b> saved.',
+						desc: 'Subscription Plan <b>' + res.data.name + '</b> has been saved..!'
+					})
+					document.body.style.cursor = 'default'
+				}
+			}).catch(err => {
+				self.$Notice.error({
+					title: 'Updating Plan',
+					desc: err.message,
+					duration: 5
+				})
+				document.body.style.cursor = 'default'
+			})
+		},
+		updateCbAddon (id, data) {
+			// console.log('>>data', data)
+			let self = this
+			document.body.style.cursor = 'wait'
+			let convertedPrice = data.price * 100
+			let updateDefinition = {
+				'name': data.name,
+				'invoice_name': data.name,
+				'price': convertedPrice,
+				'period': data.period,
+				'meta_data': {
+					'details': data.meta_data.details
+				}
+			}
+			if (data.users > 0) {
+				delete updateDefinition.period
+			}
+			cbAddon.put(id, updateDefinition).then(res => {
+				if (res.data.api_error_code) {
+					self.throwNewError(res)
+					document.body.style.cursor = 'default'
+				} else {
+					self.$Notice.success({
+						title: '<b>' + res.data.name + '</b> saved.',
+						desc: 'Addon <b>' + res.data.name + '</b> has been saved..!'
+					})
+					document.body.style.cursor = 'default'
+				}
+			}).catch(err => {
+				self.$Notice.error({
+					title: 'Updating Addon',
+					desc: err.message,
+					duration: 5
+				})
+				document.body.style.cursor = 'default'
+			})
+		},
+		deleteCbPlan (id, index) {
+			let self = this
+			document.body.style.cursor = 'wait'
+			cbPlan.delete(id).then(res => {
+				console.log('Delete Plan Res: : ', res)
+				if (res.data.api_error_code) {
+					if (res.data.api_error_code == 'resource_not_found') {
+						self.$Notice.error({
+							title: 'You can\'t delete ' + self.plans[index].name,
+							duration: 5,
+							desc: res.data.message
+						})
+					} else {
+						self.throwNewError(res)
+					}
+					document.body.style.cursor = 'default'
+				} else {
+					self.$Notice.success({
+						title: '<b>' + self.plans[index].name + '</b> deleted.',
+						desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been deleted..!'
+					})
+					self.plans.splice(index, 1)
+					document.body.style.cursor = 'default'
+				}
+			}).catch(err => {
+				console.log('Delete Plan Catch Error: ', err)
+				document.body.style.cursor = 'default'
+			})
+			self.loading = false
+			self.confirmDelete = false
+		},
+		deleteCbAddon (id, index) {
+			let self = this
+			document.body.style.cursor = 'wait'
+			cbAddon.delete(id).then(res => {
+				console.log('Delete Addon Res: : ', res)
+				if (res.data.api_error_code) {
+					if (res.data.api_error_code == 'resource_not_found') {
+						self.$Notice.error({
+							title: 'You can\'t delete ' + self.plans[index].name,
+							duration: 5,
+							desc: res.data.message
+						})
+					} else {
+						self.throwNewError(res)
+					}
+					document.body.style.cursor = 'default'
+				} else {
+					self.$Notice.success({
+						title: '<b>' + self.plans[index].name + '</b> deleted.',
+						desc: 'Addon Plan <b>' + self.plans[index].name + '</b> has been deleted..!'
+					})
+					self.plans.splice(index, 1)
+					document.body.style.cursor = 'default'
+				}
+			}).catch(err => {
+				document.body.style.cursor = 'default'
+				console.log('Delete Addon Catch Error: ', err)
+			})
+		},
+		disablePlan (index) {
+			let self = this
+			let msg, ttl
+			document.body.style.cursor = 'wait'
+			cbPlan.delete(self.plans[index].id).then(res => {
+				if (res.data.api_error_code) {
+					msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':') + 1)
+					ttl = res.data.api_error_code.replace(/_/gi, ' ')
+					ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1)
+					if (res.data.api_error_code == 'resource_not_found') {
+						self.$Notice.error({
+							title: 'You can\'t disable ' + self.plans[index].name,
+							duration: 5,
+							desc: msg
+						})
+					} else {
+						self.$Notice.error({
+							title: ttl,
+							duration: 5,
+							desc: msg
+						})
+					}
+					self.plans[index].status = 'active'
+					document.body.style.cursor = 'default'
+				} else {
+					self.$Notice.success({
+						title: '<b>' + self.plans[index].name + '</b> Plan Disabled.',
+						desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been disabled..!'
+					})
+					document.body.style.cursor = 'default'
+				}
+				console.log('Plan archived :: ', res)
+			}).catch(err => {
+				self.plans[index].status = 'active'
+				document.body.style.cursor = 'default'
+				console.log('Plan archived error ::', err)
+			})
+		},
+		disableAddon (index) {
+			let self = this
+			let msg, ttl
+			document.body.style.cursor = 'wait'
+			cbAddon.delete(self.plans[index].id).then(res => {
+				if (res.data.api_error_code) {
+					msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':') + 1)
+					ttl = res.data.api_error_code.replace(/_/gi, ' ')
+					ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1)
+					if (res.data.api_error_code == 'resource_not_found') {
+						self.$Notice.error({
+							title: 'You can\'t disable ' + self.plans[index].name,
+							duration: 5,
+							desc: msg
+						})
+					} else {
+						self.$Notice.error({
+							title: ttl,
+							duration: 5,
+							desc: msg
+						})
+					}
+					self.plans[index].status = 'active'
+					document.body.style.cursor = 'default'
+				} else {
+					self.$Notice.success({
+						title: '<b>' + self.plans[index].name + '</b> Addon Disabled.',
+						desc: 'Addon Plan <b>' + self.plans[index].name + '</b> has been disabled..!'
+					})
+					document.body.style.cursor = 'default'
+				}
+				console.log('Addon archived :: ', res)
+			}).catch(err => {
+				self.plans[index].status = 'active'
+				document.body.style.cursor = 'default'
+				console.log('Addon archived error ::', err)
+			})
+		},
+		enablePlan (index) {
+			let self = this
+			let msg, ttl
+			document.body.style.cursor = 'wait'
+			cbPlan.patch(self.plans[index].id).then(res => {
+				if (res.data.api_error_code) {
+					msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':') + 1)
+					ttl = res.data.api_error_code.replace(/_/gi, ' ')
+					ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1)
+					if (res.data.api_error_code == 'resource_not_found') {
+						self.$Notice.error({
+							title: 'You can\'t enable ' + self.plans[index].name,
+							duration: 5,
+							desc: msg
+						})
+					} else {
+						self.$Notice.error({
+							title: ttl,
+							duration: 5,
+							desc: msg
+						})
+					}
+					self.plans[index].status = 'archived'
+					document.body.style.cursor = 'default'
+				} else {
+					self.$Notice.success({
+						title: '<b>' + self.plans[index].name + '</b> Plan Enabled.',
+						desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been enabled..!'
+					})
+					document.body.style.cursor = 'default'
+				}
+				console.log('Plan unarchived :: ', res)
+			}).catch(err => {
+				self.plans[index].status = 'archived'
+				document.body.style.cursor = 'default'
+				console.log('Plan unarchived error ::', err)
+			})
+		},
+		enableAddon (index) {
+			let self = this
+			let msg, ttl
+			document.body.style.cursor = 'wait'
+			cbAddon.patch(self.plans[index].id).then(res => {
+				if (res.data.api_error_code) {
+					msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':') + 1)
+					ttl = res.data.api_error_code.replace(/_/gi, ' ')
+					ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1)
+					if (res.data.api_error_code == 'resource_not_found') {
+						self.$Notice.error({
+							title: 'You can\'t enable ' + self.plans[index].name,
+							duration: 5,
+							desc: msg
+						})
+					} else {
+						self.$Notice.error({
+							title: ttl,
+							duration: 5,
+							desc: msg
+						})
+					}
+					self.plans[index].status = 'archived'
+					document.body.style.cursor = 'default'
+				} else {
+					self.$Notice.success({
+						title: '<b>' + self.plans[index].name + '</b> Addon Enabled.',
+						desc: 'Addon Plan <b>' + self.plans[index].name + '</b> has been enabled..!'
+					})
+					document.body.style.cursor = 'default'
+				}
+				console.log('Addon unarchived :: ', res)
+			}).catch(err => {
+				self.plans[index].status = 'archived'
+				document.body.style.cursor = 'default'
+				console.log('Addon unarchived error ::', err)
+			})
+		},
+		throwNewError (res) {
+			let self = this
+			let msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':') + 1)
+			let ttl = res.data.api_error_code.replace(/_/gi, ' ')
+			ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1)
+			// if (res.data.api_error_code == 'duplicate_entry') {
+			//   self.$Notice.error({
+			//     title: 'Plan Already Exist.',
+			//     duration: 5,
+			//     desc: msg
+			//   });
+			// } else {
+			self.$Notice.error({
+				title: ttl,
+				duration: 5,
+				desc: msg
+			})
+			// }
+		}
+	}
 }
 </script>
 
