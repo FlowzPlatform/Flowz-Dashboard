@@ -73,232 +73,223 @@
     import VueWidgets from 'vue-widgets'
     import 'vue-widgets/dist/styles/vue-widgets.css'
     import config from '../../config/customConfig'
-    import iView from 'iview';
-    import 'iview/dist/styles/iview.css';
+    import iView from 'iview'
+import 'iview/dist/styles/iview.css'
+import $ from 'jquery'
 
-    Vue.use(iView);
+Vue.use(iView)
 
-    Vue.use(VueWidgets)
-         /* eslint-disable*/
+Vue.use(VueWidgets)
     export default {
-        data: function() {
-            return {
-                loading: true,
-                tableData: {},
-                fields: [],
-                permissionsAll:[],
-                count: 0,
-                showOverlay: false
-            }
-        },
-        methods: {
-            getAllPermissions:async function(appName, totalApps){
+    	data: function () {
+    		return {
+    			loading: true,
+    			tableData: {},
+    			fields: [],
+    			permissionsAll: [],
+    			count: 0,
+    			showOverlay: false
+    		}
+    	},
+    	methods: {
+    		getAllPermissions: async function (appName, totalApps) {
+    			var self = this
+    			// console.log('getAllPerm:', config.getAllPermissionsUrl+appName)
+    			await axios.get(config.getAllPermissionsUrl + appName, {
+    				// headers: {
+    				//   'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+    				// },
+    			}).then(function (response) {
+    				if (response.data.data.length > 0) {
+    					self.count++
+    					console.log('Count:', self.count, totalApps)
+    					self.permissionsAll = _.union(self.permissionsAll, response.data.data)
+    					self.permissionsAll = _.map(self.permissionsAll, o => _.extend({app: appName}, o))
 
-            var self = this
-            //console.log('getAllPerm:', config.getAllPermissionsUrl+appName)
-            await axios.get(config.getAllPermissionsUrl+appName, {
-            // headers: {
-            //   'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-            // },
-          }).then(function (response) {
+    					// To resolve check/uncheck issue
+    					// if(totalApps == self.count){
+    					//     self.permissionsAll = _.groupBy(self.permissionsAll, 'app');
+    					// }
+    				}
+    				return response.data.data
+    			})
+    				.catch(function (error) {
+    					console.log('Get all permission error:', error)
+    					console.log(error)
+    				})
+    		},
+    		getRoles: async function () {
+    			var self = this
+    			await axios.get(config.subscriptionUrl + 'roles', {
+    				headers: {
+    					'Content-Type': 'application/x-www-form-urlencoded;'
+    				}
+    			}).then(function (response) {
+    				// console.log("Get all roles:",_.groupBy(response.data.data, 'module'));
+    				console.log('all roles:', response)
+    				if (response.data.data.length > 0) {
+    					var arrRoles = _.groupBy(response.data.data, 'module')
+    					for (var tblData in arrRoles) {
+    						var obj = {
+    							name: 'name',
+    							title: '',
+    							sortField: 'name'
+    						}
+						arrRoles[tblData].splice(0, 0, obj)
+    						console.log('arraData', arrRoles)
+    					}
+    					self.fields = arrRoles
+    					self.callTaskList()
+    				}
+    				return response.data.data
+    			})
+    				.catch(function (error) {
+    					console.log('Get all roles error:', error)
+    					console.log(error.response.status)
+    					if (error.response.status == 403) {
+    						self.$Modal.warning({
+    							title: 'Warning',
+    							content: 'You are not authorized to see Roles',
+    							onOk: () => {
+    								self.$router.go(-1)
+    							}
+    						})
+    					}
+    				})
+    		},
+    		callTaskList: async function () {
+    			var self = this
 
-              if(response.data.data.length > 0){
-                    self.count++
-                    console.log("Count:",self.count, totalApps);
-                    self.permissionsAll = _.union(self.permissionsAll, response.data.data);
-                    self.permissionsAll = _.map(self.permissionsAll, o => _.extend({app: appName}, o));
+    			for (let value of Object.keys(this.fields)) {
+    				// console.log('field value:::',(value));
+    				await axios.get(config.subscriptionUrl + 'register-resource', {
+    					params: {
+    						module: value
+    					},
+    					headers: {
+    						'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+    					}
+    				}).then(function (response) {
+    					let arrResources = _.groupBy(response.data.data, 'module')
+    					self.tableData = _.extend(self.tableData, arrResources)
+    				}).catch(function (error) {
+    					console.log('Get role permissions error:', error)
+    					console.log(error)
+    				})
+    			}
+    			self.loading = false
+    			for (var tblData in self.tableData) {
+    				await self.getAllPermissions(tblData, Object.keys(self.tableData).length)
+    			}
 
-                    // To resolve check/uncheck issue
-                    // if(totalApps == self.count){
-                    //     self.permissionsAll = _.groupBy(self.permissionsAll, 'app');
-                    // }
-              }
-              return response.data.data
-            })
-            .catch(function (error) {
-              console.log("Get all permission error:",error);
-              console.log(error);
-            })
-            },
-            getRoles:async  function(){
-                var self = this
-                    await axios.get(config.subscriptionUrl+'roles', {
-                    headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded;'
-                    },
-                }).then(function (response) {
-                //console.log("Get all roles:",_.groupBy(response.data.data, 'module'));
-                    console.log("all roles:",response);
-                    if(response.data.data.length > 0){
-                        var arrRoles = _.groupBy(response.data.data, 'module');
-                        for (var tblData in arrRoles){
-                            var obj = {
-                                name: 'name',
-                                title: '',
-                                sortField: 'name'
-                            };
-                            arrRoles[tblData].splice(0, 0, obj);
-                            console.log("arraData",arrRoles)
-                        }
-                        self.fields = arrRoles;
-                        self.callTaskList();
-              }
-              return response.data.data
-            })
-            .catch(function (error) {
-              console.log("Get all roles error:",error);
-              console.log(error.response.status);
-              if(error.response.status == 403){
-                self.$Modal.warning({
-                            title: "Warning",
-                            content: "You are not authorized to see Roles",
-                            onOk: () => {
-                                self.$router.go(-1);
-                            }
-                        });
-              }
-            })
-            },
-            callTaskList: async function () {
-                var self = this
+    			// axios.get(config.subscriptionUrl+'register-resource', {
+    			// headers: {
+    			// 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+    			// },
+    			//  }).then(function (response) {
+    			//     console.log("Get resources:",response.data.data);
+    			//     if(response.data.data.length > 0){
+    			//         let arrResources = _.groupBy(response.data.data, 'module');
+    			//         self.tableData = arrResources;
+    			//         //console.log("Table rows:",Object.keys(self.tableData));
+    			//         for (var tblData in arrResources){
+    			//             console.log("arrResources:",tblData)
+    			//             self.getAllPermissions(tblData, Object.keys(self.tableData).length)
+    			//         }
+    			// }
+    			// return response.data.data
+    			// })
+    			//     .catch(function (error) {
+    			//     console.log("Get role permissions error:",error);
+    			//     console.log(error);
+    			// })
+    		},
+    		getCheckboxValue: function (role, resources, action, appName) {
+    			let resID = resources.id + '_' + action
+    			let index = _.findIndex(this.permissionsAll, function (d) { return (d.roleId === role.id) && (d.resourceId === resID) })
+    			if (index > -1) {
+    				let permission = this.permissionsAll[index].access_value
+    				return parseInt(permission)
+    			} else {
+    				return parseInt(0)
+    			}
+    		},
+    		setAccessPermision: function (roleField, item, action, event, moduleName) {
+    			var accessVal = 0
+    			this.showOverlay = true
+    			let self = this
+    			if (event.target.checked) {
+    				accessVal = 1
+    			}
+    			console.log('Set permission params 1:', event.target.checked)
+    
+    			let updateValue = {
+    				resourceId: item.id + '_' + action, // resourceid_action
+    				roleId: roleField.id,
+    				taskType: 'global', // scope
+    				accessValue: accessVal,
+    				app: moduleName
+    			}
 
-                for(let value of Object.keys(this.fields)) {
-                    // console.log('field value:::',(value));
-                    await axios.get(config.subscriptionUrl+'register-resource', {
-                        params: {
-                            module: value
-                        },
-                        headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                        },
-                        }).then(function (response) {
-                            let arrResources = _.groupBy(response.data.data, 'module');
-                            self.tableData = _.extend(self.tableData, arrResources);
-                        }).catch(function (error) {
-                            console.log("Get role permissions error:",error);
-                            console.log(error);
-                        })
-                }
-                    self.loading = false
-                    for (var tblData in self.tableData){
-                       await self.getAllPermissions(tblData, Object.keys(self.tableData).length)
-                    }
+			console.log('Set permission params: 2', item)
+    			axios.post(config.setPermissionUrl, updateValue, {
+    				headers: {
+    					'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+    				}
+    			})
+    				.then(function (response) {
+    					console.log('Set permission response:', response)
 
-                // axios.get(config.subscriptionUrl+'register-resource', {
-                // headers: {
-                // 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                // },
-                //  }).then(function (response) {
-                //     console.log("Get resources:",response.data.data);
-                //     if(response.data.data.length > 0){
-                //         let arrResources = _.groupBy(response.data.data, 'module');
-                //         self.tableData = arrResources;
-                //         //console.log("Table rows:",Object.keys(self.tableData));
-                //         for (var tblData in arrResources){
-                //             console.log("arrResources:",tblData)
-                //             self.getAllPermissions(tblData, Object.keys(self.tableData).length)
-                //         }
-                // }
-                // return response.data.data
-                // })
-                //     .catch(function (error) {
-                //     console.log("Get role permissions error:",error);
-                //     console.log(error);
-                // })
-
-            },
-            getCheckboxValue: function(role, resources, action, appName){
-               let resID = resources.id+"_"+action
-                let index = _.findIndex(this.permissionsAll, function(d) { return (d.roleId === role.id) && (d.resourceId === resID) })
-                if (index > -1) {
-                    let permission = this.permissionsAll[index].access_value
-                    return parseInt(permission)
-                }else{
-                    return parseInt(0)
-                }
-            },
-            setAccessPermision: function(roleField, item, action, event, moduleName) {
-                var accessVal = 0
-                this.showOverlay = true
-                let self = this
-                if(event.target.checked) {
-                    accessVal = 1
-                }
-                console.log("Set permission params 1:",event.target.checked);
-                
-                let updateValue={
-                    resourceId:  item.id+'_'+action , //resourceid_action
-                    roleId:  roleField.id ,
-                    taskType:  'global', // scope
-                    accessValue: accessVal,
-                    app: moduleName
-                };
-
-                console.log("Set permission params: 2",item);
-                 axios.post(config.setPermissionUrl, updateValue, {
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                    }
-                    })
-                    .then(function (response) {
-                    console.log("Set permission response:",response);
-
-                    let resID = item.id+"_"+action
-                    let index = _.findIndex(self.permissionsAll, function(d) { return (d.roleId === roleField.id) && (d.resourceId === resID) })
-                    console.log("Set permission response index:",index);
-                    if (index > -1) {
-                        if(self.permissionsAll[index].access_value==='1')
-                            self.permissionsAll.splice(index,1)
-                        else{
-                            self.permissionsAll[index].access_value='1'
-                        }
-                    // self.permissionsAll[index].access_value=accessVal
-                        // return parseInt(permission)
-                        // console.log("Permiision update:--",self.permissionsAll[index].access_value)
-                    }
-                    else{
-                      
-                        let pValue={
-                            resourceId:  updateValue.resourceId , //resourceid_action
-                            roleId:  updateValue.roleId ,
-                            taskType:  updateValue.taskType, // scope
-                            access_value: updateValue.accessValue,
-                            app: updateValue.app
-                        };
-                        // console.log("Per Obj:--",pValue)
-                        self.permissionsAll.push(pValue)
-                    }
-                    self.showOverlay = false
-                    
-                    })
-                    .catch(function (error) {
-                        self.showOverlay = false
-                    console.log("Set permission error:",error);
-                    console.log(error);
-                    });
-            },
-            getTitle: function(field) {
-                if (typeof field.title === 'undefined') {
-                    return this.titleCase(field.role)
-                }
-                return this.titleCase(field.title)
-            },
-            titleCase: function(str)
-            {
-                return str.replace(/\w+/g, function(txt){
-                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
-                })
-            }
-        },
-        components: {
-                VueWidgets
-            },
-        created: function() {
-            this.getRoles();
-        },
-        mounted(){
-            $("#big-video-wrap").css("width","0px");
-        }
+    					let resID = item.id + '_' + action
+    					let index = _.findIndex(self.permissionsAll, function (d) { return (d.roleId === roleField.id) && (d.resourceId === resID) })
+    					console.log('Set permission response index:', index)
+    					if (index > -1) {
+    						if (self.permissionsAll[index].access_value === '1') { self.permissionsAll.splice(index, 1) } else {
+    							self.permissionsAll[index].access_value = '1'
+    						}
+    						// self.permissionsAll[index].access_value=accessVal
+    						// return parseInt(permission)
+    						// console.log("Permiision update:--",self.permissionsAll[index].access_value)
+    					} else {
+    						let pValue = {
+    							resourceId: updateValue.resourceId, // resourceid_action
+    							roleId: updateValue.roleId,
+    							taskType: updateValue.taskType, // scope
+    							access_value: updateValue.accessValue,
+    							app: updateValue.app
+    						}
+						// console.log("Per Obj:--",pValue)
+						self.permissionsAll.push(pValue)
+    					}
+    					self.showOverlay = false
+    				})
+    				.catch(function (error) {
+    					self.showOverlay = false
+    					console.log('Set permission error:', error)
+    					console.log(error)
+    				})
+		},
+    		getTitle: function (field) {
+    			if (typeof field.title === 'undefined') {
+    				return this.titleCase(field.role)
+    			}
+    			return this.titleCase(field.title)
+    		},
+    		titleCase: function (str) {
+    			return str.replace(/\w+/g, function (txt) {
+    				return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+    			})
+    		}
+    	},
+    	components: {
+    		VueWidgets
+    	},
+    	created: function () {
+    		this.getRoles()
+    	},
+    	mounted () {
+    		$('#big-video-wrap').css('width', '0px')
+    	}
     }
     </script>
 

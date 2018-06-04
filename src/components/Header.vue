@@ -53,66 +53,61 @@
     </Menu>
 </template>
 <script>
-    /*eslint-disable*/
     import Cookie from 'js-cookie'
-    let location = psl.parse(window.location.hostname)
+let psl = require('psl')
+
+let location = psl.parse(window.location.hostname)
     location = location.domain === null ? location.input : location.domain
     export default {
-        data() {
-            return {
-                email: Cookie.get('user') ? Cookie.get('user') : 'User'
-            }
-        },
-        computed: {
+    	data () {
+    		return {
+    			email: Cookie.get('user') ? Cookie.get('user') : 'User'
+    		}
+    	},
+    	computed: {
 
+    	},
+    	methods: {
+    		//   logout () {
+    		//         this.$session.destroy('auth_token');
+    		//         this.$router.push('/login');
+    		//    }
 
-        },
-        methods: {
-            //   logout () {
-            //         this.$session.destroy('auth_token');
-            //         this.$router.push('/login');
-            //    }
-
-            logout: function () {
-                //this.$session.destroy('auth_token');
-
-                this.$store.commit("FB_SIGN_IN",false);
-                this.$store.commit("GOOGLE_SIGN_IN",false);
-                this.$store.commit('SET_LOGIN_USER', "");
-                this.$cookie.delete('auth_token');
-                Cookie.remove('auth_token' ,{domain: location})
-                Cookie.remove('user' ,{domain: location})
-                this.$router.push('/login');
-                this.$Message.success({content:'You have Succesfully Logged Out',duration:3})
-
-            },
-            settings: function () {
-                //this.$session.destroy('auth_token');
-                //his.$router.push('/acl');
-                let routeData = this.$router.resolve({name: 'acl'});
-                window.open(routeData.href, '_blank');
-            },
-            subscriptionList: function () {
-                //this.$router.push('/subscription-list');
-                let routeData = this.$router.resolve({name: 'subscriptionList'});
-                window.open(routeData.href, '_blank');
-            },
-            planList: function () {
-                //this.$router.push('/plan-details');
-                let routeData = this.$router.resolve({name: 'planDetails'});
-                window.open(routeData.href, '_blank');
-            },
-            mainPage: function () {
-                this.$router.push('/');
-            }
-        },
-
-        mounted (){
-            setTimeout(function() {
-            this.email = Cookie.get('user') ? Cookie.get('user') : 'User'
-            }, 1000);
-
-        }
+    		logout: function () {
+			this.$store.commit('FB_SIGN_IN', false)
+			this.$store.commit('GOOGLE_SIGN_IN', false)
+			this.$store.commit('SET_LOGIN_USER', '')
+			this.$cookie.delete('auth_token')
+			Cookie.remove('auth_token', {domain: location})
+			Cookie.remove('user', {domain: location})
+			this.$router.push('/login')
+			this.$Message.success({content: 'You have Succesfully Logged Out', duration: 3})
+    		},
+    		settings: function () {
+    			// this.$session.destroy('auth_token');
+    			// his.$router.push('/acl');
+    			let routeData = this.$router.resolve({name: 'acl'})
+    			window.open(routeData.href, '_blank')
+    		},
+    		subscriptionList: function () {
+    			// this.$router.push('/subscription-list');
+    			let routeData = this.$router.resolve({name: 'subscriptionList'})
+    			window.open(routeData.href, '_blank')
+    		},
+    		planList: function () {
+    			// this.$router.push('/plan-details');
+    			let routeData = this.$router.resolve({name: 'planDetails'})
+    			window.open(routeData.href, '_blank')
+    		},
+    		mainPage: function () {
+    			this.$router.push('/')
+    		}
+    	},
+    	mounted () {
+    		setTimeout(function () {
+    			this.email = Cookie.get('user') ? Cookie.get('user') : 'User'
+		}, 1000)
+	}
     }
 </script>
 <style scoped>

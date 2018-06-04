@@ -62,17 +62,16 @@
 
 <script>
 
+export default {
+	name: 'subscription',
+	data () {
+		return {
+			msg: 'Welcome to Price'
+		}
+	},
+	created () {
 
-export default {  
-  name: 'subscription',
-  data () {
-    return {
-      msg: 'Welcome to Price'
-    }
-  },
-  created(){
- 
-  }
+	}
 }
 </script>
 
