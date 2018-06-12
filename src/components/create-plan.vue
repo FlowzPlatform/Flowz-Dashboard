@@ -23,7 +23,7 @@
                      <colgroup>
                           <col width="22">
                             <col width="8">
-                              <col width="22">
+                              <!-- <col width="22"> -->
                                   <col width="22">
                                       <!-- <col width="15"> -->
                                           <col width="20">
@@ -41,11 +41,11 @@
                                     <span>Active User</span>
                                   </div>
                               </th>
-                              <th class="ivu-table-column-center">
+                              <!-- <th class="ivu-table-column-center">
                                   <div class="ivu-table-cell">
                                       <span>Validity <span style="color:gray;font-size:10px">(Month)</span></span>
                                   </div>
-                              </th>
+                              </th> -->
                               <th class="ivu-table-column-center">
                                   <div class="ivu-table-cell"><span>Price <span style="color:gray;font-size:10px">(USD)</span></span>
                                   </div>
@@ -76,13 +76,13 @@
                                   </Tooltip>
                                 </div>
                               </td>
-                              <td class="ivu-table-column-center">
+                              <!-- <td class="ivu-table-column-center">
                                 <div class="ivu-table-cell">
                                   <Tooltip content="Validity" placement="bottom">
                                     <input  type="text" class="description form-control" v-model="plan.period" min=1 v-on:keyup="validateValidity(plan.period, pIndex)" placeholder="*Validity"></input>
                                   </Tooltip>
                                 </div>
-                              </td>
+                              </td> -->
                               <td class="ivu-table-column-center">
                                   <div class="ivu-table-cell">
                                     <Tooltip content="Price" placement="bottom">
@@ -163,7 +163,7 @@
                               </td>
                           </tr>
                           <tr class="ivu-table-row">
-                            <td colspan="5" class="hidden-td">
+                            <td colspan="4" class="hidden-td">
                               <div :id="'plan_'+pIndex" class="outer-toggle">
                                 <Row>
                                   <Col span="22" push="1">
@@ -271,7 +271,7 @@
             <h5 v-else-if="!planLoding && plans.length == 0"><span v-if="activeTab === 'plan'">Plans</span><span v-else>Addons</span> Not available</h5>
           </Col>
         </Row>
-        <span>Note: if any plan / addon is subscribed by any user then you can't update validity.</span>
+        <!-- <span>Note: if any plan / addon is subscribed by any user then you can't update validity.</span> -->
       </Card>
     </Col>
     <div id="overlay" v-show="showOverlay">
@@ -397,14 +397,29 @@ export default {
 			})
 			this.showOverlay = false
 		}).catch(err => {
-			if (err.response.status == 403) {
-				self.$Modal.warning({
-					title: 'Warning',
-					content: 'You are not authorized to see ',
-					onOk: () => {
-						self.$router.go(-1)
-					}
-				})
+			if (err.response.status == 500) {
+				let msg = err.response.data.message.substr(err.response.data.message.indexOf(':') + 1)
+				if (msg === ' Permission not available for action') {
+					self.$Modal.warning({
+						title: 'Warning',
+						content: msg + '.<br> You are <b>not authorized</b> to see ROLES',
+						onOk: () => {
+							self.$router.go(-1)
+						}
+					})
+				} else if (err.message == 'Network Error') {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Loading created plans',
+						desc: 'API service unavailable.'
+					})
+				} else {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Loading created plans',
+						desc: err.response.data.message
+					})
+				}
 			}
 		})
 
@@ -529,7 +544,7 @@ export default {
 			let self = this
 			self.addPlanLoading = true
 			let data5 = []
-			let modules = ['crm', 'uploader', 'webbuilder', 'subscription']
+			let modules = ['crm', 'uploader', 'webbuilder', 'subscription', 'vshopdata']
 
 			self.plans.filter(function (o) {
 				o.class = 'ivu-table-row'
@@ -641,7 +656,6 @@ export default {
 			this.process.cursor = 'progress!important'
 			let self = this
 			let dataObj = this.plans[index]
-			console.log('Updating Addon Data: ', dataObj.price)
 			if (dataObj.name == '') {
 				this.$Notice.error({
 					duration: 5,
@@ -726,7 +740,6 @@ export default {
 					self.plans.splice(0, 0, res.data)
 					self.addPlanLoading = false
 				}
-				console.log('Create Plan :: ', res)
 			}).catch(err => {
 				console.log('Error Create Plan :: ', err)
 			})
@@ -782,7 +795,6 @@ export default {
 				delete updateDefinition.period
 			}
 			cbPlan.put(id, updateDefinition).then(res => {
-				console.log('UpdatedPlan :: ', res)
 				if (res.data.api_error_code) {
 					self.throwNewError(res)
 					document.body.style.cursor = 'default'
@@ -803,7 +815,6 @@ export default {
 			})
 		},
 		updateCbAddon (id, data) {
-			// console.log('>>data', data)
 			let self = this
 			document.body.style.cursor = 'wait'
 			let convertedPrice = data.price * 100
@@ -812,6 +823,7 @@ export default {
 				'invoice_name': data.name,
 				'price': convertedPrice,
 				'period': data.period,
+				'description': data.description,
 				'meta_data': {
 					'details': data.meta_data.details
 				}
@@ -843,7 +855,6 @@ export default {
 			let self = this
 			document.body.style.cursor = 'wait'
 			cbPlan.delete(id).then(res => {
-				console.log('Delete Plan Res: : ', res)
 				if (res.data.api_error_code) {
 					if (res.data.api_error_code == 'resource_not_found') {
 						self.$Notice.error({
@@ -874,7 +885,6 @@ export default {
 			let self = this
 			document.body.style.cursor = 'wait'
 			cbAddon.delete(id).then(res => {
-				console.log('Delete Addon Res: : ', res)
 				if (res.data.api_error_code) {
 					if (res.data.api_error_code == 'resource_not_found') {
 						self.$Notice.error({
@@ -930,7 +940,6 @@ export default {
 					})
 					document.body.style.cursor = 'default'
 				}
-				console.log('Plan archived :: ', res)
 			}).catch(err => {
 				self.plans[index].status = 'active'
 				document.body.style.cursor = 'default'
@@ -968,7 +977,6 @@ export default {
 					})
 					document.body.style.cursor = 'default'
 				}
-				console.log('Addon archived :: ', res)
 			}).catch(err => {
 				self.plans[index].status = 'active'
 				document.body.style.cursor = 'default'
@@ -1006,7 +1014,6 @@ export default {
 					})
 					document.body.style.cursor = 'default'
 				}
-				console.log('Plan unarchived :: ', res)
 			}).catch(err => {
 				self.plans[index].status = 'archived'
 				document.body.style.cursor = 'default'
@@ -1044,7 +1051,6 @@ export default {
 					})
 					document.body.style.cursor = 'default'
 				}
-				console.log('Addon unarchived :: ', res)
 			}).catch(err => {
 				self.plans[index].status = 'archived'
 				document.body.style.cursor = 'default'

@@ -35,7 +35,11 @@ export default {
 				// },
 				{
 					title: 'Plan',
-					key: 'plan_name'
+					render: (h, params) => {
+						return h('div', [
+							h('a', params.row.plan_name)
+						])
+					}
 				},
 				{
 					title: 'Price',
@@ -81,7 +85,7 @@ export default {
 		},
 		currentRow (currentRow) {
 			console.log('CurrentRow', currentRow)
-			this.$emit('selectedSubscription', [currentRow.id, currentRow.plan_id, currentRow.plan_unit_price])
+			this.$emit('selectedSubscription', [currentRow.id, currentRow.plan_id, currentRow.plan_unit_price, currentRow.next_billing_at])
 		},
 		async getPlanName (itm) {
 			return cbPlan.get(itm.subscription.plan_id).then(res => {

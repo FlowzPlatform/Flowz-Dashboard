@@ -6,7 +6,7 @@
             <div style="font-size: x-large;">My Plan</div><br>
                 <Row>
                     <Col span="22" push="1">
-                        <Table :loading="loading" class='dataTable' :columns="planDetails" :data="planList" no-data-text="No Data"></Table>
+                        <Table :loading="loading" class='dataTable' :columns="planDetails" :data="planList" no-data-text="No Subscription Found"></Table>
                         <Page v-if="planListData.length > pageSize" style="margin-top:10px;" class="pull-right" :total="planListData.length" :page-size="pageSize" :current="currentPage" @on-change="changePage"></Page>
                     </Col>
                 </Row>
@@ -21,7 +21,7 @@ import cbPlan from '@/api/cb-plan'
 import Cookies from 'js-cookie'
 import addOn from './add-on.vue'
 import psl from 'psl'
-var moment = require('moment')
+let moment = require('moment')
 moment().format()
 
 export default {
@@ -51,11 +51,11 @@ export default {
 					key: 'plan_unit_price',
 					align: 'center'
 				},
-				{
+				/* {
 					title: 'Validity (Months)',
 					key: 'billing_period',
 					align: 'center'
-				},
+				}, */
 				{
 					title: 'Subscribed',
 					key: 'started_at',
@@ -69,6 +69,32 @@ export default {
 				{
 					title: 'Status',
 					key: 'status'
+				},
+				{
+					title: 'Pause / Resume Subscription',
+					render: (h, params) => {
+						return h('div', [
+							h('Button', {
+								props: {
+									type: 'text',
+									size: 'large',
+									icon: params.row.status === 'active' ? 'pause' : 'play'
+								},
+								style: {
+									marginRight: '3px',
+									padding: '0px',
+									fontSize: '20px'
+								},
+								on: {
+									click: () => {
+										this.pauseSubscription(params)
+									}
+								}
+							}, '')
+						])
+					},
+					width: 210,
+					align: 'center'
 				}
 			],
 			planListData: [],
@@ -80,6 +106,27 @@ export default {
 		}
 	},
 	methods: {
+		pauseSubscription (params) {
+			let status
+			document.body.style.cursor = 'wait'
+			if (params.row.status === 'active') {
+				status = true
+				params.row.status = 'paused'
+			} else if (params.row.status === 'paused') {
+				status = false
+				params.row.status = 'active'
+			}
+			cbSubscription.pauseSubscription(params.row.id, status).then(res => {
+				this.$Notice.success({
+					title: 'Subscription plan has been ' + params.row.status
+				})
+				console.log('RES FROM PAUSE Subscription ::', res)
+				document.body.style.cursor = 'default'
+			}).catch(err => {
+				console.log('ERR FROM PAUSE Subscription :: ', err)
+				document.body.style.cursor = 'default'
+			})
+		},
 		async changePage (pageNo) {
 			this.planList = await this.makeChunk(pageNo, this.pageSize)
 		},

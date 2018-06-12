@@ -102,10 +102,15 @@
           <div class="panel-footer">
             <Row type="flex" justify="space-around">
                 <Col span="5">
-                  <p v-if="mainData[1]" class="pay-info">PAY {{ mainData[1].price * mainData[0].period }} USD
-                  <Poptip slot="append" trigger="hover" title="Pay Info" placement="bottom" :content="'Basic Plan Validity Multiply By Addon Price( ' + mainData[0].period + ' * ' + mainData[1].price + ' = ' + mainData[1].price * mainData[0].period + ' )'">
+									<p v-if="mainData[1]" class="pay-info">PAY {{ mainData[1].price }} USD
+                  <Poptip slot="append" trigger="hover" title="Pay Info" placement="bottom" :content="'Total amount to be pay is ' + parseFloat(mainData[1].price / 30 * remainDays).toFixed(2) + '*' ">
                     <Icon type="help-circled"></Icon>
                   </Poptip></p>
+                  <!-- OLD CODE TO CALCULATE PAY AMOUNT -->
+									<!-- <p v-if="mainData[1]" class="pay-info">PAY {{ mainData[1].price * mainData[0].period }} USD
+                  <Poptip slot="append" trigger="hover" title="Pay Info" placement="bottom" :content="'Basic Plan Validity Multiply By Addon Price( ' + mainData[0].period + ' * ' + mainData[1].price + ' = ' + mainData[1].price * mainData[0].period + ' )'">
+                    <Icon type="help-circled"></Icon>
+                  </Poptip></p> -->
                 </Col>
                 <Col span="6">
                     <!-- set attribute to Col span="16" offset="4" 
@@ -147,7 +152,8 @@ import config from '../config'
 export default {
 	props: {
 		basicPlan: String,
-		basicSubId: String
+		basicSubId: String,
+		remainDays: String
 	},
 	name: 'checkout',
 	data () {
@@ -236,6 +242,7 @@ export default {
 				msg: '',
 				class: ''
 			},
+			payAmount: null,
 			expiryMonth: [
 				{
 					value: '01',

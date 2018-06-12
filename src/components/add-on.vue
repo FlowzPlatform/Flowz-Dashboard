@@ -62,11 +62,11 @@ export default {
 	},
 	mounted () {
 		let self = this
-		console.log('ADDON ROW OPEN', this.row)
+		// console.log('ADDON ROW OPEN', this.row)
 		if (this.row.addons) {
 			let obj = this.row.addons.map(async (itm) => {
 				let addonDetails = await self.getAddonDetails(itm.id)
-				console.log('addon details::', addonDetails)
+				// console.log('addon details::', addonDetails)
 				addonDetails.price /= 100
 				return addonDetails
 			})
