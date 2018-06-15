@@ -147,6 +147,20 @@
                                         </Tooltip>
                                       </a>
                                     </Col>
+																		<Col span="3">
+                                      <div>
+                                        <a v-if="plan.period >= getDefaultPlan('validity', pIndex) && plan.price >= getDefaultPlan('price', pIndex) && checkOpen(pIndex)" @click="copyPlan(pIndex, activeTab)">
+																					<Tooltip content="Copy" placement="top">
+																						<Icon type="ios-copy-outline" size="23" color="#337ab7"></Icon>
+																					</Tooltip>
+																				</a>
+																				<a v-else class="pointerX">
+																					<Tooltip content="Copy" placement="top">
+																						<Icon type="ios-copy-outline" size="23" color="#337ab7"></Icon>
+																					</Tooltip>
+																				</a>
+                                      </div>
+																		</Col>
                                     <Col span="3">
                                       <a v-if="plan.period >= getDefaultPlan('validity', pIndex) && plan.price >= getDefaultPlan('price', pIndex) && checkOpen(pIndex)" @click="expand(pIndex)">
                                         <Tooltip content="Expand" placement="top">
@@ -268,7 +282,7 @@
         <Row type="flex" justify="center">
           <Col span="4" style="margin-top:5px;">
             <Spin v-if="planLoding" size="large"></Spin>
-            <h5 v-else-if="!planLoding && plans.length == 0"><span v-if="activeTab === 'plan'">Plans</span><span v-else>Addons</span> Not available</h5>
+            <h5 v-else-if="!planLoding && plans.length == 0"><span v-if="activeTab === 'plan'">Plans</span><span v-else>Addons</span> not available</h5>
           </Col>
         </Row>
         <!-- <span>Note: if any plan / addon is subscribed by any user then you can't update validity.</span> -->
@@ -318,7 +332,6 @@ export default {
 			addPlanLoading: false,
 			currentOpen: [],
 			time_units: ['day/s', 'month/s', 'year/s'],
-			data5: [],
 			confirmDelete: false,
 			loading: false,
 			deleteIndex: 0,
@@ -336,6 +349,7 @@ export default {
 				type: 'basic',
 				details: []
 			},
+			currentMsgInst: this.$store.state.currentMsgInst,
 			showOverlay: false
 		}
 	},
@@ -343,7 +357,7 @@ export default {
 		let self = this
 		this.showOverlay = true
 		roles.get().then(res => {
-			this.planLoding = true
+			self.planLoding = true
 
 			// NEW SUBSCRIPTION CODE WITH CHARGEBEE
 			cbPlan.get().then(res => {
@@ -362,7 +376,7 @@ export default {
 				let location = psl.parse(window.location.hostname)
 				location = location.domain === null ? location.input : location.domain
 				if (err.message == 'Network Error') {
-					self.$Notice.error({
+					self.currentMsgInst = self.$Notice.error({
 						duration: 5,
 						title: 'Loading created plans',
 						desc: 'API service unavailable.'
@@ -377,7 +391,12 @@ export default {
 					Cookies.remove('user', {domain: location})
 					self.$router.push({ name: 'login' })
 				} else {
-					self.$Message.error(err.response.data.message)
+					self.$Notice.error({
+						duration: 5,
+						title: 'Loading created plans',
+						desc: err.message
+					})
+					// self.$Message.error(err.response.data.message)
 				}
 			})
 
@@ -393,34 +412,41 @@ export default {
 					self.addonData = res
 				})
 			}).catch(err => {
-				console.log('Error Addon : ', err)
+				if (self.currentMsgInst &&	!self.currentMsgInst.closed) {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Loading created addons',
+						desc: err.message
+					})
+				}
 			})
 			this.showOverlay = false
 		}).catch(err => {
-			if (err.response.status == 500) {
+			if (err.message == 'Network Error') {
+				self.currentMsgInst = self.$Notice.error({
+					duration: 5,
+					title: 'Loading available plans & addons',
+					desc: 'API service unavailable.'
+				})
+			} else if (err.response.status == 500) {
 				let msg = err.response.data.message.substr(err.response.data.message.indexOf(':') + 1)
 				if (msg === ' Permission not available for action') {
-					self.$Modal.warning({
+					self.currentMsgInst = self.$Modal.warning({
 						title: 'Warning',
-						content: msg + '.<br> You are <b>not authorized</b> to see ROLES',
+						content: msg + '.<br> You are <b>not authorized</b>.',
 						onOk: () => {
 							self.$router.go(-1)
 						}
 					})
-				} else if (err.message == 'Network Error') {
-					self.$Notice.error({
-						duration: 5,
-						title: 'Loading created plans',
-						desc: 'API service unavailable.'
-					})
 				} else {
-					self.$Notice.error({
+					self.currentMsgInst = self.$Notice.error({
 						duration: 5,
-						title: 'Loading created plans',
+						title: 'Loading available plans & addons',
 						desc: err.response.data.message
 					})
 				}
 			}
+			this.showOverlay = false
 		})
 
 		// OLD CODE FOR SUBSCRIPTION
@@ -445,6 +471,29 @@ export default {
     }); */
 	},
 	methods: {
+		copyPlan (index, method) {
+			let self = this
+			document.body.style.cursor = 'wait'
+			let currentPlan = self.plans[index]
+			let convertedPrice = currentPlan.price * 100
+			let id = uuidv1()
+			let planDefinition = {
+				'id': id,
+				'name': currentPlan.name + ' Copy',
+				'description': currentPlan.description,
+				'invoice_name': currentPlan.name + ' Copy',
+				'price': convertedPrice,
+				'status': 'archived',
+				'period': currentPlan.period,
+				'period_unit': currentPlan.period_unit,
+				'meta_data': currentPlan.meta_data
+			}
+			if (method == 'plan') {
+				this.createCbPlan(planDefinition, 'copy')
+			} else if (method == 'addon') {
+				this.createCbAddon(planDefinition, 'copy')
+			}
+		},
 		getSubscribedUser (planId) {
 			return cbSubscription.getSubscribed(planId).then(res => {
 				return res.data.length
@@ -560,11 +609,12 @@ export default {
 				})
 				self.defaultPlan.details = data5
 			}).catch(function (error) {
-				self.$Notice.error({
+				self.currentMsgInst = self.$Notice.error({
 					duration: 5,
-					title: 'Trying to create subscription plan',
-					desc: 'Please try again ' + error.message
+					title: 'Trying to create ' + self.activeTab,
+					desc: 'Please try again <b>' + error.message + '</b>'
 				})
+				self.addPlanLoading = false
 			})
 			let convertedPrice = self.defaultPlan.price * 100
 			let id = uuidv1()
@@ -582,12 +632,10 @@ export default {
 				}
 			}
 			if (method == 'plan') {
-				this.createCbPlan(planDefinition)
+				this.createCbPlan(planDefinition, 'create')
 			} else if (method == 'addon') {
-				this.createCbAddon(planDefinition)
+				this.createCbAddon(planDefinition, 'create')
 			}
-			// console.log('>>>>>>>>>>>>>...', planDefinition)
-
 			// OLD CODE FOR SUBSCRIPTION
 			/* subscriptionPlans.post(self.defaultPlan).then(res => {
         self.$Notice.success({
@@ -716,7 +764,7 @@ export default {
         }) */
 			}
 		},
-		createCbPlan (planDefinition) {
+		createCbPlan (planDefinition, action) {
 			let self = this
 			cbPlan.post(planDefinition).then(res => {
 				if (res.data.api_error_code) {
@@ -730,29 +778,48 @@ export default {
 						self.throwNewError(res)
 					}
 					self.addPlanLoading = false
+					document.body.style.cursor = 'default'
 				} else {
-					self.$Notice.success({
-						title: '<b>New Plan</b>',
-						desc: '<b>New Subscription Plan</b> has been created..!'
-					})
+					if (action == 'create') {
+						self.$Notice.success({
+							title: '<b>New Plan</b>',
+							desc: '<b>New Subscription Plan</b> has been created..!'
+						})
+					} else if (action == 'copy') {
+						self.$Notice.success({
+							title: '<b>Copied Plan</b>',
+							desc: 'Selected <b>subscription plan</b> has been copied..!'
+						})
+					}
 					res.data.price /= 100
 					res.data.class = 'ivu-table-row-highlight'
 					self.plans.splice(0, 0, res.data)
 					self.addPlanLoading = false
+					document.body.style.cursor = 'default'
 				}
 			}).catch(err => {
-				console.log('Error Create Plan :: ', err)
+				if (err.message == 'Network Error') {
+					if (self.currentMsgInst &&	!self.currentMsgInst.closed) {
+						self.$Notice.error({
+							duration: 5,
+							title: 'Adding new plan',
+							desc: 'API service unavailable.'
+						})
+					}
+				}
+				document.body.style.cursor = 'default'
 			})
 		},
-		createCbAddon (planDefinition) {
+		createCbAddon (planDefinition, action) {
 			let self = this
-			planDefinition.name = 'Addon'
-			planDefinition.invoice_name = 'Addon'
+			if (action == 'create') {
+				planDefinition.name = 'Addon'
+				planDefinition.invoice_name = 'Addon'
+			}
 			planDefinition.type = 'on_off'
 			planDefinition.period_unit = 'month'
 			planDefinition.charge_type = 'recurring'
 			// delete planDefinition.status;
-
 			cbAddon.post(planDefinition).then(res => {
 				if (res.data.api_error_code) {
 					if (res.data.api_error_code == 'duplicate_entry') {
@@ -765,16 +832,36 @@ export default {
 						self.throwNewError(res)
 					}
 					self.addPlanLoading = false
+					document.body.style.cursor = 'default'
 				} else {
-					self.$Notice.success({
-						title: '<b>New Addon</b>',
-						desc: '<b>New Addon Plan</b> has been created..!'
-					})
+					if (action == 'create') {
+						self.$Notice.success({
+							title: '<b>New Addon</b>',
+							desc: '<b>New Addon Plan</b> has been created..!'
+						})
+					} else if (action == 'copy') {
+						self.$Notice.success({
+							title: '<b>Copied Addon</b>',
+							desc: 'Selected <b>subscription addon</b> has been copied..!'
+						})
+					}
 					res.data.price /= 100
 					res.data.class = 'ivu-table-row-highlight'
 					self.plans.splice(0, 0, res.data)
 					self.addPlanLoading = false
+					document.body.style.cursor = 'default'
 				}
+			}).catch(err => {
+				if (err.message == 'Network Error') {
+					if (self.currentMsgInst &&	!self.currentMsgInst.closed) {
+						self.$Notice.error({
+							duration: 5,
+							title: 'Adding new addon',
+							desc: 'API service unavailable.'
+						})
+					}
+				}
+				document.body.style.cursor = 'default'
 			})
 		},
 		updateCbPlan (id, data) {
@@ -806,11 +893,19 @@ export default {
 					document.body.style.cursor = 'default'
 				}
 			}).catch(err => {
-				self.$Notice.error({
-					title: 'Updating Plan',
-					desc: err.message,
-					duration: 5
-				})
+				if (err.message == 'Network Error') {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Updating Plan',
+						desc: 'API service unavailable.'
+					})
+				} else {
+					self.$Notice.error({
+						title: 'Updating Plan',
+						desc: err.message,
+						duration: 5
+					})
+				}
 				document.body.style.cursor = 'default'
 			})
 		},
@@ -843,11 +938,19 @@ export default {
 					document.body.style.cursor = 'default'
 				}
 			}).catch(err => {
-				self.$Notice.error({
-					title: 'Updating Addon',
-					desc: err.message,
-					duration: 5
-				})
+				if (err.message == 'Network Error') {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Updating Addon',
+						desc: 'API service unavailable.'
+					})
+				} else {
+					self.$Notice.error({
+						title: 'Updating Addon',
+						desc: err.message,
+						duration: 5
+					})
+				}
 				document.body.style.cursor = 'default'
 			})
 		},
@@ -875,7 +978,19 @@ export default {
 					document.body.style.cursor = 'default'
 				}
 			}).catch(err => {
-				console.log('Delete Plan Catch Error: ', err)
+				if (err.message == 'Network Error') {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Deleting Plan',
+						desc: 'API service unavailable.'
+					})
+				} else {
+					self.$Notice.error({
+						title: 'Deleting Plan',
+						desc: err.message,
+						duration: 5
+					})
+				}
 				document.body.style.cursor = 'default'
 			})
 			self.loading = false
@@ -905,8 +1020,20 @@ export default {
 					document.body.style.cursor = 'default'
 				}
 			}).catch(err => {
+				if (err.message == 'Network Error') {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Deleting Addon',
+						desc: 'API service unavailable.'
+					})
+				} else {
+					self.$Notice.error({
+						title: 'Deleting Addon',
+						desc: err.message,
+						duration: 5
+					})
+				}
 				document.body.style.cursor = 'default'
-				console.log('Delete Addon Catch Error: ', err)
 			})
 		},
 		disablePlan (index) {
@@ -941,9 +1068,21 @@ export default {
 					document.body.style.cursor = 'default'
 				}
 			}).catch(err => {
+				if (err.message == 'Network Error') {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Disable Plan',
+						desc: 'API service unavailable.'
+					})
+				} else {
+					self.$Notice.error({
+						title: 'Disable Plan',
+						desc: err.message,
+						duration: 5
+					})
+				}
 				self.plans[index].status = 'active'
 				document.body.style.cursor = 'default'
-				console.log('Plan archived error ::', err)
 			})
 		},
 		disableAddon (index) {
@@ -978,9 +1117,21 @@ export default {
 					document.body.style.cursor = 'default'
 				}
 			}).catch(err => {
+				if (err.message == 'Network Error') {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Disable Addon',
+						desc: 'API service unavailable.'
+					})
+				} else {
+					self.$Notice.error({
+						title: 'Disable Addon',
+						desc: err.message,
+						duration: 5
+					})
+				}
 				self.plans[index].status = 'active'
 				document.body.style.cursor = 'default'
-				console.log('Addon archived error ::', err)
 			})
 		},
 		enablePlan (index) {
@@ -1015,9 +1166,21 @@ export default {
 					document.body.style.cursor = 'default'
 				}
 			}).catch(err => {
+				if (err.message == 'Network Error') {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Enable Plan',
+						desc: 'API service unavailable.'
+					})
+				} else {
+					self.$Notice.error({
+						title: 'Enable Plan',
+						desc: err.message,
+						duration: 5
+					})
+				}
 				self.plans[index].status = 'archived'
 				document.body.style.cursor = 'default'
-				console.log('Plan unarchived error ::', err)
 			})
 		},
 		enableAddon (index) {
@@ -1052,9 +1215,21 @@ export default {
 					document.body.style.cursor = 'default'
 				}
 			}).catch(err => {
+				if (err.message == 'Network Error') {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Enable Addon',
+						desc: 'API service unavailable.'
+					})
+				} else {
+					self.$Notice.error({
+						title: 'Enable Addon',
+						desc: err.message,
+						duration: 5
+					})
+				}
 				self.plans[index].status = 'archived'
 				document.body.style.cursor = 'default'
-				console.log('Addon unarchived error ::', err)
 			})
 		},
 		throwNewError (res) {

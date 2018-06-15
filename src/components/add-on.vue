@@ -62,7 +62,6 @@ export default {
 	},
 	mounted () {
 		let self = this
-		// console.log('ADDON ROW OPEN', this.row)
 		if (this.row.addons) {
 			let obj = this.row.addons.map(async (itm) => {
 				let addonDetails = await self.getAddonDetails(itm.id)

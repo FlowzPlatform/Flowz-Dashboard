@@ -71,29 +71,25 @@ export default {
 					key: 'status'
 				},
 				{
-					title: 'Pause / Resume Subscription',
+					title: 'ON OFF Subscription',
 					render: (h, params) => {
 						return h('div', [
-							h('Button', {
+							h('i-switch', {
 								props: {
-									type: 'text',
-									size: 'large',
-									icon: params.row.status === 'active' ? 'pause' : 'play'
-								},
-								style: {
-									marginRight: '3px',
-									padding: '0px',
-									fontSize: '20px'
+									size: 'small',
+									'true-value': 'active',
+									'false-value': 'paused',
+									'value': this.planList[params.index].status
 								},
 								on: {
-									click: () => {
+									'on-change': (status) => {
 										this.pauseSubscription(params)
 									}
 								}
 							}, '')
 						])
 					},
-					width: 210,
+					width: 160,
 					align: 'center'
 				}
 			],
@@ -102,28 +98,46 @@ export default {
 			moment: moment,
 			userDetails: null,
 			currentPage: 1,
-			pageSize: 10
+			pageSize: 10,
+			currentMsgInst: this.$store.state.currentMsgInst
 		}
 	},
 	methods: {
 		pauseSubscription (params) {
 			let status
+			let self = this
 			document.body.style.cursor = 'wait'
 			if (params.row.status === 'active') {
 				status = true
-				params.row.status = 'paused'
+				this.planList[params.index].status = 'paused'
 			} else if (params.row.status === 'paused') {
 				status = false
-				params.row.status = 'active'
+				this.planList[params.index].status = 'active'
 			}
 			cbSubscription.pauseSubscription(params.row.id, status).then(res => {
 				this.$Notice.success({
 					title: 'Subscription plan has been ' + params.row.status
 				})
-				console.log('RES FROM PAUSE Subscription ::', res)
 				document.body.style.cursor = 'default'
 			}).catch(err => {
-				console.log('ERR FROM PAUSE Subscription :: ', err)
+				if (err.message == 'Network Error') {
+					self.currentMsgInst = self.$Notice.error({
+						duration: 5,
+						title: 'Please try again after some time',
+						desc: 'API service unavailable.'
+					})
+				} else {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Please try again after some time',
+						desc: err.message
+					})
+				}
+				if (params.row.status === 'paused') {
+					this.planList[params.index].status = 'paused'
+				} else {
+					this.planList[params.index].status = 'active'
+				}
 				document.body.style.cursor = 'default'
 			})
 		},
@@ -166,6 +180,12 @@ export default {
 				Cookies.remove('access', {domain: location})
 				Cookies.remove('user', {domain: location})
 				self.$router.push({ name: 'login' })
+			} else if (err.message == 'Network Error') {
+				self.currentMsgInst = self.$Notice.error({
+					duration: 5,
+					title: 'Getting your plans',
+					desc: 'API service unavailable.'
+				})
 			} else {
 				self.$Notice.error({
 					duration: 5,
@@ -173,7 +193,6 @@ export default {
 					desc: err.message
 				})
 			}
-			console.log('>>>Getting user details', err)
 		})
 		cbSubscription.getOwn(self.userDetails._id).then(async res => {
 			// console.log('Res of cb-subscription:: ', res)
@@ -192,11 +211,19 @@ export default {
 				self.loading = false
 			})
 		}).catch(err => {
-			self.$Notice.error({
-				title: 'Getting your plans',
-				desc: err.message,
-				duration: 5
-			})
+			if (err.message == 'Network Error') {
+				self.currentMsgInst = self.$Notice.error({
+					duration: 5,
+					title: 'Getting your plans',
+					desc: 'API service unavailable.'
+				})
+			} else {
+				self.$Notice.error({
+					duration: 5,
+					title: 'Getting your plans',
+					desc: err.message
+				})
+			}
 			self.loading = false
 		})
 		// OLD CODE FOR SUBSCRIPTION

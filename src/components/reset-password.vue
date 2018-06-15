@@ -79,30 +79,6 @@ export default {
 							console.log(error.response)
 							self.$message.error(error.response.data)
 						})
-					// axios({
-					// method: 'post',
-					// url: "config.resetPasswordUrl",
-					// data: {
-					//     new_password: self.formValidate.newPassword.trim(),
-					//      token: forgetToken
-					// }
-					// })
-					// .then(function(response) {
-					//    // self.saveFileLoadingLogin = false;
-					//     console.log(response)
-					//     if (response.data.code == 200) {
-					//         self.$message.success(response.data.message);
-					//         self.login.email = ""
-					//     }
-					// })
-					// .catch(function(error) {
-					//     console.log("error-->", error.response)
-					//    // self.saveFileLoadingLogin = false;
-
-					//     self.$message.error(error.response.data);
-
-					// });
-					console.log(111)
 				} else {
 					this.$Message.error('Please enter correct inputs')
 				}

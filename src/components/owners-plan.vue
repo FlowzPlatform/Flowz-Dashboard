@@ -67,7 +67,8 @@ export default {
 			moment: moment,
 			userDetails: null,
 			currentPage: 1,
-			pageSize: 10
+			pageSize: 10,
+			currentMsgInst: this.$store.state.currentMsgInst
 		}
 	},
 	methods: {
@@ -84,7 +85,6 @@ export default {
 			return chunk.slice()
 		},
 		currentRow (currentRow) {
-			console.log('CurrentRow', currentRow)
 			this.$emit('selectedSubscription', [currentRow.id, currentRow.plan_id, currentRow.plan_unit_price, currentRow.next_billing_at])
 		},
 		async getPlanName (itm) {
@@ -118,7 +118,6 @@ export default {
 					desc: err.message
 				})
 			}
-			console.log('>>>Getting user details', err)
 		})
 		cbSubscription.getOwn(self.userDetails._id).then(async res => {
 			// console.log('Res of cb-subscription:: ', res)
@@ -137,11 +136,13 @@ export default {
 				self.loading = false
 			})
 		}).catch(err => {
-			self.$Notice.error({
-				duration: 5,
-				title: 'Getting your plans',
-				desc: err.message
-			})
+			if (self.currentMsgInst &&	!self.currentMsgInst.closed) {
+				self.$Notice.error({
+					duration: 5,
+					title: 'Getting your plans',
+					desc: err.message
+				})
+			}
 			self.loading = false
 		})
 

@@ -90,7 +90,8 @@ export default {
 			assuredSum: null,
 			planPrice: null,
 			addonPrice: null,
-			remainDays: null
+			remainDays: null,
+			currentMsgInst: this.$store.state.currentMsgInst
 		}
 	},
 	methods: {
@@ -122,12 +123,19 @@ export default {
 				this.$Spin.hide()
 			}).catch(err => {
 				this.$Spin.hide()
-				self.$Notice.error({
-					duration: 5,
-					title: 'Fetching subscription plans',
-					desc: err.message
-				})
-				console.log('ERR Getting Plan ::', err)
+				if (err.message == 'Network Error') {
+					self.currentMsgInst = self.$Notice.error({
+						duration: 5,
+						title: 'Fetching subscription plans',
+						desc: 'API service unavailable.'
+					})
+				} else {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Fetching subscription plans',
+						desc: err.message
+					})
+				}
 			})
 
 			// getting addon details from the chargeBee api
@@ -136,14 +144,14 @@ export default {
 				self.addOns = res.data.map(itm => {
 					return itm.addon
 				})
-				// console.log('Addon List', self.addOns);
 			}).catch(err => {
-				self.$Notice.error({
-					duration: 5,
-					title: 'Fetching subscription plans',
-					desc: err.message
-				})
-				console.log('ERR Getting Addon ::', err)
+				if (self.currentMsgInst &&	!self.currentMsgInst.closed) {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Fetching subscription plans',
+						desc: err.message
+					})
+				}
 			})
 			// OLD CODE FOR SUBSCRIPTION LIST
 			/* subscriptionPlans.get().then(res => {
@@ -259,7 +267,6 @@ export default {
 			this.planPrice = id[2]
 			this.addonPrice = details[0].price
 			this.assuredSum = id[2] + details[0].price
-			console.log('Remaining Days', moment.unix(id[3]).format())
 			this.remainDays = moment.unix(id[3]).diff(moment(), 'days')
 		}
 	},
