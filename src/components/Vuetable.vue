@@ -144,12 +144,13 @@ Vue.use(VueWidgets)
     				return response.data.data
     			})
     				.catch(function (error) {
-    					console.log('Get all roles error:', error)
-    					console.log(error.response.status)
-    					if (error.response.status == 403) {
+    					// console.log('Get all roles error:', error)
+    					// console.log(error.response.status)
+    					if (error.response.status == 500) {
+						let msg = error.response.data.message.substr(error.response.data.message.indexOf(':') + 1)
     						self.$Modal.warning({
     							title: 'Warning',
-    							content: 'You are not authorized to see Roles',
+    							content: msg + '.<br> You are <b>not authorized</b> to see ROLES',
     							onOk: () => {
     								self.$router.go(-1)
     							}

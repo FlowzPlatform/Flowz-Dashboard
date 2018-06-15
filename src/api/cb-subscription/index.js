@@ -15,6 +15,9 @@ export default {
 	getSubscribed: (id) => {
 		return api.request('get', '/' + model + '?limit=100&plan_id=' + id)
 	},
+	pauseSubscription: (id, pause) => {
+		return api.request('get', '/' + model + '/' + id + '?pause=' + pause)
+	},
 	post: (data) => {
 		return api.request('post', '/' + model, data)
 	},

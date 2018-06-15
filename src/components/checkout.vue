@@ -40,7 +40,7 @@
               <Row>
                 <Col>
                   <FormItem prop="cardNumber" label="CARD NUMBER">
-                    <Input v-model="payDetail.cardNumber" type="text" id="cardNumber" placeholder="Valid Card Number" icon="card"></Input>
+                    <Input v-model="payDetail.cardNumber" type="text" id="cardNumber" placeholder="Valid Card Number" icon="card" autocomplete="off"></Input>
                   </FormItem>
                 </Col>
               </Row>
@@ -102,10 +102,15 @@
           <div class="panel-footer">
             <Row type="flex" justify="space-around">
                 <Col span="5">
-                  <p v-if="mainData[1]" class="pay-info">PAY {{ mainData[1].price * mainData[0].period }} USD
-                  <Poptip slot="append" trigger="hover" title="Pay Info" placement="bottom" :content="'Basic Plan Validity Multiply By Addon Price( ' + mainData[0].period + ' * ' + mainData[1].price + ' = ' + mainData[1].price * mainData[0].period + ' )'">
+									<p v-if="mainData[1]" class="pay-info">PAY {{ mainData[1].price }} USD
+                  <Poptip slot="append" trigger="hover" title="Pay Info" placement="bottom" :content="'Total amount to be pay is ' + parseFloat(mainData[1].price / 30 * remainDays).toFixed(2) + '*' ">
                     <Icon type="help-circled"></Icon>
                   </Poptip></p>
+                  <!-- OLD CODE TO CALCULATE PAY AMOUNT -->
+									<!-- <p v-if="mainData[1]" class="pay-info">PAY {{ mainData[1].price * mainData[0].period }} USD
+                  <Poptip slot="append" trigger="hover" title="Pay Info" placement="bottom" :content="'Basic Plan Validity Multiply By Addon Price( ' + mainData[0].period + ' * ' + mainData[1].price + ' = ' + mainData[1].price * mainData[0].period + ' )'">
+                    <Icon type="help-circled"></Icon>
+                  </Poptip></p> -->
                 </Col>
                 <Col span="6">
                     <!-- set attribute to Col span="16" offset="4" 
@@ -147,7 +152,8 @@ import config from '../config'
 export default {
 	props: {
 		basicPlan: String,
-		basicSubId: String
+		basicSubId: String,
+		remainDays: Number
 	},
 	name: 'checkout',
 	data () {
@@ -236,6 +242,7 @@ export default {
 				msg: '',
 				class: ''
 			},
+			payAmount: null,
 			expiryMonth: [
 				{
 					value: '01',
@@ -289,7 +296,8 @@ export default {
 			expiryYear: [],
 			userDetails: null,
 			savedCard: false,
-			loadingPlans: true
+			loadingPlans: true,
+			currentMsgInst: this.$store.state.currentMsgInst
 		}
 	},
 	async mounted () {
@@ -337,7 +345,13 @@ export default {
 			}
 			// console.log('Res of customer details', res)
 		}).catch(err => {
-			console.log('Error While geting customer details', err)
+			if (self.currentMsgInst &&	!self.currentMsgInst.closed) {
+				self.$Notice.error({
+					duration: 5,
+					title: 'Getting customer details',
+					desc: err.message
+				})
+			}
 		})
 		this.mapData(data)
 		/* cbSubscription.get(self.userDetails._id).then(res => {
@@ -376,10 +390,11 @@ export default {
 	},
 	methods: {
 		getPlanDetails (id) {
+			let self = this
 			return cbPlan.get(id).then(res => {
-				// console.log('>>>>', id,res.data)
 				return res.data
 			}).catch(err => {
+				self.$Spin.hide()
 				if (err.response && err.response.data.message == 'User authentication fail') {
 					this.$Message.error({
 						content: 'Your session has been expired please login again.',
@@ -393,35 +408,51 @@ export default {
 					Cookies.remove('user', {domain: location})
 					self.$router.push({ name: 'login' })
 				} else {
-					self.$Notice.error({
-						duration: 5,
-						title: 'Fetching subscription plan',
-						desc: err.message
-					})
+					if (err.message == 'Network Error') {
+						self.currentMsgInst = self.$Notice.error({
+							duration: 5,
+							title: 'Fetching selected plan',
+							desc: 'API service unavailable.'
+						})
+					} else {
+						self.$Notice.error({
+							duration: 5,
+							title: 'Fetching selected plan',
+							desc: err.response.data.message
+						})
+					}
 				}
-				console.log('>>>Error geting subscriptions', err)
 			})
 		},
 		getAddonDetails (id) {
+			let self = this
 			return cbAddon.get(id).then(res => {
 				return res.data
 			}).catch(err => {
-				console.log('Error :: ', err)
+				if (self.currentMsgInst &&	!self.currentMsgInst.closed) {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Fetching selected addon',
+						desc: err.message
+					})
+				}
 			})
 		},
 		mapData (data) {
 			data.map((itm) => {
-				if (itm.description) { itm.description = itm.description.split('\n') }
-				itm.price /= 100
-				if (itm.meta_data && itm.meta_data.details) {
-					itm.details = _.chain(itm.meta_data.details).filter(function (o) {
-						o.value = parseInt(o.value)
-						return o.value > 0
-					}).map(function (d) {
-						let str = d.module.charAt(0).toUpperCase() + d.module.slice(1)
-						let str2 = d.service.charAt(0).toUpperCase() + d.service.slice(1)
-						return {'key': '<i class="ivu-icon ivu-icon-android-checkmark-circle"></i> <b>' + str + '</b> ' + str2, 'value': d.value}
-					}).value()
+				if (itm) {
+					if (itm.description) { itm.description = itm.description.split('\n') }
+					if (itm.price) { itm.price /= 100 }
+					if (itm.meta_data && itm.meta_data.details) {
+						itm.details = _.chain(itm.meta_data.details).filter(function (o) {
+							o.value = parseInt(o.value)
+							return o.value > 0
+						}).map(function (d) {
+							let str = d.module.charAt(0).toUpperCase() + d.module.slice(1)
+							let str2 = d.service.charAt(0).toUpperCase() + d.service.slice(1)
+							return {'key': '<i class="ivu-icon ivu-icon-android-checkmark-circle"></i> <b>' + str + '</b> ' + str2, 'value': d.value}
+						}).value()
+					}
 				}
 			})
 			this.mainData = data

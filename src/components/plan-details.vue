@@ -6,7 +6,7 @@
             <div style="font-size: x-large;">My Plan</div><br>
                 <Row>
                     <Col span="22" push="1">
-                        <Table :loading="loading" class='dataTable' :columns="planDetails" :data="planList" no-data-text="No Data"></Table>
+                        <Table :loading="loading" class='dataTable' :columns="planDetails" :data="planList" no-data-text="No Subscription Found"></Table>
                         <Page v-if="planListData.length > pageSize" style="margin-top:10px;" class="pull-right" :total="planListData.length" :page-size="pageSize" :current="currentPage" @on-change="changePage"></Page>
                     </Col>
                 </Row>
@@ -21,7 +21,7 @@ import cbPlan from '@/api/cb-plan'
 import Cookies from 'js-cookie'
 import addOn from './add-on.vue'
 import psl from 'psl'
-var moment = require('moment')
+let moment = require('moment')
 moment().format()
 
 export default {
@@ -51,11 +51,11 @@ export default {
 					key: 'plan_unit_price',
 					align: 'center'
 				},
-				{
+				/* {
 					title: 'Validity (Months)',
 					key: 'billing_period',
 					align: 'center'
-				},
+				}, */
 				{
 					title: 'Subscribed',
 					key: 'started_at',
@@ -69,6 +69,28 @@ export default {
 				{
 					title: 'Status',
 					key: 'status'
+				},
+				{
+					title: 'ON OFF Subscription',
+					render: (h, params) => {
+						return h('div', [
+							h('i-switch', {
+								props: {
+									size: 'small',
+									'true-value': 'active',
+									'false-value': 'paused',
+									'value': this.planList[params.index].status
+								},
+								on: {
+									'on-change': (status) => {
+										this.pauseSubscription(params)
+									}
+								}
+							}, '')
+						])
+					},
+					width: 160,
+					align: 'center'
 				}
 			],
 			planListData: [],
@@ -76,10 +98,49 @@ export default {
 			moment: moment,
 			userDetails: null,
 			currentPage: 1,
-			pageSize: 10
+			pageSize: 10,
+			currentMsgInst: this.$store.state.currentMsgInst
 		}
 	},
 	methods: {
+		pauseSubscription (params) {
+			let status
+			let self = this
+			document.body.style.cursor = 'wait'
+			if (params.row.status === 'active') {
+				status = true
+				this.planList[params.index].status = 'paused'
+			} else if (params.row.status === 'paused') {
+				status = false
+				this.planList[params.index].status = 'active'
+			}
+			cbSubscription.pauseSubscription(params.row.id, status).then(res => {
+				this.$Notice.success({
+					title: 'Subscription plan has been ' + params.row.status
+				})
+				document.body.style.cursor = 'default'
+			}).catch(err => {
+				if (err.message == 'Network Error') {
+					self.currentMsgInst = self.$Notice.error({
+						duration: 5,
+						title: 'Please try again after some time',
+						desc: 'API service unavailable.'
+					})
+				} else {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Please try again after some time',
+						desc: err.message
+					})
+				}
+				if (params.row.status === 'paused') {
+					this.planList[params.index].status = 'paused'
+				} else {
+					this.planList[params.index].status = 'active'
+				}
+				document.body.style.cursor = 'default'
+			})
+		},
 		async changePage (pageNo) {
 			this.planList = await this.makeChunk(pageNo, this.pageSize)
 		},
@@ -119,6 +180,12 @@ export default {
 				Cookies.remove('access', {domain: location})
 				Cookies.remove('user', {domain: location})
 				self.$router.push({ name: 'login' })
+			} else if (err.message == 'Network Error') {
+				self.currentMsgInst = self.$Notice.error({
+					duration: 5,
+					title: 'Getting your plans',
+					desc: 'API service unavailable.'
+				})
 			} else {
 				self.$Notice.error({
 					duration: 5,
@@ -126,7 +193,6 @@ export default {
 					desc: err.message
 				})
 			}
-			console.log('>>>Getting user details', err)
 		})
 		cbSubscription.getOwn(self.userDetails._id).then(async res => {
 			// console.log('Res of cb-subscription:: ', res)
@@ -145,11 +211,19 @@ export default {
 				self.loading = false
 			})
 		}).catch(err => {
-			self.$Notice.error({
-				title: 'Getting your plans',
-				desc: err.message,
-				duration: 5
-			})
+			if (err.message == 'Network Error') {
+				self.currentMsgInst = self.$Notice.error({
+					duration: 5,
+					title: 'Getting your plans',
+					desc: 'API service unavailable.'
+				})
+			} else {
+				self.$Notice.error({
+					duration: 5,
+					title: 'Getting your plans',
+					desc: err.message
+				})
+			}
 			self.loading = false
 		})
 		// OLD CODE FOR SUBSCRIPTION
