@@ -239,415 +239,376 @@
 
 <script>
 
-
 import Vue from 'vue'
 import Cookie from 'js-cookie'
-//import VueSession from 'vue-session'
-//Vue.use(VueSession)
-
+import $ from 'jquery'
 import axios from 'axios'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-
 import VueSession from 'vue-session'
 import config from '../../config/customConfig'
 // import { mapMutations } from "vuex";
-var psl = require('psl');
-
+let psl = require('psl')
 
 Vue.use(VueSession)
 
 Vue.use(ElementUI)
 Vue.use(psl)
 
-let baseUrl = config.feathersServiceBaseUrl;
-let facebookSuccessCallbackUrl = config.facebookSuccessCallbackUrl;
-
-
-let location = psl.parse(window.location.hostname)
-location = location.domain === null ? location.input : location.domain ;
-
-
 export default {
-  name: 'login',
-  data () {
-    return {
-    signup: {
-            fname: "",
-            lname:'',
-            password: "",
-            email: ""
-        },
-     varifyEmail : "",
-      saveFileLoading : false,
-      emailLoading : false,
-      obId : '',
-      saveFileLoadingLogin:false,
-      facebookSuccessCallbackUrl : config.facebookSuccessCallbackUrl,
-        googleSuccessCallbackUrl : config.googleSuccessCallbackUrl,
-        twitterSuccessCallbackUrl: config.twitterSuccessCallbackUrl,
-        githubSuccessCallbackUrl: config.githubSuccessCallbackUrl,
-        linkedInSuccessCallbackUrl: config.linkedInSuccessCallbackUrl,
-        loginWithFacebookUrl : config.loginWithFacebookUrl,
-        loginWithGoogleUrl : config.loginWithGoogleUrl,
-        loginWithTwitterUrl: config.loginWithTwitterUrl,
-        loginWithGithubUrl: config.loginWithGithubUrl,
-        loginWithLinkedInUrl: config.loginWithLinkedInUrl,
-      isSocialLogin : false,
-      register:{
-          fname:"",
-          lname:"",
-          email:""
-      },
-      login : {
-          email:"",
-          password:""
-      },
-      selectedTabIndex:0,
-      activeName: '1',
-      showForgotPassword : false
-    }
-  },
+	name: 'login',
+	data () {
+		return {
+			signup: {
+				fname: '',
+				lname: '',
+				password: '',
+				email: ''
+			},
+			varifyEmail: '',
+			saveFileLoading: false,
+			emailLoading: false,
+			obId: '',
+			saveFileLoadingLogin: false,
+			facebookSuccessCallbackUrl: config.facebookSuccessCallbackUrl,
+			googleSuccessCallbackUrl: config.googleSuccessCallbackUrl,
+			twitterSuccessCallbackUrl: config.twitterSuccessCallbackUrl,
+			githubSuccessCallbackUrl: config.githubSuccessCallbackUrl,
+			linkedInSuccessCallbackUrl: config.linkedInSuccessCallbackUrl,
+			loginWithFacebookUrl: config.loginWithFacebookUrl,
+			loginWithGoogleUrl: config.loginWithGoogleUrl,
+			loginWithTwitterUrl: config.loginWithTwitterUrl,
+			loginWithGithubUrl: config.loginWithGithubUrl,
+			loginWithLinkedInUrl: config.loginWithLinkedInUrl,
+			isSocialLogin: false,
+			register: {
+				fname: '',
+				lname: '',
+				email: ''
+			},
+			login: {
+				email: '',
+				password: ''
+			},
+			selectedTabIndex: 0,
+			activeName: '1',
+			showForgotPassword: false
+		}
+	},
 
-  created(){
-        let self = this;
-       var configObj = {};
-    //    console.log(window.location.search)
+	created () {
+		let self = this
 
-       var url = new URL(window.location.href);
-       var ob_id = url.searchParams.get("ob_id");
-    //    console.log(ob_id);
-        if(ob_id  && ob_id != undefined)
-        {
-            this.obId = ob_id;
-            self.isSocialLogin = true;
+		var url = new URL(window.location.href)
+		var obId = url.searchParams.get('ob_id')
+		if (obId && obId != undefined) {
+			this.obId = obId
+			self.isSocialLogin = true
+		}
+	},
 
-        }
+	methods: {
 
-  },
+		forgotPassword () {
+			// let params = new URLSearchParams(document.location.href)
+			// console.log(params)
+			// let name = params.get('ob_id') // is the string "Jonathan"
+			this.showForgotPassword = true
+		},
 
+		forgotPasswordSendEmail: async function () {
+			let self = this
+			let emailValidator = await this.validateEmail(self.login.email)
+			// console.log(emailValidator)
 
+			if (self.login.email == '') {
+				self.$message.warning('email field is required')
+			} else if (emailValidator == false) {
+				self.$message.warning('Email is not valid')
+			} else {
+				self.saveFileLoadingLogin = true
+				axios.post(config.forgotPasswordUrl, {
+					email: self.login.email.trim(),
+					url: config.resetPasswordRedirectUrl
+					// url: "http://localhost:8082/reset-password"
+				})
+					.then(function (response) {
+						self.saveFileLoadingLogin = false
+						// console.log(response)
+						if (response.data.code == 200) {
+							self.$message.success(response.data.message)
+							self.login.email = ''
+						}
+					})
+					.catch(function (error) {
+						// console.log('error-->', error.response)
+						self.saveFileLoadingLogin = false
+						self.$message.error(error.response.data)
+					})
+			}
+		},
+		backtoLogin () {
+			this.showForgotPassword = false
+		},
 
-   methods: {
+		async  getTokenFromSocialLogin () {
+			let self = this
+			let valid = await this.validateEmail(this.varifyEmail)
+			if (!valid) {
+				this.$message.warning('Please enter a valid email address')
+			} else {
+				this.emailLoading = true
+				axios.post(config.varifyEmailUrl, {
+					email: this.varifyEmail,
+					id: this.obId
+				})
+					.then(function (response) {
+						self.emailLoading = false
+						// console.log(response)
+						self.saveFileLoadingLogin = false
 
-       forgotPassword(){
-             let params = new URLSearchParams(document.location.href);
-        console.log(params)
-        let name = params.get("ob_id"); // is the string "Jonathan"
+						axios({
+							method: 'get',
+							url: config.userDetail,
+							headers: {'Authorization': response.data.logintoken}
+						})
+							.then(function (result) {
+								// console.log(result)
+								let location = psl.parse(window.location.hostname)
+								location = location.domain === null ? location.input : location.domain
+								Cookie.set('user', result.data.data.email, {domain: location})
+								Cookie.set('auth_token', response.data.logintoken, {domain: location})
 
-        // alert(name)
-            this.showForgotPassword = true;
-        },
+								if (response.data.data.package !== undefined) {
+									self.$router.push('/')
+								} else {
+									self.$router.push('/subscription-list')
+								}
+							})
+					}).catch(function (error) {
+						self.emailLoading = false
+						// console.log(error.response)
+						if (error.response.status == 409) {
+							self.$message.error(error.response.data)
+						}
+					})
+			}
+		},
+		tabsClicked (val) {
+			this.login.email = ''
+			this.login.password = ''
+			// console.log('value is:', val.index)
+			this.selectedTabIndex = val.index
+		},
+		showLogin: async function (targetName, action) {
+			$('.lundcon').addClass('sing')
+		},
+		showRegister: async function (targetName, action) {
+			$('.lundcon').removeClass('sing')
+		},
+		submitFb: function () {
+			this.$store.commit('FB_SIGN_IN', true)
+			$('#form-facebook').submit()
+		},
+		submitGoogle: function () {
+			this.$store.commit('GOOGLE_SIGN_IN', true)
+			$('#form-google').submit()
+		},
+		submitTwitter: function () {
+			$('#form-twitter').submit()
+		},
+		submitLinkedin: function () {
+			$('#form-linkedin').submit()
+		},
+		submitGithub: function () {
+			$('#form-github').submit()
+		},
+		//    registerUser: async function(){
+		//        let self = this;
+		//        let emailValidator = await this.validateEmail(self.register.email);
+		//        console.log('Email Validator', emailValidator)
+		//       if(self.register.fname == ""){
+		//            self.$message.warning("First Name is required");
+		//        }else if(self.register.lname == ""){
+		//            self.$message.warning("Last Name is required");
+		//        }else if(self.register.email == ""){
+		//            self.$message.warning("Email is required");
+		//        }else if(emailValidator == false){
+		//            self.$message.warning("Email is not valid");
+		//        }else{
+		//            self.saveFileLoading = true;
+		//            console.log('Registartion URL', config.registrationUrl)
+		//            axios.post(config.registrationUrl, {
+		//             firstName: self.register.fname.trim(),
+		//             lastName: self.register.lname.trim(),
+		//             email: self.register.email.trim()
+		//         })
+		//         .then(function (response) {
+		//             console.log("Response",response)
+		//             if(response.status == 200){
+		//                 self.saveFileLoading = false;
+		//                 //alert(response.data.message+", please check your email for password")
+		//                 self.$message({
+		//                     message : " please check your email for password",
+		//                     type: 'success'
+		//                 });
+		//                  $('.lundcon').addClass('sing');
+		//             }else{
+		//                // alert(response.data.error)
+		//                self.saveFileLoading = false;
+		//                self.$message({
+		//                 message: response.data.error,
+		//                 type: 'warning'
+		//                 });
+		//             }
+		//         })
+		//         .catch(function (error) {
+		//             console.log('Error', error.response.data)
+		//             // this.login.password = ''
+		//             // console.log(error);
+		//             self.saveFileLoading = false;
+		//             //alert(error);
+		//             self.$message.error(error.response.data);
+		//         });
+		//        }
+		//    },
 
-        forgotPasswordSendEmail: async function() {
-            let self = this;
-            let emailValidator = await this.validateEmail(self.login.email);
-            console.log(emailValidator);
+		signupUser: async function () {
+			let self = this
+			let emailValidator = await this.validateEmail(self.signup.email)
+			console.log(emailValidator)
+			if (self.signup.fname == '') {
+				self.$message.warning('First name is required')
+			} else if (self.signup.lname == '') {
+				self.$message.warning('Last name is required')
+			} else if (self.signup.email == '') {
+				self.$message.warning('email is required')
+			} else if (emailValidator == false) {
+				self.$message.warning('Email is not valid')
+			} else if (self.signup.password == '') {
+				self.$message.warning('password is required')
+			} else {
+				self.saveFileLoading = true
+				axios.post(config.signupUrl, {
+					email: self.signup.email.trim(),
+					password: self.signup.password.trim(),
+					firstname: self.signup.fname.trim(),
+					lastname: self.signup.lname.trim()
+				})
+					.then(function (response) {
+						console.log(response)
+						if (response.data.code == 200) {
+							self.saveFileLoading = false
+							// alert(response.data.message+", please check your email for password")
+							self.$message({
+								message: response.data.message,
+								type: 'success'
+							})
 
-            if (self.login.email == "") {
-                self.$message.warning("email field is required");
-            } else if (emailValidator == false) {
-                self.$message.warning("Email is not valid");
-            } else {
-                self.saveFileLoadingLogin = true;
-                axios.post(config.forgotPasswordUrl, {
-                        email: self.login.email.trim(),
-                         url: config.resetPasswordRedirectUrl
-                      // url: "http://localhost:8082/reset-password"
-                    })
-                    .then(function(response) {
-                        self.saveFileLoadingLogin = false;
-                        console.log(response)
-                        if (response.data.code == 200) {
-                            self.$message.success(response.data.message);
-                            self.login.email = ""
-                        }
-                    })
-                    .catch(function(error) {
-                        console.log("error-->", error.response)
-                        self.saveFileLoadingLogin = false;
+							self.signup.email = ''
+							self.signup.password = ''
+							self.signup.fname = ''
+							self.signup.lname = ''
 
-                        self.$message.error(error.response.data);
+							$('.lundcon').addClass('sing')
+						} else {
+							self.saveFileLoading = false
+							self.$message({
+								message: response.data.error,
+								type: 'warning'
+							})
+						}
+					})
+					.catch(function (error) {
+						// this.login.password = ''
+						console.log(error.response)
+						// self.saveFileLoading = false;
+						// alert(error);
 
-                    });
-            }
-        },
-        backtoLogin(){
-            this.showForgotPassword = false;
-        },
+						if (error.response.status == 409) {
+							self.$message.error(error.response.data)
+						} else {
+							self.$message.error('Something went wrong , Please try again later')
+						}
+					})
+			}
+		},
 
-    async  getTokenFromSocialLogin(){
-                let self = this
-                let valid = await this.validateEmail(this.varifyEmail); ;
-                if(!valid){
-                    this.$message.warning("Please enter a valid email address")
-                }else{
-                    this.emailLoading = true;
-                    axios.post(config.varifyEmailUrl, {
-                        email: this.varifyEmail,
-                        id: this.obId
-                    })
-                    .then(function(response) {
-                        self.emailLoading = false ;
-                        console.log(response)
-                        self.saveFileLoadingLogin = false;
+		loginUser: async function () {
+			let self = this
+			let emailValidator = await this.validateEmail(self.login.email)
+			//    console.log('emailvalidator', emailValidator);
 
-                        axios({
-                            method: 'get',
-                            url: config.userDetail,
-                            headers: {'Authorization': response.data.logintoken}
-                        })
-                        .then(function(result) {
-                            console.log(result)
-                            let location = psl.parse(window.location.hostname)
-                            location = location.domain === null ? location.input : location.domain
-                             Cookie.set('user',  result.data.data.email  , {domain: location});
-                              Cookie.set('auth_token', response.data.logintoken , {domain: location});
+			if (self.login.email == '') {
+				self.$message.warning('email field is required')
+			} else if (self.login.password == '') {
+				self.$message.warning('password field is required')
+			} else if (emailValidator == false) {
+				self.$message.warning('Email is not valid')
+			} else {
+				self.saveFileLoadingLogin = true
+				//  console.log('login URL:', config.loginUrl)
+				axios.post(this.selectedTabIndex == 0 ? config.loginUrl : config.ldapLoginUrl, {email: self.login.email.trim(),
+					password: self.login.password.trim()})
+					.then(function (response) {
+						axios({
+							method: 'get',
+							url: config.userDetail,
+							headers: {'Authorization': response.data.logintoken}
+						})
+							.then(function (result) {
+								let location = psl.parse(window.location.hostname)
+								location = location.domain === null ? location.input : location.domain
+								Cookie.set('user', result.data.data.email, {domain: location})
+								Cookie.set('auth_token', response.data.logintoken, {domain: location})
 
-                            if(response.data.data.package !== undefined) {
-                              self.$router.push('/');
-                            } else {
-                              self.$router.push('/subscription-list');
-                            }
+								if (result.data.data.package !== undefined) {
+									self.$router.push('/')
+								} else {
+									self.$router.push('/subscription-list')
+								}
+								// self.$router.push('/');
+							})
 
+						// //    console.log('Login response:',response);
 
-                        })
-                    }).catch(function(error){
-                        self.emailLoading = false ;
-                       console.log(error.response)
-                       if(error.response.status == 409){
-                            self.$message.error(error.response.data)
-                        }
-                    })
-                }
+						//    let email = self.login.email.trim().split('@');
+						// //    console.log('Email',email);
+						//    self.$store.commit('SET_LOGIN_USER', email[0]);
+						//    self.saveFileLoadingLogin = false;
+						//     //self.$session.set('auth_token', response.data.logintoken)
+						//     let location = psl.parse(window.location.hostname)
+						//     location = location.domain === null ? location.input : location.domain
+						//     //   location = location.domain === null ? location.input : location.domain
+						//     //   console.log('Cookie :', Vue.cookie)
+						//     //   Vue.cookie.set('auth_token', token, {expires: 1, domain: location});
+						//     // console.log('domain', location.domain);
+						//     // location = location.domain === null ? location.input : location.domain ;
+						//      alert(response.data.logintoken)
 
+						//     Cookies.set('auth_token', response.data.logintoken , {domain: location});
+						//     // Cookie.set('auth_token', response.data.logintoken, {expires: 1, domain: location});
+						//     self.$router.push({path: '/dashboard'})
 
-        },
-    tabsClicked(val){
-                this.login.email = ''
-                this.login.password = ''
-                console.log('value is:',val.index);
-                this.selectedTabIndex = val.index;
-        },
-       showLogin : async function(targetName, action){
-           $('.lundcon').addClass('sing');
-       },
-       showRegister : async function(targetName, action){
-           $('.lundcon').removeClass('sing');
-       },
-       submitFb : function(){
-            this.$store.commit("FB_SIGN_IN",true)
-           $("#form-facebook").submit();
-       },
-       submitGoogle : function(){
-           this.$store.commit("GOOGLE_SIGN_IN",true)
-           $("#form-google").submit();
-        },
-        submitTwitter : function(){
-
-           $("#form-twitter").submit();
-        },
-        submitLinkedin : function(){
-
-           $("#form-linkedin").submit();
-        },
-        submitGithub : function(){
-
-           $("#form-github").submit();
-        },
-    //    registerUser: async function(){
-    //        let self = this;
-    //        let emailValidator = await this.validateEmail(self.register.email);
-    //        console.log('Email Validator', emailValidator)
-    //       if(self.register.fname == ""){
-    //            self.$message.warning("First Name is required");
-    //        }else if(self.register.lname == ""){
-    //            self.$message.warning("Last Name is required");
-    //        }else if(self.register.email == ""){
-    //            self.$message.warning("Email is required");
-    //        }else if(emailValidator == false){
-    //            self.$message.warning("Email is not valid");
-    //        }else{
-    //            self.saveFileLoading = true;
-    //            console.log('Registartion URL', config.registrationUrl)
-    //            axios.post(config.registrationUrl, {
-    //             firstName: self.register.fname.trim(),
-    //             lastName: self.register.lname.trim(),
-    //             email: self.register.email.trim()
-    //         })
-    //         .then(function (response) {
-    //             console.log("Response",response)
-    //             if(response.status == 200){
-    //                 self.saveFileLoading = false;
-    //                 //alert(response.data.message+", please check your email for password")
-    //                 self.$message({
-    //                     message : " please check your email for password",
-    //                     type: 'success'
-    //                 });
-    //                  $('.lundcon').addClass('sing');
-    //             }else{
-    //                // alert(response.data.error)
-    //                self.saveFileLoading = false;
-    //                self.$message({
-    //                 message: response.data.error,
-    //                 type: 'warning'
-    //                 });
-    //             }
-    //         })
-    //         .catch(function (error) {
-    //             console.log('Error', error.response.data)
-    //             // this.login.password = ''
-    //             // console.log(error);
-    //             self.saveFileLoading = false;
-    //             //alert(error);
-    //             self.$message.error(error.response.data);
-    //         });
-    //        }
-    //    },
-
-          signupUser:async function(){
-            let self = this;
-           let emailValidator = await this.validateEmail(self.signup.email);
-           console.log(emailValidator)
-          if(self.signup.fname == ""){
-               self.$message.warning("First name is required");
-           }else if(self.signup.lname == ""){
-               self.$message.warning("Last name is required");
-           }else if(self.signup.email == ""){
-               self.$message.warning("email is required");
-           }else if(emailValidator == false){
-               self.$message.warning("Email is not valid");
-           }else if(self.signup.password == ""){
-               self.$message.warning("password is required");
-           }else{
-               self.saveFileLoadingLogin = true;
-               axios.post(config.signupUrl, {
-                email: self.signup.email.trim(),
-                password: self.signup.password.trim(),
-                firstname: self.signup.fname.trim(),
-                lastname : self.signup.lname.trim()
-            })
-            .then(function (response) {
-                console.log(response);
-                self.saveFileLoadingLogin = false;
-                if(response.data.code == 200){
-                    self.saveFileLoading = false;
-                    //alert(response.data.message+", please check your email for password")
-                    self.$message({
-                        message : response.data.message,
-                        type: 'success'
-                    });
-
-                    self.signup.email = '';
-                    self.signup.password = "";
-                    self.signup.fname = "";
-                    self.signup.lname = "";
-                    
-                     $('.lundcon').addClass('sing');
-                }else{
-                    
-                   self.$message({
-                    message: response.data.error,
-                    type: 'warning'
-                    });
-                }
-            })
-            .catch(function (error) {
-                 self.saveFileLoadingLogin = false;
-                // this.login.password = ''
-                 console.log(error.response);
-                //self.saveFileLoading = false;
-                //alert(error);
-
-                if(error.response.status == 409){
-                    self.$message.error(error.response.data);
-                }else{
-                    self.$message.error("Something went wrong , Please try again later");
-                }
-
-            });
-           }
-          },
-
-       loginUser: async function(){
-           let self = this;
-           let emailValidator = await this.validateEmail(self.login.email);
-        //    console.log('emailvalidator', emailValidator);
-
-           if(self.login.email == ""){
-               self.$message.warning("email field is required");
-           }else if(self.login.password == ""){
-               self.$message.warning("password field is required");
-           }else if(emailValidator == false){
-               self.$message.warning("Email is not valid");
-           }else{
-             self.saveFileLoadingLogin = true;
-            //  console.log('login URL:', config.loginUrl)
-             axios.post(this.selectedTabIndex==0? config.loginUrl:config.ldapLoginUrl , {email: self.login.email.trim(),
-                    password: self.login.password.trim()})
-            .then(function (response) {
-
-                axios({
-                            method: 'get',
-                            url: config.userDetail,
-                            headers: {'Authorization': response.data.logintoken}
-                        })
-                        .then(function(result) {
-                            let location = psl.parse(window.location.hostname)
-                            location = location.domain === null ? location.input : location.domain
-                            Cookie.set('user',  result.data.data.email  , {domain: location});
-                            Cookie.set('auth_token', response.data.logintoken , {domain: location});
-
-                            if(result.data.data.package !== undefined) {
-                              self.$router.push('/');
-                            } else {
-                              self.$router.push('/subscription-list');
-                            }
-                            // self.$router.push('/');
-                        })
-
-
-            // //    console.log('Login response:',response);
-
-            //    let email = self.login.email.trim().split('@');
-            // //    console.log('Email',email);
-            //    self.$store.commit('SET_LOGIN_USER', email[0]);
-            //    self.saveFileLoadingLogin = false;
-            //     //self.$session.set('auth_token', response.data.logintoken)
-            //     let location = psl.parse(window.location.hostname)
-            //     location = location.domain === null ? location.input : location.domain
-            //     //   location = location.domain === null ? location.input : location.domain
-            //     //   console.log('Cookie :', Vue.cookie)
-            //     //   Vue.cookie.set('auth_token', token, {expires: 1, domain: location});
-            //     // console.log('domain', location.domain);
-            //     // location = location.domain === null ? location.input : location.domain ;
-            //      alert(response.data.logintoken)
-
-            //     Cookies.set('auth_token', response.data.logintoken , {domain: location});
-            //     // Cookie.set('auth_token', response.data.logintoken, {expires: 1, domain: location});
-            //     self.$router.push({path: '/dashboard'})
-
-
-            //     // console.log('before call dashboard');
-            //     // self.$router.push('/');
-            })
-            .catch(function (error) {
-                // console.log("error-->",error.response)
-                self.saveFileLoadingLogin = false;
-                if(!error.response || error.response != undefined){
-                    self.$message.error(error.response.data)
-                }else{
-                    self.$message.error("email or password is incorrect");
-                }
-
-            });
-           }
-       },
-        validateEmail(email) {
-        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(email);
-        }
-   }
+						//     // console.log('before call dashboard');
+						//     // self.$router.push('/');
+					})
+					.catch(function (error) {
+						// console.log("error-->",error.response)
+						self.saveFileLoadingLogin = false
+						if (!error.response || error.response != undefined) {
+							self.$message.error(error.response.data)
+						} else {
+							self.$message.error('email or password is incorrect')
+						}
+					})
+			}
+		},
+		validateEmail (email) {
+			var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ //eslint-disable-line
+			return re.test(email)
+		}
+	}
 }
 </script>
 
