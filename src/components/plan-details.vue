@@ -116,7 +116,7 @@ export default {
 			}
 			cbSubscription.pauseSubscription(params.row.id, status).then(res => {
 				this.$Notice.success({
-					title: 'Subscription plan has been ' + params.row.status
+					title: 'Subscription plan has been ' + self.planList[params.index].status
 				})
 				document.body.style.cursor = 'default'
 			}).catch(err => {

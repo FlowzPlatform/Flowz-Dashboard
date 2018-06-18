@@ -48,6 +48,9 @@
       <div style="clear: both"></div>
     </section>
   </section>
+	<div v-if="basicPlans.length === 0 && addOns.length === 0" class="type-header setMiddle">
+		<p>Sorry, Plans And Addons Not Available!</p>
+	</div>
   <Modal title="My Plan" v-model="showPlanSelection" :mask-closable="false" @on-ok="makeAddon()" width="60%" :loading="validateModal">
     <p style="margin-bottom:0px">Select basic plan which you wants to extend.</p>
     <!-- component owners-plan.vue imported -->
@@ -304,6 +307,18 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   vertical-align: top;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
+}
+
+.setMiddle{
+    width: 100%;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    margin: auto;
+    position: absolute;
+    -ms-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
 }
 
 body {
