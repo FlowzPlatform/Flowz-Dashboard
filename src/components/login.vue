@@ -58,12 +58,12 @@
                         <icon name="twitter"></icon>
                       </span>
                       </Tooltip>
-                      -
+                      <!-- -
                       <Tooltip content="Login with linkdin">
                       <span class="linkedin" @click="submitLinkedin()">
                         <icon name="linkedin"></icon>
                       </span> 
-                        </Tooltip>
+                        </Tooltip> -->
                         -
                       <Tooltip content="Login with github">
 
@@ -154,12 +154,12 @@
                         <icon name="twitter"></icon>
                       </span>
                       </Tooltip>
-                      -
+                      <!-- -
                        <Tooltip content="Login with linkdin">
                       <span class="linkedin" @click="submitLinkedin()">
                         <icon name="linkedin"></icon>
                       </span>
-                       </Tooltip>
+                       </Tooltip> -->
                       -
                       <Tooltip content="Login with github">
                       <span class="github" @click="submitGithub()">
