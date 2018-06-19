@@ -1,6 +1,6 @@
 <template>
   <div id="addOnDetails">
-      <Table :loading="loading" :columns="addOnDetails" :data="addOnList" no-data-text="Add-on plan not found"></Table>
+      <Table :loading="loading" :columns="addonColumn" :data="addOnList" no-data-text="Add-on plan not found"></Table>
       <Page v-if="addOnListData.length > pageSize" size="small" show-total style="margin-top:10px;" class="pull-right" :total="addOnListData.length" :page-size="pageSize" :current="currentPage" @on-change="changePage"></Page>
   </div>
 </template>
@@ -14,11 +14,66 @@ moment().format()
 export default {
 	name: 'addOnDetails',
 	props: {
-		row: Object
+		row: Object,
+		userDetail: Boolean
 	},
 	data () {
 		return {
-			addOnDetails: [
+			addOnAdminDetails: [
+				{
+					type: 'index',
+					width: 40
+				},
+				{
+					title: 'Add-on',
+					key: 'name'
+				},
+				{
+					title: 'Price',
+					key: 'price',
+					align: 'center',
+					sortable: true
+				},
+				{
+					title: 'Quantity',
+					key: 'period',
+					align: 'center',
+					sortable: true
+				},
+				{
+					title: 'Description',
+					key: 'description',
+					align: 'center'
+				},
+				{
+					title: 'Status',
+					key: 'status',
+					align: 'center',
+					filters: [
+						{
+							label: 'Active',
+							value: 1
+						},
+						{
+							label: 'Archived',
+							value: 2
+						}
+					],
+					filterMultiple: false,
+					filterMethod (value, row) {
+						if (value === 1) {
+							if (row.status == 'active') {
+								return row.status
+							}
+						} else if (value === 2) {
+							if (row.status == 'archived') {
+								return row.status
+							}
+						}
+					}
+				}
+			],
+			addOnClientDetails: [
 				{
 					title: 'Add-on',
 					key: 'name'
@@ -29,11 +84,17 @@ export default {
 					align: 'center'
 				},
 				{
+					title: 'Purchased Quantity',
+					key: 'quantity',
+					align: 'center'
+				},
+				{
 					title: 'Validity (Months)',
 					key: 'period',
 					align: 'center'
 				}
 			],
+			addonColumn: [],
 			loading: true,
 			addOnListData: [],
 			addOnList: [],
@@ -56,6 +117,7 @@ export default {
 		},
 		getAddonDetails (id) {
 			return cbAddon.get(id).then(res => {
+				console.log('res >>>>>>>>>>>>>', res)
 				return res.data
 			})
 		}
@@ -66,8 +128,9 @@ export default {
 		if (this.row.addons) {
 			let obj = this.row.addons.map(async (itm) => {
 				let addonDetails = await self.getAddonDetails(itm.id)
-				console.log('addon details::', addonDetails)
+				// console.log('addon details::', addonDetails)
 				addonDetails.price /= 100
+				addonDetails.quantity = itm.quantity
 				return addonDetails
 			})
 			Promise.all(obj).then(async res => {
@@ -75,6 +138,11 @@ export default {
 				self.addOnList = await self.makeChunk(self.currentPage, self.pageSize)
 				self.loading = false
 			})
+			if (this.userDetail == true) {
+				this.addonColumn = this.addOnAdminDetails
+			} else {
+				this.addonColumn = this.addOnClientDetails
+			}
 		} else {
 			self.loading = false
 		}

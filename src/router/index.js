@@ -10,6 +10,7 @@ import checkout from '@/components/checkout'
 import planDetails from '@/components/plan-details'
 import Vuetable from '@/components/Vuetable'
 import resetpassword from '@/components/reset-password'
+import subscriberdetails from '@/components/subscriber-user-list'
 
 Vue.use(Router)
 
@@ -69,6 +70,12 @@ export default new Router({
 					path: '/acl',
 					name: 'acl',
 					component: Vuetable,
+					meta: { requiresAuth: true }
+				},
+				{
+					path: '/subscriberdetails',
+					name: 'subscriberdetails',
+					component: subscriberdetails,
 					meta: { requiresAuth: true }
 				}
 			]

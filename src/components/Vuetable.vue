@@ -88,7 +88,8 @@ Vue.use(VueWidgets)
     			fields: [],
     			permissionsAll: [],
     			count: 0,
-    			showOverlay: false
+			showOverlay: false,
+			currentMsgInst: this.$store.state.currentMsgInst
     		}
     	},
     	methods: {
@@ -146,15 +147,19 @@ Vue.use(VueWidgets)
     				.catch(function (error) {
     					console.log('Get all roles error:', error)
     					console.log(error.response.status)
-    					if (error.response.status == 403) {
-    						self.$Modal.warning({
-    							title: 'Warning',
-    							content: 'You are not authorized to see Roles',
-    							onOk: () => {
-    								self.$router.go(-1)
-    							}
-    						})
-    					}
+    					if (error.response.status == 500) {
+						let msg = error.response.data.message.substr(error.response.data.message.indexOf(':') + 1)
+						console.log('ERROR msg', msg)
+						if (msg === ' Permission not available for action') {
+							self.currentMsgInst = self.$Modal.warning({
+								title: 'Warning',
+								content: msg + '.<br> You are <b>not authorized</b> to see ROLES.',
+								onOk: () => {
+									self.$router.go(-1)
+								}
+							})
+						}
+					}
     				})
     		},
     		callTaskList: async function () {

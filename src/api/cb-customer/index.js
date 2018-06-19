@@ -6,7 +6,7 @@ export default {
 		if (id != undefined) {
 			return api.request('get', '/' + model + '/' + id)
 		} else {
-			return api.request('get', '/' + model)
+			return api.request('get', '/' + model + '?limit=100')
 		}
 	},
 	post: (data) => {
