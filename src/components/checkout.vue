@@ -587,13 +587,43 @@ export default {
 				}
 				let result // eslint-disable-line no-unused-vars
 				if (self.basicPlan != undefined) {
+					// cbSubscription call to get already subscribed addon quantity
+					let quantity = await cbSubscription.get(self.basicPlan).then(res => {
+						if (res.data.api_error_code) {
+							self.throwNewError(res)
+							return res
+						} else {
+							let addonObj = _.filter(res.data.subscription.addons, { 'id': self.sub_id })
+							return addonObj.length > 0 ? addonObj[0].quantity + 1 : 1
+						}
+					}).catch(err => {
+						if (err.message == 'Network Error') {
+							self.currentMsgInst = self.$Notice.error({
+								duration: 5,
+								title: 'Purchasing addon',
+								desc: 'API service unavailable.'
+							})
+						} else {
+							self.currentMsgInst = self.$Notice.error({
+								duration: 5,
+								title: 'Purchasing addon',
+								desc: err.message
+							})
+						}
+						return err
+					})
 					// IF CHANGES IN subDetails OBJECT THEN ALSO CHANGE CODE OF AN CB-SUBSCRIPTION's UPDATE METHOD
-					subDetails = {
-						'addons': [{
-							'id': self.sub_id
-						}]
+					if (!isNaN(quantity)) {
+						subDetails = {
+							'addons': [{
+								'id': self.sub_id,
+								'quantity': quantity
+							}]
+						}
+						result = await self.subscribeCbAddon(subDetails)
+					} else {
+						self.payloading = false
 					}
-					result = await self.subscribeCbAddon(subDetails)
 				} else {
 					result = await self.subscribeCbPlan(subDetails)
 				}
@@ -614,8 +644,13 @@ export default {
 					}
 					self.payloading = false
 				}).catch(err => {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Purchasing plan',
+						desc: err.message
+					})
 					self.updatePayMessage('alert alert-danger', 'Error..! ', null)
-					console.log('Error while subscribing plan:: ', err)
+					// console.log('Error while subscribing plan:: ', err)
 					self.payloading = false
 				})
 			} else {
@@ -627,8 +662,13 @@ export default {
 					}
 					self.payloading = false
 				}).catch(err => {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Purchasing plan',
+						desc: err.message
+					})
 					self.updatePayMessage('alert alert-danger', 'Error..! ', null)
-					console.log('Error while sub for customer:: ', err)
+					// console.log('Error while sub for customer:: ', err)
 					self.payloading = false
 				})
 			}
@@ -643,8 +683,15 @@ export default {
 				}
 				self.payloading = false
 			}).catch(err => {
+				if (self.currentMsgInst &&	!self.currentMsgInst.closed) {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Purchasing addon',
+						desc: err.message
+					})
+				}
 				self.updatePayMessage('alert alert-danger', 'Error..! ', null)
-				console.log('Error while subscribeCbAddon() ', err)
+				// console.log('Error while subscribeCbAddon() ', err)
 				self.payloading = false
 			})
 		},

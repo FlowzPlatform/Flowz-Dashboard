@@ -3,7 +3,12 @@
     <Col span="14" push="5">
         <Card>
             <!-- <h3>Thank You for Subscribing...!</h3> -->
-            <div style="font-size: x-large;">My Plan</div><br>
+            <div style="font-size: x-large;">
+				My Plan
+				<div class="pull-right">
+					<Button disabled type="ghost" @click="showCardDetails = true" shape="circle" icon="card">Update Card Details</Button>
+				</div>
+			</div><br>
                 <Row>
                     <Col span="22" push="1">
                         <Table :loading="loading" class='dataTable' :columns="planDetails" :data="planList" no-data-text="No Subscription Found"></Table>
@@ -12,6 +17,9 @@
                 </Row>
         </Card>
     </Col>
+	<Modal title="Change Card Details" v-model="showCardDetails" :mask-closable="false" @on-ok="updateCardDetails()" width="60%" :loading="validateModal">
+		<div slot="footer"></div>
+  	</Modal>
 </Row>
 </template>
 <script>
@@ -99,7 +107,9 @@ export default {
 			userDetails: null,
 			currentPage: 1,
 			pageSize: 10,
-			currentMsgInst: this.$store.state.currentMsgInst
+			currentMsgInst: this.$store.state.currentMsgInst,
+			showCardDetails: false,
+			validateModal: false
 		}
 	},
 	methods: {
