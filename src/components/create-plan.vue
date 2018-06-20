@@ -816,7 +816,7 @@ export default {
 				planDefinition.name = 'Addon'
 				planDefinition.invoice_name = 'Addon'
 			}
-			planDefinition.type = 'on_off'
+			planDefinition.type = 'quantity'
 			planDefinition.period_unit = 'month'
 			planDefinition.charge_type = 'recurring'
 			// delete planDefinition.status;
