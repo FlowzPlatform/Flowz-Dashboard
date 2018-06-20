@@ -477,7 +477,7 @@ export default {
 			this.payDetail.expiryMM = splited[1]
 		},
 		backFunction () {
-			this.$router.push('/subscription-list')
+			this.$router.go(-1)
 		},
 		updatePayMessage (cls, type, msg) {
 			this.payDone = true
@@ -709,20 +709,11 @@ export default {
 			let ttl = res.data.api_error_code.replace(/_/gi, ' ')
 			ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1)
 			self.updatePayMessage('alert alert-danger', 'Error..! ', msg)
-			/* if (res.data.error_code == 'add_card_error') {
-      self.$Notice.error({
-        title: ttl,
-        duration: 5,
-        desc: msg
-      });
-      self.updatePayMessage('alert alert-danger', 'Error..! ', 'Your card is expire.');
-    } else { */
 			self.$Notice.error({
 				title: ttl,
 				duration: 5,
 				desc: msg
 			})
-			/* } */
 		},
 		subscriptionDone (res) {
 			let self = this
@@ -734,7 +725,6 @@ export default {
 				duration: 0,
 				desc: res.data.subscription.id
 			})
-			// console.log('Subscription Details', res);
 			this.$router.push({ name: 'planDetails' })
 		}
 	},
