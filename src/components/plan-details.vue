@@ -3,7 +3,12 @@
     <Col span="14" push="5">
         <Card>
             <!-- <h3>Thank You for Subscribing...!</h3> -->
-            <div style="font-size: x-large;">My Plan</div><br>
+            <div style="font-size: x-large;">
+				My Plan
+				<div class="pull-right">
+					<Button type="ghost" @click="showCardDetails = true, getCustomerCardDetails()" shape="circle" icon="card">Update Card Details</Button>
+				</div>
+			</div><br>
                 <Row>
                     <Col span="22" push="1">
                         <Table :loading="loading" class='dataTable' :columns="planDetails" :data="planList" no-data-text="No Subscription Found"></Table>
@@ -12,11 +17,89 @@
                 </Row>
         </Card>
     </Col>
+	<Modal v-model="showCardDetails" :mask-closable="false" width="50%">
+		<p slot="header">
+			<span>Update Card Details</span>
+			<Poptip v-if="customerDetails != null" slot="append" trigger="hover" placement="bottom">
+				<div slot="title">Your Card Details</div>
+				<div slot="content">
+					<table>
+						<tr>
+							<td>CARD</td>
+							<td>{{ customerDetails.masked_number }}</td>
+						</tr>
+						<tr>
+							<td>VALID UPTO</td>
+							<td class="td-align">{{ customerDetails.expiry_month }}/{{ customerDetails.expiry_year }}</td>
+						</tr>
+						<tr>
+							<td>CARD TYPE</td>
+							<td class="td-align">{{ customerDetails.card_type }}</td>
+						</tr>
+						<tr>
+							<td>STATUS</td>
+							<td class="td-align">{{ customerDetails.status }}</td>
+						</tr>
+					</table>
+				</div>
+				<Icon size="20px" type="help-circled"></Icon>
+			</Poptip>
+        </p>
+		<Row type="flex" justify="center">
+			<Col span="12">
+				<Form ref="cardDetails" :model="cardDetails" :rules="cardDetailsRule" label-position="left">
+					<Row>
+						<FormItem label="CARD NUMBER" prop="cardNumber">
+							<Input v-model="cardDetails.cardNumber" type="text" placeholder="Valid Card Number" icon="card" autocomplete="off"></Input>
+						</FormItem>
+					</Row>
+					<Row type="flex">
+						<Col span="24" >
+							<FormItem prop="cvCode" label="CVV CODE">
+								<Input v-model="cardDetails.cvCode" type="password" placeholder="CVV Code" >
+									<Poptip slot="append" trigger="hover" title="CVV info" placement="right" content="CVV code is a 3 digit number on the back side of your card.">
+										<Icon type="help-circled"></Icon>
+									</Poptip>
+								</Input> 
+							</FormItem>
+						</Col>
+						<Col span="24">
+							<label class="ivu-form-item-label">VALID THRU</label>
+							<Row type="flex" justify="space-around">
+								<Col span="11">
+									<FormItem prop="expiryMM">
+										<Select v-model="cardDetails.expiryMM"  placeholder="MM">
+										<Option v-for="item in expiryMonth" :value="item.value" :key="item.value">{{ item.label }}</Option>
+										</Select>
+									</FormItem>
+								</Col>
+								<Col span="12">
+									<FormItem prop="expiryYY">
+										<Select v-model="cardDetails.expiryYY"  placeholder="YYYY">
+										<Option v-for="item in expiryYear" :value="item.value" :key="item.value">{{ item.label }}</Option>
+										</Select>
+									</FormItem>
+								</Col>
+							</Row>
+						</Col>
+					</Row>
+					<Row type="flex" justify="center">
+						<FormItem>
+							<Button type="primary" :loading="submitLoading" @click="updateCardDetails('cardDetails')">Submit</Button>
+							<Button type="ghost" @click="updateCardDetailsReset('cardDetails')" style="margin-left: 8px">Reset</Button>
+						</FormItem>
+					</Row>
+				</Form>
+			</Col>
+		</Row>
+		<div slot="footer"></div>
+  	</Modal>
 </Row>
 </template>
 <script>
 import getUserDetails from '@/api/userdetails'
 import cbSubscription from '@/api/cb-subscription'
+import cbCustomer from '@/api/cb-customer'
 import cbPlan from '@/api/cb-plan'
 import Cookies from 'js-cookie'
 import addOn from './add-on.vue'
@@ -28,7 +111,28 @@ export default {
 	components: { addOn },
 	name: 'planDetails',
 	data () {
+		const validateCardNumber = (rule, value, callback) => {
+			if (!value) {
+				callback(new Error('Please Enter Card Number.'))
+			} else if (isNaN(value)) {
+				callback(new Error('Please Enter Valid Card Number.'))
+			} else if (rule.max != value.length && rule.min != value.length) {
+				callback(new Error('Please Enter Valid 16-Digit Card Number.'))
+			} else {
+				callback()
+			}
+		}
+		const validateCvvNumber = (rule, value, callback) => {
+			if (!value) {
+				callback(new Error('Please Enter CVV Code.'))
+			} else if (isNaN(value)) {
+				callback(new Error('Please Enter Valid CVV Code.'))
+			} else {
+				callback()
+			}
+		}
 		return {
+			moment: moment,
 			loading: true,
 			planDetails: [
 				{
@@ -95,11 +199,77 @@ export default {
 			],
 			planListData: [],
 			planList: [],
-			moment: moment,
 			userDetails: null,
 			currentPage: 1,
 			pageSize: 10,
-			currentMsgInst: this.$store.state.currentMsgInst
+			currentMsgInst: this.$store.state.currentMsgInst,
+			showCardDetails: false,
+			validateModal: false,
+			cardDetails: {
+				cardNumber: null,
+				cvCode: null,
+				expiryMM: null,
+				expiryYY: null
+			},
+			cardDetailsRule: {
+				cardNumber: [{ required: true, min: 16, max: 16, validator: validateCardNumber, trigger: 'blur' }],
+				cvCode: [{ required: true, validator: validateCvvNumber, trigger: 'blur' }],
+				expiryMM: [{ required: true, message: 'Please Select Expiry Month.', trigger: 'blur' }],
+				expiryYY: [{ required: true, message: 'Please Select Expiry Year.', trigger: 'blur' }]
+			},
+			expiryMonth: [
+				{
+					value: '01',
+					label: '01'
+				},
+				{
+					value: '02',
+					label: '02'
+				},
+				{
+					value: '03',
+					label: '03'
+				},
+				{
+					value: '04',
+					label: '04'
+				},
+				{
+					value: '05',
+					label: '05'
+				},
+				{
+					value: '06',
+					label: '06'
+				},
+				{
+					value: '07',
+					label: '07'
+				},
+				{
+					value: '08',
+					label: '08'
+				},
+				{
+					value: '09',
+					label: '09'
+				},
+				{
+					value: '10',
+					label: '10'
+				},
+				{
+					value: '11',
+					label: '11'
+				},
+				{
+					value: '12',
+					label: '12'
+				}
+			],
+			expiryYear: [],
+			customerDetails: null,
+			submitLoading: false
 		}
 	},
 	methods: {
@@ -157,6 +327,78 @@ export default {
 			return cbPlan.get(itm.subscription.plan_id).then(res => {
 				return res.data.name
 			})
+		},
+		getCustomerCardDetails () {
+			cbCustomer.get(this.userDetails._id).then(res => {
+				this.customerDetails = res.data.card
+			}).catch(err => {
+				this.$Notice.error({
+					title: 'Can\'t find customer details',
+					desc: err.message,
+					duration: 5
+				})
+			})
+		},
+		updateCardDetails (name) {
+			let self = this
+			this.$refs[name].validate((valid) => {
+				if (valid) {
+					self.submitLoading = true
+					let data = {
+						number: this.cardDetails.cardNumber,
+						expiry_month: this.cardDetails.expiryMM,
+						expiry_year: this.cardDetails.expiryYY,
+						cvv: this.cardDetails.cvCode,
+						gateway_account_id: 'gw_2smoc98yQqJksAPR6T'
+					}
+					cbCustomer.patch(this.customerDetails.customer_id, data).then(res => {
+						if (res.data.api_error_code) {
+							self.throwNewError(res)
+							self.submitLoading = false
+						} else {
+							self.$Notice.success({
+								title: 'Card details updated successfully',
+								desc: 'It will take some time to update details.',
+								duration: 10
+							})
+							self.$refs[name].resetFields()
+							self.submitLoading = false
+						}
+					}).catch(err => {
+						if (err.message == 'Network Error') {
+							self.$Notice.error({
+								duration: 5,
+								title: 'Updating card details',
+								desc: 'API service unavailable.'
+							})
+						} else {
+							self.$Notice.error({
+								duration: 5,
+								title: 'Updating card details',
+								desc: err.message
+							})
+						}
+						self.submitLoading = false
+					})
+				} else {
+					this.$Message.error('Please fill required fields..!')
+				}
+			})
+		},
+		updateCardDetailsReset (name) {
+			this.$refs[name].resetFields()
+		},
+		throwNewError (res) {
+			let self = this
+			let msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':') + 1)
+			let ttl = res.data.api_error_code.replace(/_/gi, ' ')
+			ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1)
+			// self.updatePayMessage('alert alert-danger', 'Error..! ', msg)
+			self.$Notice.error({
+				title: ttl,
+				duration: 5,
+				desc: msg
+			})
 		}
 	},
 	async mounted () {
@@ -195,8 +437,6 @@ export default {
 			}
 		})
 		cbSubscription.getOwn(self.userDetails._id).then(async res => {
-			// console.log('Res of cb-subscription:: ', res)
-
 			let obj = res.data.map(async (itm) => {
 				itm.subscription.plan_unit_price /= 100
 				itm.subscription.started_at = moment.unix(itm.subscription.started_at).format('DD MMM YYYY')
@@ -226,6 +466,10 @@ export default {
 			}
 			self.loading = false
 		})
+		for (let j = 0; j <= 20; j++) {
+			let yy = new Date().getFullYear() + j
+			self.expiryYear.push({label: yy.toString(), value: yy.toString()})
+		}
 		// OLD CODE FOR SUBSCRIPTION
 		/* userSubscription.getOwn().then(async res => {
             res.data.data = await _.orderBy(res.data.data, 'createdAt', 'desc')
@@ -258,6 +502,9 @@ export default {
 }
 </script>
 <style scoped>
+.td-align {
+	text-align: right
+}
 h3 {
     font-size: 30px;
     text-align: center;

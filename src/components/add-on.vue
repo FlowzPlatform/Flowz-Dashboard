@@ -29,6 +29,11 @@ export default {
 					align: 'center'
 				},
 				{
+					title: 'Purchased Quantity',
+					key: 'quantity',
+					align: 'center'
+				},
+				{
 					title: 'Validity (Months)',
 					key: 'period',
 					align: 'center'
@@ -67,6 +72,7 @@ export default {
 				let addonDetails = await self.getAddonDetails(itm.id)
 				// console.log('addon details::', addonDetails)
 				addonDetails.price /= 100
+				addonDetails.quantity = itm.quantity
 				return addonDetails
 			})
 			Promise.all(obj).then(async res => {
