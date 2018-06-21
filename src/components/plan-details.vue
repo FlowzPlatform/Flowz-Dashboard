@@ -348,8 +348,7 @@ export default {
 						number: this.cardDetails.cardNumber,
 						expiry_month: this.cardDetails.expiryMM,
 						expiry_year: this.cardDetails.expiryYY,
-						cvv: this.cardDetails.cvCode,
-						gateway_account_id: 'gw_2smoc98yQqJksAPR6T'
+						cvv: this.cardDetails.cvCode
 					}
 					cbCustomer.patch(this.customerDetails.customer_id, data).then(res => {
 						if (res.data.api_error_code) {
