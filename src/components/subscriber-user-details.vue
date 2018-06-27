@@ -32,8 +32,10 @@ export default {
 				},
 				{
 					type: 'index',
-					width: 35,
+					// title: 'index',
+					width: 40,
 					align: 'center'
+					// ,sortable: true
 				}, {
 					title: 'ChargeBee Customer Id',
 					render: (h, params) => {
@@ -52,13 +54,13 @@ export default {
 						return h('span', params.row.customer.email)
 					}
 				}, {
-					title: 'Start at',
+					title: 'Start At',
 					align: 'center',
 					render: (h, params) => {
 						return h('span', moment.unix(params.row.subscription.started_at).format('DD MMM YYYY'))
 					}
 				}, {
-					title: 'Next billing at',
+					title: 'Next Billing At',
 					align: 'center',
 					render: (h, params) => {
 						return h('span', moment.unix(params.row.subscription.next_billing_at).format('DD MMM YYYY'))
@@ -70,7 +72,7 @@ export default {
 						return h('span', params.row.subscription.mrr / 100)
 					}
 				}, {
-					title: 'Current status',
+					title: 'Current Status',
 					align: 'center',
 					render: (h, params) => {
 						return h('span', params.row.subscription.status)
