@@ -9,6 +9,9 @@ export default {
 			return api.request('get', '/' + model + '?limit=100')
 		}
 	},
+	filter: (params) => {
+		return api.request('get', '/' + model + '?limit=100&' + params)
+	},
 	post: (data) => {
 		return api.request('post', '/' + model, data)
 	},

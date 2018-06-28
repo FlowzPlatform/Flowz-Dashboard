@@ -64,7 +64,7 @@
 						<!-- v-if="model2 == 'id'" -->
 						<!-- <Input v-else-if="model2 == 'customer_id'" v-model="value" :value="item.value" :key="item.value" placeholder="enter something..." style="width: 300px;margin-left: 20px;"></Input> -->
 
-						<Button type="primary" icon="ios-search" @click="searchfilter()" style="margin-left:20px;">Search</Button>{{ model1 }}
+						<Button type="primary" icon="ios-search" @click="searchfilter()" style="margin-left:20px;">Search</Button>
 						<!-- </Menu> -->
 						<Table style="margin-top:30px;" :loading="planLoding" border :columns="setColumns" :data="setData"></Table>
 						<!-- <Table style="margin-top:30px;" :loading="planLoding" border :columns="planfilterlist" :data="resultplanfilter"></Table> -->
@@ -285,31 +285,43 @@ export default {
 					align: 'center'
 					// ,sortable: true
 				}, {
-					title: 'ChargeBee Customer Id'
+					title: 'ChargeBee Customer Id',
+					key: 'id'
 				}, {
-					title: 'Customers Name',
-					align: 'center'
+					title: 'First Name',
+					align: 'center',
+					key: 'first_name'
+				}, {
+					title: 'Last Name',
+					align: 'center',
+					key: 'last_name'
 				}, {
 					title: 'Email',
-					align: 'center'
+					align: 'center',
+					key: 'email'
 				}, {
 					title: 'Start At',
-					align: 'center'
+					align: 'center',
+					key: 'started_at'
 				}, {
 					title: 'Next Billing At',
-					align: 'center'
+					align: 'center',
+					key: 'next_billing_at'
 				}, {
 					title: 'Monthly Recurring Revenue (USD)',
-					align: 'center'
+					align: 'center',
+					key: 'mrr'
 				}, {
 					title: 'Current Status',
-					align: 'center'
+					align: 'center',
+					key: 'status'
 				}
 			],
 			Subscriptionfilterlist: [],
 			planData: [],
 			planDetailData: [],
 			resultplanfilter: [],
+			resultcustomerfilter: [],
 			currentPage: 1,
 			pageSize: 10,
 			activeTab: '1',
@@ -362,16 +374,6 @@ export default {
 					value: 'last_name',
 					label: 'last name',
 					placeholder: 'enter customer last name'
-				},
-				{
-					value: 'country',
-					label: 'country',
-					placeholder: 'enter country'
-				},
-				{
-					value: 'state',
-					label: 'state',
-					placeholder: 'enter state'
 				}
 				],
 				Subscriptionfilter: [{
@@ -416,9 +418,13 @@ export default {
 		},
 		setData () {
 			if (this.model1value !== '') {
-				return [{
-					name: 'Nikita'
-				}]
+				if (this.model1value === 'planfilter') {
+					return this.resultplanfilter
+				} else if (this.model1value === 'customerfilter') {
+					return this.resultcustomerfilter
+				} else if (this.model1value === 'subscriptionfilter') {
+					return this.resultsubscriptionfilter
+				}
 			} else {
 				return []
 			}
@@ -535,7 +541,7 @@ export default {
 			})
 			cbCustomer.get().then(res => {
 				this.totalCustomer = res.data.length
-				console.log('RES CUSTOMER ::', res)
+				console.log('RES CUSTOMER ::', res.customer)
 			}).catch(err => {
 				if (self.currentMsgInst && !self.currentMsgInst.closed) {
 					if (err.message == 'Network Error') {
@@ -592,34 +598,132 @@ export default {
 			// let id;
 			let self = this
 			self.planLoding = true
+			// let method = null
 			console.log('hi........')
 			console.log('data', this.model1value, this.model2value, this.model3value)
-
-			let filtervalue = 'undefined?Basic' // 'id' + '?' + this.model3value //id?5a8fc0c37c791e0013c8c7a8
+			// let first = this.model2value
+			// let second = this.model3value
+			// let arr = []
+			// arr.push({[this.model2value]: second})
+			// console.log('arr...', arr)
+			console.log(this.model2value === 'id')
+			console.log(this.model1value == 'planfilter')
+			//  [this.model2value] = this.model3value
+			// console.log('filterdata >>>', filterdata)
+			// console.log(!this.model2value === 'id')
+			console.log(this.model2value !== 'id')
+			let filtervalue = this.model3value // 'id' + '?' + this.model3value //id?5a8fc0c37c791e0013c8c7a8
 
 			// let field = this.model2value
 			if (this.model1value == 'planfilter') {
-				cbPlan.get(filtervalue).then(res => {
-					console.log('res', res.data)
-					res.data.price /= 100
-					this.resultplanfilter = [res.data]
-					self.planLoding = false
-				}).catch(err => {
-					if (err.message == 'Network Error') {
-						self.currentMsgInst = self.$Notice.error({
-							duration: 5,
-							title: 'Fetching plan data',
-							desc: 'API service unavailable.'
+				console.log(this.model2value === 'id')
+				if (this.model2value === 'id') {
+					cbPlan.get(filtervalue).then(res => {
+						console.log('res', res.data)
+						res.data.price /= 100
+						this.resultplanfilter = [res.data]
+						self.planLoding = false
+					}).catch(err => {
+						console.log('err', err)
+						if (err.message == 'Network Error') {
+							self.currentMsgInst = self.$Notice.error({
+								duration: 5,
+								title: 'Fetching plan data',
+								desc: 'API service unavailable.'
+							})
+						} else {
+							self.$Notice.error({
+								duration: 5,
+								title: 'Fetching plan data',
+								desc: err.message
+							})
+						}
+						console.log('ERROR', err)
+					})
+				} else {
+					console.log('else called')
+					// console.log()
+					// console.log('filterdata', filterdata)
+					// console.log('editfilterdata', editfilterdata)
+					let data1 = this.model2value + '=' + this.model3value
+					cbPlan.filter(data1).then(res => {
+						console.log('res................', [res.data[0].plan])
+						res.data[0].plan.price /= 100
+						this.resultplanfilter = [res.data[0].plan]
+						self.planLoding = false
+					}).catch(err => {
+						console.log('err', err)
+						if (err.message == 'Network Error') {
+							self.currentMsgInst = self.$Notice.error({
+								duration: 5,
+								title: 'Fetching plan data',
+								desc: 'API service unavailable.'
+							})
+						} else {
+							self.$Notice.error({
+								duration: 5,
+								title: 'Fetching plan data',
+								desc: err.message
+							})
+						}
+						console.log('ERROR', err)
+					})
+				}
+			} else if (this.model1value == 'customerfilter') {
+				if (this.model2value === 'id') {
+					cbCustomer.get(filtervalue).then(res => {
+						console.log('RES CUSTOMER ::', res.data)
+						this.resultcustomerfilter = [res.data.customer]
+						self.planLoding = false
+						console.log('resultcustomerfilter', this.resultcustomerfilter)
+					}).catch(err => {
+						if (self.currentMsgInst && !self.currentMsgInst.closed) {
+							if (err.message == 'Network Error') {
+								self.currentMsgInst = self.$Notice.error({
+									duration: 5,
+									title: 'Fetching Customer data',
+									desc: 'API service unavailable.'
+								})
+							} else {
+								self.$Notice.error({
+									duration: 5,
+									title: 'Fetching Customer data',
+									desc: err.message
+								})
+							}
+						}
+						console.log('ERR CUSTOMER ::', err)
+					})
+				} else {
+					// var data3
+					let data2 = this.model2value + '=' + this.model3value
+					cbCustomer.filter(data2).then(res => {
+						console.log('RES CUSTOMER ::', res.data[0].customer)
+						let datares = res.data.map((item) => {
+							console.log('item', item.customer)
+							return item.customer
 						})
-					} else {
-						self.$Notice.error({
-							duration: 5,
-							title: 'Fetching plan data',
-							desc: err.message
-						})
-					}
-					console.log('ERROR', err)
-				})
+						this.resultcustomerfilter = datares
+						self.planLoding = false
+					}).catch(err => {
+						if (self.currentMsgInst && !self.currentMsgInst.closed) {
+							if (err.message == 'Network Error') {
+								self.currentMsgInst = self.$Notice.error({
+									duration: 5,
+									title: 'Fetching Customer data',
+									desc: 'API service unavailable.'
+								})
+							} else {
+								self.$Notice.error({
+									duration: 5,
+									title: 'Fetching Customer data',
+									desc: err.message
+								})
+							}
+						}
+						console.log('ERR CUSTOMER ::', err)
+					})
+				}
 			}
 		}
 	},
@@ -666,6 +770,7 @@ export default {
 
 
 
+
 /* .vw-widget{
         overflow-x:scroll;
         width: 500px;
@@ -688,6 +793,7 @@ td {
 	height: 50px;
 	width: 50px;
 }
+
 
 
 
