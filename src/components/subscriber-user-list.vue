@@ -95,6 +95,8 @@ import config from '../../config/customConfig'
 // import iView from 'iview'
 // import 'iview/dist/styles/iview.css'
 import $ from 'jquery'
+import moment from 'moment'
+moment().format()
 
 // Vue.use(iView)
 // Vue.use(VueWidgets)
@@ -136,7 +138,7 @@ export default {
 					// ,sortable: true
 				},
 				{
-					title: 'ChargeBee Id',
+					title: 'plan Id',
 					key: 'id',
 					align: 'center'
 				},
@@ -247,7 +249,7 @@ export default {
 					// ,sortable: true
 				},
 				{
-					title: 'ChargeBee Id',
+					title: 'Plan Id',
 					key: 'id',
 					align: 'center'
 				},
@@ -285,7 +287,7 @@ export default {
 					align: 'center'
 					// ,sortable: true
 				}, {
-					title: 'ChargeBee Customer Id',
+					title: 'Customer Id',
 					key: 'id'
 				}, {
 					title: 'First Name',
@@ -299,29 +301,65 @@ export default {
 					title: 'Email',
 					align: 'center',
 					key: 'email'
-				}, {
+				}
+			],
+			subscriptionfilterlist: [
+				{
+					type: 'index',
+					width: 55,
+					align: 'center'
+				},
+				{
+					title: 'subscription id',
+					align: 'center',
+					key: 'id'
+				},
+				{
+					title: 'plan_id',
+					align: 'center',
+					key: 'plan_id'
+				},
+				{
+					title: 'Plan Name',
+					key: 'plan_name',
+					align: 'center'
+				},
+				{
+					title: 'customer_id',
+					align: 'center',
+					key: 'customer_id'
+				},
+				{
+					title: 'name',
+					align: 'center',
+					key: 'name'
+				},
+				{
 					title: 'Start At',
 					align: 'center',
 					key: 'started_at'
-				}, {
+				},
+				{
 					title: 'Next Billing At',
 					align: 'center',
 					key: 'next_billing_at'
-				}, {
+				},
+				{
 					title: 'Monthly Recurring Revenue (USD)',
 					align: 'center',
 					key: 'mrr'
-				}, {
+				},
+				{
 					title: 'Current Status',
 					align: 'center',
 					key: 'status'
 				}
 			],
-			Subscriptionfilterlist: [],
 			planData: [],
 			planDetailData: [],
 			resultplanfilter: [],
 			resultcustomerfilter: [],
+			resultsubscriptionfilter: [],
 			currentPage: 1,
 			pageSize: 10,
 			activeTab: '1',
@@ -337,7 +375,7 @@ export default {
 					label: 'customer'
 				},
 				{
-					value: 'Subscriptionfilter',
+					value: 'subscriptionfilter',
 					label: 'subscription'
 				}
 			],
@@ -376,15 +414,25 @@ export default {
 					placeholder: 'enter customer last name'
 				}
 				],
-				Subscriptionfilter: [{
+				subscriptionfilter: [{
 					value: 'id',
 					label: 'subscription id',
 					placeholder: 'enter subscription id'
 				},
 				{
+					value: 'plan_id',
+					align: 'center',
+					label: 'plan id'
+				},
+				{
+					value: 'customer_id',
+					align: 'center',
+					label: 'customer id'
+				},
+				{
 					value: 'status',
-					label: 'status',
-					placeholder: 'enter subscription status'
+					align: 'center',
+					label: 'status'
 				}
 				]
 			}
@@ -406,11 +454,12 @@ export default {
 					// 	title: 'Customer',
 					// 	key: 'name'
 					// }]
-				} else if (this.model1value === 'Subscriptionfilter') {
-					return [{
-						title: 'Subscription',
-						key: 'name'
-					}]
+				} else if (this.model1value === 'subscriptionfilter') {
+					return this.subscriptionfilterlist
+					// [{
+					// 	title: 'Subscription',
+					// 	key: 'name'
+					// }]
 				}
 			} else {
 				return []
@@ -582,6 +631,20 @@ export default {
 			this.pageSize = changedSize
 			this.changePage(1)
 		},
+		getPlanName (item) {
+			console.log('getPlanName ITEM', item)
+			return cbPlan.get(item.subscription.plan_id).then(res => {
+				console.log('getPlanName res', res)
+				return res.data.name
+			})
+		},
+		getCustomerName (item) {
+			console.log('item.subscription', item.subscription)
+			return cbCustomer.get(item.subscription.customer_id).then(res => {
+				console.log('getCustomerName', res)
+				return res.data.customer.first_name + ' ' + res.data.customer.last_name
+			})
+		},
 		getfilterlist: function (val) {
 			console.log('hello')
 			console.log('val', val)
@@ -666,6 +729,7 @@ export default {
 								desc: err.message
 							})
 						}
+						self.planLoding = false
 						console.log('ERROR', err)
 					})
 				}
@@ -724,6 +788,164 @@ export default {
 						console.log('ERR CUSTOMER ::', err)
 					})
 				}
+			} else if (this.model1value == 'subscriptionfilter') {
+				console.log('<<<<<<<< subscriptionfilter >>>>>>>>>>>')
+				console.log('this.model2value', this.model2value)
+				if (this.model2value === 'plan_id') {
+					cbSubscription.getSubscribed(filtervalue).then(async res => {
+						console.log('res >>>>>>>>>>', res.data[0].subscription)
+						let datares = res.data.map(async (item) => {
+							console.log('item subscription', item.subscription)
+							item.subscription.started_at = moment.unix(item.subscription.started_at).format('DD MMM YYYY')
+							item.subscription.next_billing_at = moment.unix(item.subscription.next_billing_at).format('DD MMM YYYY')
+							item.subscription.mrr /= 100
+							item.subscription.plan_name = await self.getPlanName(item)
+							item.subscription.name = await self.getCustomerName(item)
+							console.log('first_name', item.subscription.first_name)
+							Promise.resolve(item.subscription.plan_name)
+							return item.subscription
+						})
+						console.log('datares', datares)
+						Promise.all(datares).then(async res => {
+							console.log('res---------', res)
+							self.resultsubscriptionfilter = res
+							// self.planList = await self.makeChunk(self.currentPage, self.pageSize)
+							self.planLoding = false
+						})
+						// this.resultsubscriptionfilter = datares
+						// self.planLoding = false
+					}).catch(err => {
+						console.log('err', err)
+						if (err.message == 'Network Error') {
+							self.currentMsgInst = self.$Notice.error({
+								duration: 5,
+								title: 'Fetching subscription data',
+								desc: 'API service unavailable.'
+							})
+						} else {
+							self.$Notice.error({
+								duration: 5,
+								title: 'Fetching subscription data',
+								desc: err.message
+							})
+						}
+						self.planLoding = false
+						console.log('ERROR', err)
+					})
+				} else if (this.model2value === 'customer_id') {
+					cbSubscription.getOwn(filtervalue).then(async res => {
+						console.log('res >>>>>>>>>>', res.data[0].subscription)
+						let datares = res.data.map(async (item) => {
+							console.log('item subscription', item.subscription)
+							item.subscription.started_at = moment.unix(item.subscription.started_at).format('DD MMM YYYY')
+							item.subscription.next_billing_at = moment.unix(item.subscription.next_billing_at).format('DD MMM YYYY')
+							item.subscription.mrr /= 100
+							item.subscription.plan_name = await self.getPlanName(item)
+							item.subscription.name = await self.getCustomerName(item)
+							console.log('first_name', item.subscription.first_name)
+							Promise.resolve(item.subscription.plan_name)
+							return item.subscription
+						})
+						console.log('datares', datares)
+						Promise.all(datares).then(async res => {
+							console.log('res---------', res)
+							self.resultsubscriptionfilter = res
+							// self.planList = await self.makeChunk(self.currentPage, self.pageSize)
+							self.planLoding = false
+						})
+						// this.resultsubscriptionfilter = datares
+						// self.planLoding = false
+					}).catch(err => {
+						console.log('err', err)
+						if (err.message == 'Network Error') {
+							self.currentMsgInst = self.$Notice.error({
+								duration: 5,
+								title: 'Fetching subscription data',
+								desc: 'API service unavailable.'
+							})
+						} else {
+							self.$Notice.error({
+								duration: 5,
+								title: 'Fetching subscription data',
+								desc: err.message
+							})
+						}
+						self.planLoding = false
+						console.log('ERROR', err)
+					})
+				} else if (this.model2value === 'id') {
+					// let statusfilter = this.model2value + ':' + this.model3value
+					// console.log('statusfilter', statusfilter)
+					cbSubscription.get(filtervalue).then(async res => {
+						console.log('res >>>>>>>>>>', res.data.subscription)
+						res.data.subscription.started_at = moment.unix(res.data.subscription.started_at).format('DD MMM YYYY')
+						res.data.subscription.next_billing_at = moment.unix(res.data.subscription.next_billing_at).format('DD MMM YYYY')
+						res.data.subscription.mrr /= 100
+						res.data.subscription.plan_name = await self.getPlanName(res.data)
+						res.data.subscription.name = await self.getCustomerName(res.data)
+						this.resultsubscriptionfilter = [res.data.subscription]
+						self.planLoding = false
+					}).catch(err => {
+						console.log('err', err)
+						if (err.message == 'Network Error') {
+							self.currentMsgInst = self.$Notice.error({
+								duration: 5,
+								title: 'Fetching subscription data',
+								desc: 'API service unavailable.'
+							})
+						} else {
+							self.$Notice.error({
+								duration: 5,
+								title: 'Fetching subscription data',
+								desc: err.message
+							})
+						}
+						self.planLoding = false
+						console.log('ERROR', err)
+					})
+				} else if (this.model2value === 'status') {
+					let statusfilter = this.model2value + '=' + this.model3value
+					// console.log('statusfilter', statusfilter)
+					cbSubscription.filter(statusfilter).then(res => {
+						console.log('res >>>>>>>>>>', res.data)
+						let datares = res.data.map(async (item) => {
+							console.log('item subscription', item.subscription)
+							item.subscription.started_at = moment.unix(item.subscription.started_at).format('DD MMM YYYY')
+							item.subscription.next_billing_at = moment.unix(item.subscription.next_billing_at).format('DD MMM YYYY')
+							item.subscription.mrr /= 100
+							item.subscription.plan_name = await self.getPlanName(item)
+							item.subscription.name = await self.getCustomerName(item)
+							console.log('first_name', item.subscription.first_name)
+							// Promise.resolve(item.subscription.plan_name)
+							return item.subscription
+						})
+						Promise.all(datares).then(async res => {
+							console.log('res---------', res)
+							self.resultsubscriptionfilter = res
+							// self.planList = await self.makeChunk(self.currentPage, self.pageSize)
+							self.planLoding = false
+						})
+						// this.resultsubscriptionfilter = datares
+						// self.planLoding = false
+					}).catch(err => {
+						console.log('err', err)
+						if (err.message == 'Network Error') {
+							self.currentMsgInst = self.$Notice.error({
+								duration: 5,
+								title: 'Fetching subscription data',
+								desc: 'API service unavailable.'
+							})
+						} else {
+							self.$Notice.error({
+								duration: 5,
+								title: 'Fetching subscription data',
+								desc: err.message
+							})
+						}
+						self.planLoding = false
+						console.log('ERROR', err)
+					})
+				}
 			}
 		}
 	},
@@ -771,6 +993,8 @@ export default {
 
 
 
+
+
 /* .vw-widget{
         overflow-x:scroll;
         width: 500px;
@@ -793,6 +1017,8 @@ td {
 	height: 50px;
 	width: 50px;
 }
+
+
 
 
 
