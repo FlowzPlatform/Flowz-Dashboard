@@ -60,16 +60,17 @@
 							<Option v-for="item in dataInFilter" :value="item.value" :key="item.value">{{ item.label }}</Option>
 							<!-- <option v-for="option in options" :value="option.value">{{ option.value }}</option>   -->
 						</Select>
-						<Input v-model="model3value" placeholder="enter something..." style="width: 300px;margin-left: 20px;"></Input>
+						<Input v-model="model3value" :disabled="disabled" placeholder="enter something..." style="width: 300px;margin-left: 20px;"></Input>
 						<!-- v-if="model2 == 'id'" -->
 						<!-- <Input v-else-if="model2 == 'customer_id'" v-model="value" :value="item.value" :key="item.value" placeholder="enter something..." style="width: 300px;margin-left: 20px;"></Input> -->
 
 						<Button type="primary" icon="ios-search" @click="searchfilter()" style="margin-left:20px;">Search</Button>
 						<!-- </Menu> -->
-						<Table style="margin-top:30px;" :loading="planLoding" border :columns="setColumns" :data="setData"></Table>
+						<div class='table-wrapper' style="margin-top:30px;">
+						<Table :loading="planLoding" border :columns="setColumns" :data="setData"></Table>
 						<!-- <Table style="margin-top:30px;" :loading="planLoding" border :columns="planfilterlist" :data="resultplanfilter"></Table> -->
 						<Page class="pull-right" style="margin-top:10px;" :page-size="pageSize" :current="currentPage" :total="planDetailData.length" @on-change="changePage" @on-page-size-change="changePageSize" show-sizer></Page>
-
+						</div>
 					</div>
 				</TabPane>
 			</Tabs>
@@ -118,6 +119,7 @@ export default {
 			model1value: '',
 			model2value: '',
 			model3value: '',
+			disabled: false,
 			planList: [
 				{
 					type: 'expand',
@@ -283,7 +285,7 @@ export default {
 				{
 					type: 'index',
 					// title: 'index',
-					width: 40,
+					width: 55,
 					align: 'center'
 					// ,sortable: true
 				}, {
@@ -381,6 +383,10 @@ export default {
 			],
 			types: {
 				planfilter: [{
+					value: 'All plan',
+					label: 'All plan',
+					placeholder: 'enter plan id'
+				}, {
 					value: 'id',
 					label: 'plan id',
 					placeholder: 'enter plan id'
@@ -394,6 +400,11 @@ export default {
 					placeholder: 'enter plan status'
 				}],
 				customerfilter: [{
+					value: 'All customer',
+					label: 'All customer',
+					placeholder: 'enter customer id'
+				},
+				{
 					value: 'id',
 					label: 'customer id',
 					placeholder: 'enter customer id'
@@ -415,6 +426,10 @@ export default {
 				}
 				],
 				subscriptionfilter: [{
+					value: 'All subscription',
+					label: 'All subscription'
+				},
+				{
 					value: 'id',
 					label: 'subscription id',
 					placeholder: 'enter subscription id'
@@ -654,37 +669,39 @@ export default {
 			this.dataInFilter = this.types[val]
 		},
 		getfilteritem: function (val) {
-			console.log('val', val)
+			console.log('getfilteritem val', val)
+			console.log(val === 'All plan')
+
+			if (val === 'All plan' || val === 'All Customer' || val === 'All subscription') {
+				this.disabled = true
+			} else {
+				this.disabled = false
+			}
 			this.model2value = val
 		},
 		searchfilter: async function (data) {
-			// let id;
 			let self = this
 			self.planLoding = true
-			// let method = null
-			console.log('hi........')
 			console.log('data', this.model1value, this.model2value, this.model3value)
-			// let first = this.model2value
-			// let second = this.model3value
-			// let arr = []
-			// arr.push({[this.model2value]: second})
-			// console.log('arr...', arr)
 			console.log(this.model2value === 'id')
 			console.log(this.model1value == 'planfilter')
 			//  [this.model2value] = this.model3value
 			// console.log('filterdata >>>', filterdata)
 			// console.log(!this.model2value === 'id')
 			console.log(this.model2value !== 'id')
-			let filtervalue = this.model3value // 'id' + '?' + this.model3value //id?5a8fc0c37c791e0013c8c7a8
+			let filtervalue = this.model3value
 
-			// let field = this.model2value
+			/* ---------------- planfilter ------------------ */
+
 			if (this.model1value == 'planfilter') {
 				console.log(this.model2value === 'id')
+				/* ======== plan id wise filter ======== */
 				if (this.model2value === 'id') {
 					cbPlan.get(filtervalue).then(res => {
 						console.log('res', res.data)
 						res.data.price /= 100
 						this.resultplanfilter = [res.data]
+						// this.resultplanfilter = await this.makeChunk(this.currentPage, this.pageSize)
 						self.planLoding = false
 					}).catch(err => {
 						console.log('err', err)
@@ -702,9 +719,42 @@ export default {
 							})
 						}
 						console.log('ERROR', err)
+						self.planLoding = false
 					})
-				} else {
-					console.log('else called')
+				} else if (this.model2value === 'status') {
+					/* ========  plan status wise filter ======== */
+					console.log('plan status  called')
+					let data1 = this.model2value + '=' + this.model3value
+					cbPlan.filter(data1).then(res => {
+						console.log('res................', res.data)
+						let datares = res.data.map((item) => {
+							console.log('item', item.plan)
+							item.plan.price /= 100
+							return item.plan
+						})
+						this.resultplanfilter = datares
+						self.planLoding = false
+					}).catch(err => {
+						console.log('err', err)
+						if (err.message == 'Network Error') {
+							self.currentMsgInst = self.$Notice.error({
+								duration: 5,
+								title: 'Fetching plan data',
+								desc: 'API service unavailable.'
+							})
+						} else {
+							self.$Notice.error({
+								duration: 5,
+								title: 'Fetching plan data',
+								desc: err.message
+							})
+						}
+						self.planLoding = false
+						console.log('ERROR', err)
+					})
+				} else if (this.model2value === 'name') {
+					/* ========  plan name wise filter ======== */
+					console.log('plan name  called')
 					// console.log()
 					// console.log('filterdata', filterdata)
 					// console.log('editfilterdata', editfilterdata)
@@ -732,9 +782,40 @@ export default {
 						self.planLoding = false
 						console.log('ERROR', err)
 					})
+				} else {
+					/* ======== All plan wise filter ======== */
+					cbPlan.get().then(res => {
+						console.log('res', res.data)
+						let datares = res.data.map((item) => {
+							console.log('item', item.plan)
+							item.plan.price /= 100
+							return item.plan
+						})
+						this.resultplanfilter = datares
+						self.planLoding = false
+					}).catch(err => {
+						console.log('err', err)
+						if (err.message == 'Network Error') {
+							self.currentMsgInst = self.$Notice.error({
+								duration: 5,
+								title: 'Fetching plan data',
+								desc: 'API service unavailable.'
+							})
+						} else {
+							self.$Notice.error({
+								duration: 5,
+								title: 'Fetching plan data',
+								desc: err.message
+							})
+						}
+						console.log('ERROR', err)
+						self.planLoding = false
+					})
 				}
 			} else if (this.model1value == 'customerfilter') {
+				/* ---------------- customerfilter ------------------ */
 				if (this.model2value === 'id') {
+					/* ========  customer id wise filter ======== */
 					cbCustomer.get(filtervalue).then(res => {
 						console.log('RES CUSTOMER ::', res.data)
 						this.resultcustomerfilter = [res.data.customer]
@@ -758,11 +839,41 @@ export default {
 						}
 						console.log('ERR CUSTOMER ::', err)
 					})
-				} else {
-					// var data3
+				} else if (this.model2value === 'All Customer') {
+					/* ========  All Customer wise filter ======== */
+
+					cbCustomer.get().then(res => {
+						console.log('res', res.data)
+						let datares = res.data.map((item) => {
+							console.log('item', item.customer)
+							return item.customer
+						})
+						this.resultcustomerfilter = datares
+						self.planLoding = false
+					}).catch(err => {
+						console.log('err', err)
+						if (err.message == 'Network Error') {
+							self.currentMsgInst = self.$Notice.error({
+								duration: 5,
+								title: 'Fetching Customer data',
+								desc: 'API service unavailable.'
+							})
+						} else {
+							self.$Notice.error({
+								duration: 5,
+								title: 'Fetching Customer data',
+								desc: err.message
+							})
+						}
+						self.planLoding = false
+						console.log('ERROR', err)
+					})
+				} else if (this.model2value === 'email' || this.model2value === 'first_name' || this.model2value === 'last_name') {
+					/* ========  Customer email , first_name, last_name wise filter ======== */
+					console.log('=== filter called ===')
 					let data2 = this.model2value + '=' + this.model3value
 					cbCustomer.filter(data2).then(res => {
-						console.log('RES CUSTOMER ::', res.data[0].customer)
+						console.log('RES CUSTOMER ::', res.data)
 						let datares = res.data.map((item) => {
 							console.log('item', item.customer)
 							return item.customer
@@ -786,12 +897,14 @@ export default {
 							}
 						}
 						console.log('ERR CUSTOMER ::', err)
+						self.planLoding = false
 					})
 				}
 			} else if (this.model1value == 'subscriptionfilter') {
 				console.log('<<<<<<<< subscriptionfilter >>>>>>>>>>>')
 				console.log('this.model2value', this.model2value)
 				if (this.model2value === 'plan_id') {
+					/* ========  subscription plan_id wise filter ======== */
 					cbSubscription.getSubscribed(filtervalue).then(async res => {
 						console.log('res >>>>>>>>>>', res.data[0].subscription)
 						let datares = res.data.map(async (item) => {
@@ -833,6 +946,7 @@ export default {
 						console.log('ERROR', err)
 					})
 				} else if (this.model2value === 'customer_id') {
+					/* ========  subscription customer_id wise filter ======== */
 					cbSubscription.getOwn(filtervalue).then(async res => {
 						console.log('res >>>>>>>>>>', res.data[0].subscription)
 						let datares = res.data.map(async (item) => {
@@ -874,8 +988,7 @@ export default {
 						console.log('ERROR', err)
 					})
 				} else if (this.model2value === 'id') {
-					// let statusfilter = this.model2value + ':' + this.model3value
-					// console.log('statusfilter', statusfilter)
+					/* ========  subscription id wise filter ======== */
 					cbSubscription.get(filtervalue).then(async res => {
 						console.log('res >>>>>>>>>>', res.data.subscription)
 						res.data.subscription.started_at = moment.unix(res.data.subscription.started_at).format('DD MMM YYYY')
@@ -904,6 +1017,7 @@ export default {
 						console.log('ERROR', err)
 					})
 				} else if (this.model2value === 'status') {
+					/* ========  subscription status wise filter ======== */
 					let statusfilter = this.model2value + '=' + this.model3value
 					// console.log('statusfilter', statusfilter)
 					cbSubscription.filter(statusfilter).then(res => {
@@ -925,8 +1039,46 @@ export default {
 							// self.planList = await self.makeChunk(self.currentPage, self.pageSize)
 							self.planLoding = false
 						})
-						// this.resultsubscriptionfilter = datares
-						// self.planLoding = false
+					}).catch(err => {
+						console.log('err', err)
+						if (err.message == 'Network Error') {
+							self.currentMsgInst = self.$Notice.error({
+								duration: 5,
+								title: 'Fetching subscription data',
+								desc: 'API service unavailable.'
+							})
+						} else {
+							self.$Notice.error({
+								duration: 5,
+								title: 'Fetching subscription data',
+								desc: err.message
+							})
+						}
+						self.planLoding = false
+						console.log('ERROR', err)
+					})
+				} else {
+					/* ========  All subscription wise filter ======== */
+					cbSubscription.get().then(async res => {
+						console.log('res >>>>>>>>>>', res.data)
+						let datares = res.data.map(async (item) => {
+							console.log('item subscription', item.subscription)
+							item.subscription.started_at = moment.unix(item.subscription.started_at).format('DD MMM YYYY')
+							item.subscription.next_billing_at = moment.unix(item.subscription.next_billing_at).format('DD MMM YYYY')
+							item.subscription.mrr /= 100
+							item.subscription.plan_name = await self.getPlanName(item)
+							item.subscription.name = await self.getCustomerName(item)
+							console.log('first_name', item.subscription.first_name)
+							Promise.resolve(item.subscription.plan_name)
+							return item.subscription
+						})
+						console.log('datares', datares)
+						Promise.all(datares).then(async res => {
+							console.log('res---------', res)
+							self.resultsubscriptionfilter = res
+							// self.planList = await self.makeChunk(self.currentPage, self.pageSize)
+							self.planLoding = false
+						})
 					}).catch(err => {
 						console.log('err', err)
 						if (err.message == 'Network Error') {
@@ -988,12 +1140,6 @@ export default {
 	background-color: rgba(255, 0, 0, .3);
 	text-align: center;
 }
-
-
-
-
-
-
 
 /* .vw-widget{
         overflow-x:scroll;
