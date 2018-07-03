@@ -114,7 +114,7 @@ export default {
 		const validateCardNumber = (rule, value, callback) => {
 			if (!value) {
 				callback(new Error('Please Enter Card Number.'))
-			} else if (isNaN(value)) {
+			} else if (!value.match(/^[0-9]+$/)) {
 				callback(new Error('Please Enter Valid Card Number.'))
 			} else if (rule.max != value.length && rule.min != value.length) {
 				callback(new Error('Please Enter Valid 16-Digit Card Number.'))
@@ -141,7 +141,8 @@ export default {
 					render: (h, params) => {
 						return h(addOn, {
 							props: {
-								row: params.row
+								row: params.row,
+								table: true
 							}
 						})
 					}
@@ -360,6 +361,7 @@ export default {
 								desc: 'It will take some time to update details.',
 								duration: 10
 							})
+							self.showCardDetails = false
 							self.$refs[name].resetFields()
 							self.submitLoading = false
 						}

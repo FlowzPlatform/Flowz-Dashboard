@@ -31,7 +31,7 @@
             <h3 class="text-center"><span v-if="!savedCard">Payment Details</span><span v-else>Saved Card Details</span></h3>
           </div>
           <div class="panel-body" style="text-allign:left">
-            <Form v-if="!savedCard" ref="payDetail" :model="payDetail" :rules="payDetailRule">
+            <Form v-if="!savedCard" ref="payDetail" :model="payDetail" :rules="payDetailRule" autocomplete="off">
               <div class="pull-right">
                 <span id="Visa"><img class="pay-icon" src="../../static/visa.png"></img></span>
                 <span id="MasterCard"><img class="pay-icon" src="../../static/master-card.png"></img></span>
@@ -46,7 +46,7 @@
               </Row>
               <label class="ivu-form-item-label">VALID THRU</label>
               <Row align="bottom" type="flex">
-                <Col span="10" pull="4">
+                <Col span="10" pull="3">
                   <Row type="flex" justify="space-around">
                     <Col span="11">
                       <FormItem prop="expiryMM">
@@ -66,7 +66,7 @@
                 </Col>
                 <Col span="8" offset="6">
                   <FormItem prop="cvCode" label="CVV CODE">
-                    <Input v-model="payDetail.cvCode" type="password" placeholder="CVV Code" >
+                    <Input v-model="payDetail.cvCode" type="password" placeholder="CVV Code">
                       <Poptip slot="append" trigger="hover" title="CVV info" placement="right" content="CVV code is a 3 digit number on the back side of your card.">
                         <Icon type="help-circled"></Icon>
                       </Poptip>
@@ -103,14 +103,9 @@
             <Row type="flex" justify="space-around">
                 <Col span="5">
 									<p v-if="mainData[1]" class="pay-info">PAY {{ mainData[1].price }} USD
-                  <Poptip slot="append" trigger="hover" title="Pay Info" placement="bottom" :content="'Total amount to be pay is ' + parseFloat(mainData[1].price / 30 * remainDays).toFixed(2) + '*' ">
+                  <!-- <Poptip slot="append" trigger="hover" title="Pay Info" placement="bottom" :content="'Total amount to be pay is ' + parseFloat(mainData[1].price / 30 * remainDays).toFixed(2) + '*' ">
                     <Icon type="help-circled"></Icon>
-                  </Poptip></p>
-                  <!-- OLD CODE TO CALCULATE PAY AMOUNT -->
-									<!-- <p v-if="mainData[1]" class="pay-info">PAY {{ mainData[1].price * mainData[0].period }} USD
-                  <Poptip slot="append" trigger="hover" title="Pay Info" placement="bottom" :content="'Basic Plan Validity Multiply By Addon Price( ' + mainData[0].period + ' * ' + mainData[1].price + ' = ' + mainData[1].price * mainData[0].period + ' )'">
-                    <Icon type="help-circled"></Icon>
-                  </Poptip></p> -->
+                  </Poptip> --></p>
                 </Col>
                 <Col span="6">
                     <!-- set attribute to Col span="16" offset="4" 
@@ -181,7 +176,7 @@ export default {
 
 			if (!value) {
 				callback(new Error('Please Enter Card Number.'))
-			} else if (isNaN(value)) {
+			} else if (!value.match(/^[0-9]+$/)) {
 				callback(new Error('Please Enter Valid Card Number.'))
 			} else if (rule.max != value.length && rule.min != value.length) {
 				callback(new Error('Please Enter Valid 16-Digit Card Number.'))

@@ -1,7 +1,32 @@
 <template>
   <div id="addOnDetails">
-      <Table :loading="loading" :columns="addOnDetails" :data="addOnList" no-data-text="Add-on plan not found"></Table>
-      <Page v-if="addOnListData.length > pageSize" size="small" show-total style="margin-top:10px;" class="pull-right" :total="addOnListData.length" :page-size="pageSize" :current="currentPage" @on-change="changePage"></Page>
+	<Table v-show="table" :loading="loading" :columns="addOnDetails" :data="addOnList" no-data-text="Add-on plan not found"></Table>
+	<p v-if="!table" style="cursor:pointer">
+		<Poptip v-if="totalAddonPrice != 0" trigger="hover" title="Addon Details" placement="right" width="400">
+			<strong>{{ totalAddonPrice }}</strong>
+			<div slot="content">
+				<Row>
+					<Col>
+						<strong><Row type="flex" justify="center">
+							<Col span="10">Name</Col>
+							<Col span="4">Price</Col>
+							<Col span="4">Qty</Col>
+							<Col span="6">Total</Col>
+						</Row></strong>
+						<Row v-for="item in addOnListData" :key="item.id" type="flex" justify="center">
+							<Col span="10">{{item.name}}</Col>
+							<Col span="4">{{item.price}}</Col>
+							<Col span="4">{{item.quantity}}</Col>
+							<Col span="6">{{ (item.price)*item.quantity }}</Col>
+						</Row>
+						<p>Total is <Strong>{{totalAddonPrice}} USD</strong></p>
+					</Col>
+				</Row>
+			</div>
+		</Poptip>
+		<p v-if="totalAddonPrice == 0 && !table">{{ totalAddonPrice }}</p>
+	</p>
+	<Page v-if="addOnListData.length > pageSize && table" size="small" show-total style="margin-top:10px;" class="pull-right" :total="addOnListData.length" :page-size="pageSize" :current="currentPage" @on-change="changePage"></Page>
   </div>
 </template>
 
@@ -9,24 +34,22 @@
 // import userAddon from '@/api/user-addon';
 import cbAddon from '@/api/cb-addon'
 // import _ from 'lodash'
+let total = 0 // eslint-disable-line
 var moment = require('moment')
 moment().format()
 export default {
 	name: 'addOnDetails',
 	props: {
-		row: Object
+		row: Object,
+		table: Boolean
 	},
 	data () {
 		return {
+			totalAddonPrice: 0,
 			addOnDetails: [
 				{
 					title: 'Add-on',
 					key: 'name'
-				},
-				{
-					title: 'Price',
-					key: 'price',
-					align: 'center'
 				},
 				{
 					title: 'Purchased Quantity',
@@ -34,16 +57,28 @@ export default {
 					align: 'center'
 				},
 				{
-					title: 'Validity (Months)',
-					key: 'period',
+					title: 'Price',
+					key: 'price',
 					align: 'center'
+				},
+				{
+					title: 'Total',
+					align: 'center',
+					render: (h, params) => {
+						let val
+						val = (params.row.price * params.row.quantity)
+						total += val
+						this.totalAddonPrice = total
+						this.$emit('totalAddon', total)
+						return h('span', params.row.price * params.row.quantity)
+					}
 				}
 			],
 			loading: true,
 			addOnListData: [],
 			addOnList: [],
 			currentPage: 1,
-			pageSize: 5
+			pageSize: 10
 		}
 	},
 	methods: {
@@ -109,6 +144,16 @@ export default {
 		//     }
 		//     self.loading = false
 		// })
+	},
+	destroyed () {
+		this.totalAddonPrice = 0
+		total = 0
 	}
 }
 </script>
+
+<style scoped>
+	.total-tag {
+		font-size: 16px;
+	}
+</style>
