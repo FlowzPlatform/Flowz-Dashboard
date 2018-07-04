@@ -20,7 +20,7 @@ export default {
 			userDetailList: [
 				{
 					type: 'expand',
-					width: 50,
+					width: 55,
 					render: (h, params) => {
 						return h(userAddon, {
 							props: {
@@ -33,7 +33,7 @@ export default {
 				{
 					type: 'index',
 					// title: 'index',
-					width: 40,
+					width: 55,
 					align: 'center'
 					// ,sortable: true
 				}, {
