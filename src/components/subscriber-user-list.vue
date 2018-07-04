@@ -91,7 +91,6 @@ import $ from 'jquery'
 import moment from 'moment'
 moment().format()
 
-
 export default {
 	components: { userDetails },
 	data: function () {
