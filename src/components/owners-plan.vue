@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Table highlight-row :loading="loading" class='dataTable' :columns="planDetails" :data="planList" no-data-text="No Data" @on-current-change="currentRow"></Table>
+        <Table highlight-row ref="planDetails" :loading="loading" class='dataTable' :columns="planDetails" :data="planList" no-data-text="No Data" @on-current-change="currentRow"></Table>
         <Page v-if="planListData.length > pageSize" size="small" show-total style="margin-top:10px;" class="pull-right" :total="planListData.length" :page-size="pageSize" :current="currentPage" @on-change="changePage"></Page>
     </div>
 </template>
@@ -21,17 +21,23 @@ export default {
 	data () {
 		return {
 			loading: true,
+			totalAddonPrice: {},
 			planDetails: [
 				// {
-				//     type: 'expand',
-				//     width: 50,
-				//     render: (h, params) => {
-				//         return h(expandRow, {
-				//             props: {
-				//                 row: params.row
-				//             }
-				//         })
-				//     }
+				// 	type: 'expand',
+				// 	width: 50,
+				// 	render: (h, params) => {
+				// 		return h(expandRow, {
+				// 			props: {
+				// 				row: params.row
+				// 			},
+				// 			on: {
+				// 				totalAddon: (item) => {
+				// 					console.log('ITEM>>>', item)
+				// 				}
+				// 			}
+				// 		})
+				// 	}
 				// },
 				{
 					title: 'Plan',
@@ -42,24 +48,31 @@ export default {
 					}
 				},
 				{
-					title: 'Price',
-					key: 'plan_unit_price',
-					align: 'center'
-				},
-				{
-					title: 'Validity (Months)',
-					key: 'billing_period',
-					align: 'center'
-				},
-				{
 					title: 'Subscribed',
 					key: 'started_at',
 					align: 'center'
 				},
 				{
-					title: 'Expiry Date',
-					key: 'current_term_end',
-					sortable: true
+					title: 'Plan Price (USD)',
+					key: 'plan_unit_price',
+					align: 'center'
+				},
+				{
+					title: 'Purchased Add-on Price (USD)',
+					align: 'center',
+					render: (h, params) => {
+						return h(expandRow, {
+							props: {
+								row: params.row,
+								table: false
+							},
+							on: {
+								totalAddon: (item) => {
+									this.totalAddonPrice[params.row.id] = item
+								}
+							}
+						})
+					}
 				}
 			],
 			planListData: [],
@@ -85,17 +98,27 @@ export default {
 			return chunk.slice()
 		},
 		currentRow (currentRow) {
-			this.$emit('selectedSubscription', [currentRow.id, currentRow.plan_id, currentRow.plan_unit_price, currentRow.next_billing_at])
+			if (this.totalAddonPrice != null && currentRow != null) {
+				currentRow.totalAddonPrice = this.totalAddonPrice[currentRow.id]
+			}
+			this.$emit('selectedSubscription', currentRow)
 		},
 		async getPlanName (itm) {
 			return cbPlan.get(itm.subscription.plan_id).then(res => {
 				return res.data.name
 			})
+		},
+		destroyElement () {
+			this.$refs.planDetails.clearCurrentRow()
+		},
+		addTotalAddonPrice (index, value) {
+			console.log('>>>', index, value)
+			this.planList[index].totalAddonPrice = value
+			console.log('after adding totalAddonPrice:: ', this.planList)
 		}
 	},
 	async mounted () {
 		let self = this
-
 		await getUserDetails.get().then(res => {
 			self.userDetails = res.data.data
 		}).catch(err => {

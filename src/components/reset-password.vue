@@ -1,24 +1,23 @@
 <template>
   <div>
     <div class="mainBody">
-      
       <div class="loginContainer">
         <div class="frontbox">
            <div class="login">
-             <h2>Reset Password</h2>
-             <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
-                <FormItem  prop="newPassword">
-                    <label>New Password</label>
+            <h2>Reset Password</h2>
+            <Form ref="formValidate" :model="formValidate" :rules="ruleValidate">
+                <FormItem label="New Password" prop="newPassword">
                     <Input type="password" v-model="formValidate.newPassword" placeholder="Enter New Password"></Input>
                 </FormItem>
-                <FormItem  prop="confirmPassword">
-                    <label>Confirm Password</label>
+                <FormItem label="Confirm Password" prop="confirmPassword">
                     <Input type="password" v-model="formValidate.confirmPassword" placeholder="Enter Confirm Password"></Input>
-                </FormItem>
+                </FormItem><br>
                 <FormItem>
+									<Row type="flex" justify="start" align="bottom">
                     <Button type="primary" :loading="saveFileLoadingLogin" @click="handleSubmit('formValidate')">Submit</Button>
-                </FormItem>
-             </Form>
+									</Row>
+								</FormItem>
+            </Form>
            </div>
          </div>
       </div>
@@ -35,7 +34,7 @@ export default {
 	data () {
 		const validatePassCheck = (rule, value, callback) => {
 			if (value === '') {
-				callback(new Error('Please enter confirm password!'))
+				callback(new Error('Please enter confirm password'))
 			} else if (value !== this.formValidate.newPassword) {
 				callback(new Error('The entered new and confirm password does not match!'))
 			} else {
@@ -49,18 +48,15 @@ export default {
 				confirmPassword: ''
 			},
 			ruleValidate: {
-				newPassword: [
-					{ required: true, message: 'Please enter New Password', trigger: 'blur' }
-				],
-				confirmPassword: [
-					{ required: true, validator: validatePassCheck, trigger: 'blur' }
-				]}
-
+				newPassword: [{ required: true, message: 'Please enter new password', trigger: 'blur' }],
+				confirmPassword: [{ required: true, validator: validatePassCheck, trigger: 'blur' }]
+			}
 		}
 	},
 	methods: {
 		handleSubmit (name) {
 			let self = this
+			self.saveFileLoadingLogin = true
 			this.$refs[name].validate((valid) => {
 				if (valid) {
 					let url = new URL(window.location.href)
@@ -71,30 +67,28 @@ export default {
 						token: forgetToken
 					})
 						.then(function (response) {
-							console.log(response)
 							self.$message.success(response.data.message)
 							self.$router.push('/login')
+							self.saveFileLoadingLogin = false
 						})
 						.catch(function (error) {
-							console.log(error.response)
+							self.saveFileLoadingLogin = false
 							self.$message.error(error.response.data)
 						})
 				} else {
+					self.saveFileLoadingLogin = false
 					this.$Message.error('Please enter correct inputs')
 				}
 			})
 		}
-
-	},
-	mounted () {
 
 	}
 }
 </script>
 
 
-<style>
-    .backbox,
+<style scoped>
+.backbox,
 .loginContainer {
     top: 50%;
     display: inline-flex;
@@ -108,6 +102,9 @@ export default {
 .login div  .ivu-tabs-nav-scroll {
     position: fixed;
   }
+.login h2 {
+	margin-bottom: 10%;
+}
 .el-tabs__header {
     margin-bottom: 5px !important;
 }
