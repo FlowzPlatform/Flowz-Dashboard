@@ -331,7 +331,15 @@ export default {
 		},
 		getCustomerCardDetails () {
 			cbCustomer.get(this.userDetails._id).then(res => {
-				this.customerDetails = res.data.card
+				if (res.data.card != undefined) {
+					this.customerDetails = res.data.card
+				} else {
+					this.showCardDetails = false
+					this.$Message.warning({
+						content: 'You don\'t have any saved card to update!',
+						duration: 10
+					})
+				}
 			}).catch(err => {
 				this.$Notice.error({
 					title: 'Can\'t find customer details',
