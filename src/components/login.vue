@@ -4,7 +4,7 @@
       <a href="#"><img src="../assets/images/flowz_digital_logo2.png" style="height: 50px;"> </a>
       </div> -->
    <div class="lcontended">
-      <div v-if="!isSocialLogin" class="lundcon">
+      <div v-if="!isSocialLogin" class="lundcon sing">
          <div class="lrpt" >
             <div class="lsrpt" @click="showLogin">
                <span>Already have an <br> account?</span>
@@ -58,12 +58,12 @@
                         <icon name="twitter"></icon>
                       </span>
                       </Tooltip>
-                      -
+                      <!-- -
                       <Tooltip content="Login with linkdin">
                       <span class="linkedin" @click="submitLinkedin()">
                         <icon name="linkedin"></icon>
                       </span> 
-                        </Tooltip>
+                        </Tooltip> -->
                         -
                       <Tooltip content="Login with github">
 
@@ -112,21 +112,16 @@
                </div>
                <div class="lconun">
                   <div class="lrinp">
-
                        <div>
                            <div class="col-md-6">
                                <el-button type="success" v-if="!showForgotPassword" size="small"  class="signupButton" @click="loginUser()" :loading="saveFileLoadingLogin" style="margin-left:18px">Login</el-button>
                               <el-button type="success" size="small" class="signupButton"  v-if="showForgotPassword" @click="forgotPasswordSendEmail()" :loading="saveFileLoadingLogin" style="margin-left:18px" >Submit</el-button>
                            </div>
                            <div class="col-md-6" style="top: 9px;">
-                              <a href="javascript:void()" class="lfort" v-if="!showForgotPassword"  v-show="this.selectedTabIndex==0" @click="forgotPassword()" style="margin-right:18px;color:#0e0c0c">Forgot Password</a>
+                              <a href="javascript:void()" class="lfort" v-if="!showForgotPassword"  v-show="this.selectedTabIndex==0" @click="forgotPassword()" style="margin-right:18px;color:#0e0c0c">Forgot Password?</a>
                               <a href="javascript:void()" class="lfort" v-if="showForgotPassword" v-show="this.selectedTabIndex==0" @click="backtoLogin()" style="margin-right:18px;color:#0e0c0c">Back to Login</a>
-
                            </div>
                         </div>
-
-
-
                   </div>
                </div>
             </div>
@@ -154,12 +149,12 @@
                         <icon name="twitter"></icon>
                       </span>
                       </Tooltip>
-                      -
+                      <!-- -
                        <Tooltip content="Login with linkdin">
                       <span class="linkedin" @click="submitLinkedin()">
                         <icon name="linkedin"></icon>
                       </span>
-                       </Tooltip>
+                       </Tooltip> -->
                       -
                       <Tooltip content="Login with github">
                       <span class="github" @click="submitGithub()">

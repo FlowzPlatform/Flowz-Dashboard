@@ -1,6 +1,6 @@
 export default {
 	loginUser: '',
+	currentMsgInst: null,
 	isGooleLogin: false,
-	isFacebookLogin: false,
-	currentMsgInst: null
+	isFacebookLogin: false
 }

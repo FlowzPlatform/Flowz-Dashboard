@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Table highlight-row :loading="loading" class='dataTable' :columns="planDetails" :data="planList" no-data-text="No Data" @on-current-change="currentRow"></Table>
+        <Table highlight-row ref="planDetails" :loading="loading" class='dataTable' :columns="planDetails" :data="planList" no-data-text="No Data" @on-current-change="currentRow"></Table>
         <Page v-if="planListData.length > pageSize" size="small" show-total style="margin-top:10px;" class="pull-right" :total="planListData.length" :page-size="pageSize" :current="currentPage" @on-change="changePage"></Page>
     </div>
 </template>
@@ -21,31 +21,31 @@ export default {
 	data () {
 		return {
 			loading: true,
+			totalAddonPrice: {},
 			planDetails: [
 				// {
-				//     type: 'expand',
-				//     width: 50,
-				//     render: (h, params) => {
-				//         return h(expandRow, {
-				//             props: {
-				//                 row: params.row
-				//             }
-				//         })
-				//     }
+				// 	type: 'expand',
+				// 	width: 50,
+				// 	render: (h, params) => {
+				// 		return h(expandRow, {
+				// 			props: {
+				// 				row: params.row
+				// 			},
+				// 			on: {
+				// 				totalAddon: (item) => {
+				// 					console.log('ITEM>>>', item)
+				// 				}
+				// 			}
+				// 		})
+				// 	}
 				// },
 				{
 					title: 'Plan',
-					key: 'plan_name'
-				},
-				{
-					title: 'Price',
-					key: 'plan_unit_price',
-					align: 'center'
-				},
-				{
-					title: 'Validity (Months)',
-					key: 'billing_period',
-					align: 'center'
+					render: (h, params) => {
+						return h('div', [
+							h('a', params.row.plan_name)
+						])
+					}
 				},
 				{
 					title: 'Subscribed',
@@ -53,9 +53,26 @@ export default {
 					align: 'center'
 				},
 				{
-					title: 'Expiry Date',
-					key: 'current_term_end',
-					sortable: true
+					title: 'Plan Price (USD)',
+					key: 'plan_unit_price',
+					align: 'center'
+				},
+				{
+					title: 'Purchased Add-on Price (USD)',
+					align: 'center',
+					render: (h, params) => {
+						return h(expandRow, {
+							props: {
+								row: params.row,
+								table: false
+							},
+							on: {
+								totalAddon: (item) => {
+									this.totalAddonPrice[params.row.id] = item
+								}
+							}
+						})
+					}
 				}
 			],
 			planListData: [],
@@ -63,7 +80,8 @@ export default {
 			moment: moment,
 			userDetails: null,
 			currentPage: 1,
-			pageSize: 10
+			pageSize: 10,
+			currentMsgInst: this.$store.state.currentMsgInst
 		}
 	},
 	methods: {
@@ -80,18 +98,27 @@ export default {
 			return chunk.slice()
 		},
 		currentRow (currentRow) {
-			console.log('CurrentRow', currentRow)
-			this.$emit('selectedSubscription', [currentRow.id, currentRow.plan_id, currentRow.plan_unit_price])
+			if (this.totalAddonPrice != null && currentRow != null) {
+				currentRow.totalAddonPrice = this.totalAddonPrice[currentRow.id]
+			}
+			this.$emit('selectedSubscription', currentRow)
 		},
 		async getPlanName (itm) {
 			return cbPlan.get(itm.subscription.plan_id).then(res => {
 				return res.data.name
 			})
+		},
+		destroyElement () {
+			this.$refs.planDetails.clearCurrentRow()
+		},
+		addTotalAddonPrice (index, value) {
+			console.log('>>>', index, value)
+			this.planList[index].totalAddonPrice = value
+			console.log('after adding totalAddonPrice:: ', this.planList)
 		}
 	},
 	async mounted () {
 		let self = this
-
 		await getUserDetails.get().then(res => {
 			self.userDetails = res.data.data
 		}).catch(err => {
@@ -114,7 +141,6 @@ export default {
 					desc: err.message
 				})
 			}
-			console.log('>>>Getting user details', err)
 		})
 		cbSubscription.getOwn(self.userDetails._id).then(async res => {
 			// console.log('Res of cb-subscription:: ', res)
@@ -133,11 +159,13 @@ export default {
 				self.loading = false
 			})
 		}).catch(err => {
-			self.$Notice.error({
-				duration: 5,
-				title: 'Getting your plans',
-				desc: err.message
-			})
+			if (self.currentMsgInst &&	!self.currentMsgInst.closed) {
+				self.$Notice.error({
+					duration: 5,
+					title: 'Getting your plans',
+					desc: err.message
+				})
+			}
 			self.loading = false
 		})
 

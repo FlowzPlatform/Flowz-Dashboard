@@ -31,7 +31,7 @@
             <h3 class="text-center"><span v-if="!savedCard">Payment Details</span><span v-else>Saved Card Details</span></h3>
           </div>
           <div class="panel-body" style="text-allign:left">
-            <Form v-if="!savedCard" ref="payDetail" :model="payDetail" :rules="payDetailRule">
+            <Form v-if="!savedCard" ref="payDetail" :model="payDetail" :rules="payDetailRule" autocomplete="off">
               <div class="pull-right">
                 <span id="Visa"><img class="pay-icon" src="../../static/visa.png"></img></span>
                 <span id="MasterCard"><img class="pay-icon" src="../../static/master-card.png"></img></span>
@@ -40,13 +40,13 @@
               <Row>
                 <Col>
                   <FormItem prop="cardNumber" label="CARD NUMBER">
-                    <Input v-model="payDetail.cardNumber" type="text" id="cardNumber" placeholder="Valid Card Number" icon="card"></Input>
+                    <Input v-model="payDetail.cardNumber" type="text" id="cardNumber" placeholder="Valid Card Number" icon="card" autocomplete="off"></Input>
                   </FormItem>
                 </Col>
               </Row>
               <label class="ivu-form-item-label">VALID THRU</label>
               <Row align="bottom" type="flex">
-                <Col span="10" pull="4">
+                <Col span="10" pull="3">
                   <Row type="flex" justify="space-around">
                     <Col span="11">
                       <FormItem prop="expiryMM">
@@ -66,7 +66,7 @@
                 </Col>
                 <Col span="8" offset="6">
                   <FormItem prop="cvCode" label="CVV CODE">
-                    <Input v-model="payDetail.cvCode" type="password" placeholder="CVV Code" >
+                    <Input v-model="payDetail.cvCode" type="password" placeholder="CVV Code">
                       <Poptip slot="append" trigger="hover" title="CVV info" placement="right" content="CVV code is a 3 digit number on the back side of your card.">
                         <Icon type="help-circled"></Icon>
                       </Poptip>
@@ -102,10 +102,10 @@
           <div class="panel-footer">
             <Row type="flex" justify="space-around">
                 <Col span="5">
-                  <p v-if="mainData[1]" class="pay-info">PAY {{ mainData[1].price * mainData[0].period }} USD
-                  <Poptip slot="append" trigger="hover" title="Pay Info" placement="bottom" :content="'Basic Plan Validity Multiply By Addon Price( ' + mainData[0].period + ' * ' + mainData[1].price + ' = ' + mainData[1].price * mainData[0].period + ' )'">
+									<p v-if="mainData[1]" class="pay-info">PAY {{ mainData[1].price }} USD
+                  <!-- <Poptip slot="append" trigger="hover" title="Pay Info" placement="bottom" :content="'Total amount to be pay is ' + parseFloat(mainData[1].price / 30 * remainDays).toFixed(2) + '*' ">
                     <Icon type="help-circled"></Icon>
-                  </Poptip></p>
+                  </Poptip> --></p>
                 </Col>
                 <Col span="6">
                     <!-- set attribute to Col span="16" offset="4" 
@@ -147,7 +147,8 @@ import config from '../config'
 export default {
 	props: {
 		basicPlan: String,
-		basicSubId: String
+		basicSubId: String,
+		remainDays: Number
 	},
 	name: 'checkout',
 	data () {
@@ -175,7 +176,7 @@ export default {
 
 			if (!value) {
 				callback(new Error('Please Enter Card Number.'))
-			} else if (isNaN(value)) {
+			} else if (!value.match(/^[0-9]+$/)) {
 				callback(new Error('Please Enter Valid Card Number.'))
 			} else if (rule.max != value.length && rule.min != value.length) {
 				callback(new Error('Please Enter Valid 16-Digit Card Number.'))
@@ -236,6 +237,7 @@ export default {
 				msg: '',
 				class: ''
 			},
+			payAmount: null,
 			expiryMonth: [
 				{
 					value: '01',
@@ -289,7 +291,8 @@ export default {
 			expiryYear: [],
 			userDetails: null,
 			savedCard: false,
-			loadingPlans: true
+			loadingPlans: true,
+			currentMsgInst: this.$store.state.currentMsgInst
 		}
 	},
 	async mounted () {
@@ -337,7 +340,13 @@ export default {
 			}
 			// console.log('Res of customer details', res)
 		}).catch(err => {
-			console.log('Error While geting customer details', err)
+			if (self.currentMsgInst &&	!self.currentMsgInst.closed) {
+				self.$Notice.error({
+					duration: 5,
+					title: 'Getting customer details',
+					desc: err.message
+				})
+			}
 		})
 		this.mapData(data)
 		/* cbSubscription.get(self.userDetails._id).then(res => {
@@ -376,10 +385,11 @@ export default {
 	},
 	methods: {
 		getPlanDetails (id) {
+			let self = this
 			return cbPlan.get(id).then(res => {
-				// console.log('>>>>', id,res.data)
 				return res.data
 			}).catch(err => {
+				self.$Spin.hide()
 				if (err.response && err.response.data.message == 'User authentication fail') {
 					this.$Message.error({
 						content: 'Your session has been expired please login again.',
@@ -393,35 +403,51 @@ export default {
 					Cookies.remove('user', {domain: location})
 					self.$router.push({ name: 'login' })
 				} else {
-					self.$Notice.error({
-						duration: 5,
-						title: 'Fetching subscription plan',
-						desc: err.message
-					})
+					if (err.message == 'Network Error') {
+						self.currentMsgInst = self.$Notice.error({
+							duration: 5,
+							title: 'Fetching selected plan',
+							desc: 'API service unavailable.'
+						})
+					} else {
+						self.$Notice.error({
+							duration: 5,
+							title: 'Fetching selected plan',
+							desc: err.response.data.message
+						})
+					}
 				}
-				console.log('>>>Error geting subscriptions', err)
 			})
 		},
 		getAddonDetails (id) {
+			let self = this
 			return cbAddon.get(id).then(res => {
 				return res.data
 			}).catch(err => {
-				console.log('Error :: ', err)
+				if (self.currentMsgInst &&	!self.currentMsgInst.closed) {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Fetching selected addon',
+						desc: err.message
+					})
+				}
 			})
 		},
 		mapData (data) {
 			data.map((itm) => {
-				if (itm.description) { itm.description = itm.description.split('\n') }
-				itm.price /= 100
-				if (itm.meta_data && itm.meta_data.details) {
-					itm.details = _.chain(itm.meta_data.details).filter(function (o) {
-						o.value = parseInt(o.value)
-						return o.value > 0
-					}).map(function (d) {
-						let str = d.module.charAt(0).toUpperCase() + d.module.slice(1)
-						let str2 = d.service.charAt(0).toUpperCase() + d.service.slice(1)
-						return {'key': '<i class="ivu-icon ivu-icon-android-checkmark-circle"></i> <b>' + str + '</b> ' + str2, 'value': d.value}
-					}).value()
+				if (itm) {
+					if (itm.description) { itm.description = itm.description.split('\n') }
+					if (itm.price) { itm.price /= 100 }
+					if (itm.meta_data && itm.meta_data.details) {
+						itm.details = _.chain(itm.meta_data.details).filter(function (o) {
+							o.value = parseInt(o.value)
+							return o.value > 0
+						}).map(function (d) {
+							let str = d.module.charAt(0).toUpperCase() + d.module.slice(1)
+							let str2 = d.service.charAt(0).toUpperCase() + d.service.slice(1)
+							return {'key': '<i class="ivu-icon ivu-icon-android-checkmark-circle"></i> <b>' + str + '</b> ' + str2, 'value': d.value}
+						}).value()
+					}
 				}
 			})
 			this.mainData = data
@@ -446,7 +472,7 @@ export default {
 			this.payDetail.expiryMM = splited[1]
 		},
 		backFunction () {
-			this.$router.push('/subscription-list')
+			this.$router.go(-1)
 		},
 		updatePayMessage (cls, type, msg) {
 			this.payDone = true
@@ -556,13 +582,43 @@ export default {
 				}
 				let result // eslint-disable-line no-unused-vars
 				if (self.basicPlan != undefined) {
+					// cbSubscription call to get already subscribed addon quantity
+					let quantity = await cbSubscription.get(self.basicPlan).then(res => {
+						if (res.data.api_error_code) {
+							self.throwNewError(res)
+							return res
+						} else {
+							let addonObj = _.filter(res.data.subscription.addons, { 'id': self.sub_id })
+							return addonObj.length > 0 ? addonObj[0].quantity + 1 : 1
+						}
+					}).catch(err => {
+						if (err.message == 'Network Error') {
+							self.currentMsgInst = self.$Notice.error({
+								duration: 5,
+								title: 'Purchasing addon',
+								desc: 'API service unavailable.'
+							})
+						} else {
+							self.currentMsgInst = self.$Notice.error({
+								duration: 5,
+								title: 'Purchasing addon',
+								desc: err.message
+							})
+						}
+						return err
+					})
 					// IF CHANGES IN subDetails OBJECT THEN ALSO CHANGE CODE OF AN CB-SUBSCRIPTION's UPDATE METHOD
-					subDetails = {
-						'addons': [{
-							'id': self.sub_id
-						}]
+					if (!isNaN(quantity)) {
+						subDetails = {
+							'addons': [{
+								'id': self.sub_id,
+								'quantity': quantity
+							}]
+						}
+						result = await self.subscribeCbAddon(subDetails)
+					} else {
+						self.payloading = false
 					}
-					result = await self.subscribeCbAddon(subDetails)
 				} else {
 					result = await self.subscribeCbPlan(subDetails)
 				}
@@ -583,8 +639,13 @@ export default {
 					}
 					self.payloading = false
 				}).catch(err => {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Purchasing plan',
+						desc: err.message
+					})
 					self.updatePayMessage('alert alert-danger', 'Error..! ', null)
-					console.log('Error while subscribing plan:: ', err)
+					// console.log('Error while subscribing plan:: ', err)
 					self.payloading = false
 				})
 			} else {
@@ -596,8 +657,13 @@ export default {
 					}
 					self.payloading = false
 				}).catch(err => {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Purchasing plan',
+						desc: err.message
+					})
 					self.updatePayMessage('alert alert-danger', 'Error..! ', null)
-					console.log('Error while sub for customer:: ', err)
+					// console.log('Error while sub for customer:: ', err)
 					self.payloading = false
 				})
 			}
@@ -612,8 +678,15 @@ export default {
 				}
 				self.payloading = false
 			}).catch(err => {
+				if (self.currentMsgInst &&	!self.currentMsgInst.closed) {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Purchasing addon',
+						desc: err.message
+					})
+				}
 				self.updatePayMessage('alert alert-danger', 'Error..! ', null)
-				console.log('Error while subscribeCbAddon() ', err)
+				// console.log('Error while subscribeCbAddon() ', err)
 				self.payloading = false
 			})
 		},
@@ -631,20 +704,11 @@ export default {
 			let ttl = res.data.api_error_code.replace(/_/gi, ' ')
 			ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1)
 			self.updatePayMessage('alert alert-danger', 'Error..! ', msg)
-			/* if (res.data.error_code == 'add_card_error') {
-      self.$Notice.error({
-        title: ttl,
-        duration: 5,
-        desc: msg
-      });
-      self.updatePayMessage('alert alert-danger', 'Error..! ', 'Your card is expire.');
-    } else { */
 			self.$Notice.error({
 				title: ttl,
 				duration: 5,
 				desc: msg
 			})
-			/* } */
 		},
 		subscriptionDone (res) {
 			let self = this
@@ -656,7 +720,6 @@ export default {
 				duration: 0,
 				desc: res.data.subscription.id
 			})
-			// console.log('Subscription Details', res);
 			this.$router.push({ name: 'planDetails' })
 		}
 	},

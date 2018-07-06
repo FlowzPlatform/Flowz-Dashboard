@@ -18,6 +18,9 @@ export default {
 	filter: (params) => {
 		return api.request('get', '/' + model + '?limit=100&' + params)
 	},
+	pauseSubscription: (id, pause) => {
+		return api.request('get', '/' + model + '/' + id + '?pause=' + pause)
+	},
 	post: (data) => {
 		return api.request('post', '/' + model, data)
 	},

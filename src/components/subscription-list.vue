@@ -48,11 +48,20 @@
       <div style="clear: both"></div>
     </section>
   </section>
+	<div v-if="basicPlans.length === 0 && addOns.length === 0" class="type-header setMiddle">
+		<p>Sorry, Plans And Addons Not Available!</p>
+	</div>
   <Modal title="My Plan" v-model="showPlanSelection" :mask-closable="false" @on-ok="makeAddon()" width="60%" :loading="validateModal">
     <p style="margin-bottom:0px">Select basic plan which you wants to extend.</p>
     <!-- component owners-plan.vue imported -->
-    <my-plan style="padding:35px" v-on:selectedSubscription="setSelectedSubscription"></my-plan>
-    <p v-if="assuredSum != null">Your monthly payment will be {{ planPrice }} + {{ addonPrice }} = {{ assuredSum }}</p>
+    <my-plan ref="myPlans" style="padding:35px" v-on:selectedSubscription="setSelectedSubscription"></my-plan>
+		<p v-if="assuredSum != null">
+			Now, your <strong>monthly payment</strong> will be 
+				<Tooltip placement="top" content="Basic Plan Price"><strong style="cursor:pointer">{{ planPrice }}</strong></Tooltip>
+				<Tooltip v-if="totalAddonPrice != null" placement="top" content="Total Price of Purchased Addons"> + <strong style="cursor:pointer">{{ totalAddonPrice }}</strong></Tooltip>
+				+ <Tooltip placement="top" content="Current Selected Addon Price"><strong style="cursor:pointer">{{ addonPrice }}</strong></Tooltip>
+				= {{ assuredSum }}
+		</p>
   </Modal>
 </div>
 </template>
@@ -61,6 +70,8 @@ import myPlans from './owners-plan.vue'
 import cbPlan from '@/api/cb-plan'
 import cbAddon from '@/api/cb-addon'
 import _ from 'lodash'
+let moment = require('moment')
+moment().format()
 
 export default {
 	components: {
@@ -69,7 +80,6 @@ export default {
 	name: 'subscriptionList',
 	data () {
 		return {
-			showDetails: '0',
 			mainData: [],
 			basicPlans: [],
 			addOns: [],
@@ -78,6 +88,7 @@ export default {
 			selectedBasicPlan: '',
 			selectedBasicSubId: '',
 			validateModal: true,
+			totalAddonPrice: null,
 			details: [{
 				'key': 'key',
 				'width': 230,
@@ -86,8 +97,11 @@ export default {
 				'key': 'value'
 			}],
 			assuredSum: null,
+			// allAddonPrice: null,
 			planPrice: null,
-			addonPrice: null
+			addonPrice: null,
+			remainDays: null,
+			currentMsgInst: this.$store.state.currentMsgInst
 		}
 	},
 	methods: {
@@ -119,12 +133,19 @@ export default {
 				this.$Spin.hide()
 			}).catch(err => {
 				this.$Spin.hide()
-				self.$Notice.error({
-					duration: 5,
-					title: 'Fetching subscription plans',
-					desc: err.message
-				})
-				console.log('ERR Getting Plan ::', err)
+				if (err.message == 'Network Error') {
+					self.currentMsgInst = self.$Notice.error({
+						duration: 5,
+						title: 'Fetching subscription plans',
+						desc: 'API service unavailable.'
+					})
+				} else {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Fetching subscription plans',
+						desc: err.message
+					})
+				}
 			})
 
 			// getting addon details from the chargeBee api
@@ -135,14 +156,14 @@ export default {
 					console.log('itm.addon', itm.addon)
 					return itm.addon
 				})
-				console.log('Addon List', self.addOns)
 			}).catch(err => {
-				self.$Notice.error({
-					duration: 5,
-					title: 'Fetching subscription plans',
-					desc: err.message
-				})
-				console.log('ERR Getting Addon ::', err)
+				if (self.currentMsgInst &&	!self.currentMsgInst.closed) {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Fetching subscription plans',
+						desc: err.message
+					})
+				}
 			})
 			// OLD CODE FOR SUBSCRIPTION LIST
 			/* subscriptionPlans.get().then(res => {
@@ -225,8 +246,11 @@ export default {
 		},
 		// when select addon then popup modal for basic plan selection
 		checkoutAddonFunction (addonId) {
+			this.assuredSum = null
+			this.addonPrice = null
 			this.selectedAddon = addonId
 			this.showPlanSelection = true
+			this.$refs.myPlans.destroyElement()
 		},
 		// select a basic plan from open modal and validate it
 		makeAddon () {
@@ -243,20 +267,28 @@ export default {
 					params: {
 						id: this.selectedAddon,
 						'basicSubId': this.selectedBasicSubId,
-						'basicPlan': this.selectedBasicPlan
+						'basicPlan': this.selectedBasicPlan,
+						'remainDays': this.remainDays
 					}
 				})
 			}
 		},
-		setSelectedSubscription (id) {
-			this.selectedBasicPlan = id[0]
-			this.selectedBasicSubId = id[1]
-			let details = this.addOns.filter(itm => {
-				return itm.id == this.selectedAddon
-			})
-			this.planPrice = id[2]
-			this.addonPrice = details[0].price
-			this.assuredSum = id[2] + details[0].price
+		setSelectedSubscription (currentRow) {
+			if (currentRow != null) {
+				let purchasedAddonPrice = currentRow.totalAddonPrice | 0
+				this.selectedBasicPlan = currentRow.id
+				this.selectedBasicSubId = currentRow.plan_id
+				let details = this.addOns.filter(itm => {
+					return itm.id == this.selectedAddon
+				})
+				this.planPrice = currentRow.plan_unit_price
+				this.addonPrice = details[0].price
+				this.assuredSum = currentRow.plan_unit_price + details[0].price + purchasedAddonPrice
+				// this.allAddonPrice = currentRow.addons
+				this.totalAddonPrice = currentRow.totalAddonPrice
+				// this.totalAddonPrice -= currentRow.plan_unit_price
+				this.remainDays = moment.unix(currentRow.next_billing_at).diff(moment(), 'days')
+			}
 		}
 	},
 	mounted () {
@@ -293,6 +325,18 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   vertical-align: top;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
+}
+
+.setMiddle{
+    width: 100%;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    margin: auto;
+    position: absolute;
+    -ms-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
 }
 
 body {

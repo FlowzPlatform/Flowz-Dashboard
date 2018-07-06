@@ -14,6 +14,9 @@ export default {
 	},
 	post: (data) => {
 		return api.request('post', '/' + model, data)
+	},
+	patch: (id, data) => {
+		return api.request('patch', '/' + model + '/' + id, data)
 	}
 	/* put: (id, data) => {
         return api.request('put', '/' + model + '/' + id, data);

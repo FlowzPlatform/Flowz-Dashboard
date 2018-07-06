@@ -69,16 +69,18 @@ router.beforeEach((to, from, next) => {
 			// headers: {'Authorization': response.data.logintoken}
 		})
 			.then(function (result) {
-				// console.log(result)
 				let location = psl.parse(window.location.hostname)
 				location = location.domain === null ? location.input : location.domain
 				Cookies.set('user', result.data.data.email, {domain: location})
+
 				if (result.data.data.package !== undefined) {
 					next()
 				} else {
-					next({
-						path: '/subscription-list'
-					})
+					if (to.name !== 'checkout') {
+						next({
+							path: '/subscription-list'
+						})
+					}
 				}
 			})
 			.catch(function (error) {
@@ -112,7 +114,7 @@ router.beforeEach((to, from, next) => {
 				// store.commit('SET_USER', response)
 				next()
 			}).catch(error => {
-				console.log(error.message)
+				// console.log(error.message)
 				if (error.response.data === 'invalid token') {
 					router.app.$cookie.delete('auth_token')
 				}
