@@ -491,7 +491,7 @@ export default {
 					'Content-Type': 'application/x-www-form-urlencoded;'
 				}
 			}).then(function (response) {
-				console.log('all roles:', response)
+				// console.log('all roles:', response)
 				if (response.data.data.length > 0) {
 					var arrRoles = _.groupBy(response.data.data, 'module')
 					for (var tblData in arrRoles) {
@@ -501,7 +501,7 @@ export default {
 							sortField: 'name'
 						}
 						arrRoles[tblData].splice(0, 0, obj)
-						console.log('arraData', arrRoles)
+						// console.log('arraData', arrRoles)
 					}
 				}
 				self.showOverlay = false
@@ -534,14 +534,14 @@ export default {
 					itm.plan.price /= 100
 					let userDetails = await self.getSubscribedUser(itm.plan.id)
 					Promise.resolve(userDetails)
-					console.log('userAddon >>>', userDetails)
+					// console.log('userAddon >>>', userDetails)
 					itm.plan.users = userDetails.userCount
 					itm.plan.userDetails = userDetails.userData
 					self.totalUser += userDetails.userCount
 					return itm.plan
 				})
 				Promise.all(obj).then(async res => {
-					console.log('cbPlan res >>>>>', res)
+					// console.log('cbPlan res >>>>>', res)
 					self.planData = res
 					this.planDetailData = res
 					this.planData = await this.makeChunk(this.currentPage, this.pageSize)
@@ -564,7 +564,7 @@ export default {
 				console.log('ERROR', err)
 			})
 			cbAddon.get().then(res => {
-				console.log('RES ADDON ::', res)
+				// console.log('RES ADDON ::', res)
 				let addonData = _.filter(res.data, function (itm) {
 					return itm.addon.status === 'active'
 				})
@@ -589,7 +589,7 @@ export default {
 			})
 			cbCustomer.get().then(res => {
 				this.totalCustomer = res.data.length
-				console.log('RES CUSTOMER ::', res.customer)
+				// console.log('RES CUSTOMER ::', res.customer)
 			}).catch(err => {
 				if (self.currentMsgInst && !self.currentMsgInst.closed) {
 					if (err.message == 'Network Error') {
@@ -665,26 +665,26 @@ export default {
 			this.changePage(1)
 		},
 		getPlanName (item) {
-			console.log('getPlanName ITEM', item)
+			// console.log('getPlanName ITEM', item)
 			return cbPlan.get(item.subscription.plan_id).then(res => {
 				// console.log('getPlanName res', res)
 				return res.data.name
 			})
 		},
 		getCustomerName (item) {
-			console.log('item.subscription', item.subscription)
+			// console.log('item.subscription', item.subscription)
 			return cbCustomer.get(item.subscription.customer_id).then(res => {
 				// console.log('getCustomerName', res)
 				return res.data.customer.first_name + ' ' + res.data.customer.last_name
 			})
 		},
 		getfilterlist: function (val) {
-			console.log('val', val)
+			// console.log('val', val)
 			this.model1value = val
 			this.dataInFilter = this.types[val]
 		},
 		getfilteritem: function (val) {
-			console.log('getfilteritem val', val)
+			// console.log('getfilteritem val', val)
 
 			if (val === 'All plan' || val === 'All customer' || val === 'All subscription') {
 				this.disabled = true
@@ -704,31 +704,39 @@ export default {
 			if (this.model1value == 'planfilter') {
 				// console.log(this.model2value === 'id')
 				/* ======== plan id wise filter ======== */
-				if (this.model2value === 'id') {
+				if (filtervalue == '') {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Please enter attribute value'
+					})
+					self.filterLoading = false
+				} else if (this.model2value === 'id') {
 					cbPlan.get(filtervalue).then(res => {
-						console.log('res', res.data)
+						// console.log('res', res.data)
 						res.data.price /= 100
 						this.resultplanfilter = [res.data]
 						self.filterLoading = false
 					}).catch(err => {
 						// console.log('err', err)
-						if (err.message == 'Network Error') {
-							self.currentMsgInst = self.$Notice.error({
-								duration: 5,
-								title: 'Fetching plan data',
-								desc: 'API service unavailable.'
-							})
-						} else {
-							self.$Notice.error({
-								duration: 5,
-								title: 'Fetching plan data',
-								desc: err.message
-							})
+						if (self.currentMsgInst && !self.currentMsgInst.closed) {
+							if (err.message == 'Network Error') {
+								self.currentMsgInst = self.$Notice.error({
+									duration: 5,
+									title: 'Fetching plan data',
+									desc: 'API service unavailable.'
+								})
+							} else {
+								self.$Notice.error({
+									duration: 5,
+									title: 'Fetching plan data',
+									desc: err.message
+								})
+							}
 						}
-						console.log('ERROR', err)
 						self.filterLoading = false
+						console.log('ERROR', err)
 					})
-				} else if (this.model2value === 'status') {
+				} else if (this.model2value === 'status' || this.model2value === 'name') {
 					/* ========  plan status wise filter ======== */
 
 					let data1 = this.model2value + '=' + this.model3value
@@ -748,44 +756,20 @@ export default {
 						})
 					}).catch(err => {
 						// console.log('err', err)
-						if (err.message == 'Network Error') {
-							self.currentMsgInst = self.$Notice.error({
-								duration: 5,
-								title: 'Fetching plan data',
-								desc: 'API service unavailable.'
-							})
-						} else {
-							self.$Notice.error({
-								duration: 5,
-								title: 'Fetching plan data',
-								desc: err.message
-							})
-						}
-						self.filterLoading = false
-						console.log('ERROR', err)
-					})
-				} else if (this.model2value === 'name') {
-					/* ========  plan name wise filter ======== */
-					let data1 = this.model2value + '=' + this.model3value
-					cbPlan.filter(data1).then(res => {
-						console.log('res................', [res.data[0].plan])
-						res.data[0].plan.price /= 100
-						this.resultplanfilter = [res.data[0].plan]
-						self.filterLoading = false
-					}).catch(err => {
-						// console.log('err', err)
-						if (err.message == 'Network Error') {
-							self.currentMsgInst = self.$Notice.error({
-								duration: 5,
-								title: 'Fetching plan data',
-								desc: 'API service unavailable.'
-							})
-						} else {
-							self.$Notice.error({
-								duration: 5,
-								title: 'Fetching plan data',
-								desc: err.message
-							})
+						if (self.currentMsgInst && !self.currentMsgInst.closed) {
+							if (err.message == 'Network Error') {
+								self.currentMsgInst = self.$Notice.error({
+									duration: 5,
+									title: 'Fetching plan data',
+									desc: 'API service unavailable.'
+								})
+							} else {
+								self.$Notice.error({
+									duration: 5,
+									title: 'Fetching plan data',
+									desc: err.message
+								})
+							}
 						}
 						self.filterLoading = false
 						console.log('ERROR', err)
@@ -793,14 +777,14 @@ export default {
 				} else if (this.model2value === 'All plan') {
 					/* ======== All plan wise filter ======== */
 					cbPlan.get().then(async res => {
-						console.log('res', res.data)
+						// console.log('res', res.data)
 						let datares = res.data.map((item) => {
-							console.log('item', item.plan)
+							// console.log('item', item.plan)
 							item.plan.price /= 100
 							return item.plan
 						})
 						Promise.all(datares).then(async res => {
-							console.log('res---------', res)
+							// console.log('res---------', res)
 							self.resultplanfilter = res
 							this.planFilterDetailData = res
 							this.resultplanfilter = await this.makeChunk(this.currentPage, this.pageSize)
@@ -808,21 +792,23 @@ export default {
 						})
 					}).catch(err => {
 						// console.log('err', err)
-						if (err.message == 'Network Error') {
-							self.currentMsgInst = self.$Notice.error({
-								duration: 5,
-								title: 'Fetching plan data',
-								desc: 'API service unavailable.'
-							})
-						} else {
-							self.$Notice.error({
-								duration: 5,
-								title: 'Fetching plan data',
-								desc: err.message
-							})
+						if (self.currentMsgInst && !self.currentMsgInst.closed) {
+							if (err.message == 'Network Error') {
+								self.currentMsgInst = self.$Notice.error({
+									duration: 5,
+									title: 'Fetching plan data',
+									desc: 'API service unavailable.'
+								})
+							} else {
+								self.$Notice.error({
+									duration: 5,
+									title: 'Fetching plan data',
+									desc: err.message
+								})
+							}
 						}
-						console.log('ERROR', err)
 						self.filterLoading = false
+						console.log('ERROR', err)
 					})
 				} else {
 					self.$Notice.error({
@@ -833,13 +819,20 @@ export default {
 				}
 			} else if (this.model1value == 'customerfilter') {
 				/* ---------------- customerfilter ------------------ */
-				if (this.model2value === 'id') {
+				if (filtervalue == '') {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Please enter attribute value'
+					})
+					self.filterLoading = false
+				} else if (this.model2value === 'id') {
 					/* ========  customer id wise filter ======== */
+
 					cbCustomer.get(filtervalue).then(res => {
-						console.log('RES CUSTOMER ::', res.data)
+						// console.log('RES CUSTOMER ::', res.data)
 						this.resultcustomerfilter = [res.data.customer]
 						self.filterLoading = false
-						console.log('resultcustomerfilter', this.resultcustomerfilter)
+						// console.log('resultcustomerfilter', this.resultcustomerfilter)
 					}).catch(err => {
 						// console.log('err', err)
 						if (self.currentMsgInst && !self.currentMsgInst.closed) {
@@ -878,18 +871,20 @@ export default {
 						})
 					}).catch(err => {
 						// console.log('err', err)
-						if (err.message == 'Network Error') {
-							self.currentMsgInst = self.$Notice.error({
-								duration: 5,
-								title: 'Fetching Customer data',
-								desc: 'API service unavailable.'
-							})
-						} else {
-							self.$Notice.error({
-								duration: 5,
-								title: 'Fetching Customer data',
-								desc: err.message
-							})
+						if (self.currentMsgInst && !self.currentMsgInst.closed) {
+							if (err.message == 'Network Error') {
+								self.currentMsgInst = self.$Notice.error({
+									duration: 5,
+									title: 'Fetching Customer data',
+									desc: 'API service unavailable.'
+								})
+							} else {
+								self.$Notice.error({
+									duration: 5,
+									title: 'Fetching Customer data',
+									desc: err.message
+								})
+							}
 						}
 						self.filterLoading = false
 						console.log('ERROR', err)
@@ -938,10 +933,17 @@ export default {
 					self.filterLoading = false
 				}
 			} else if (this.model1value == 'subscriptionfilter') {
-				if (this.model2value === 'plan_id') {
+				if (filtervalue == '') {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Please enter attribute value'
+					})
+					self.filterLoading = false
+				} else if (this.model2value === 'plan_id') {
 					/* ========  subscription plan_id wise filter ======== */
+
 					cbSubscription.getSubscribed(filtervalue).then(async res => {
-						console.log('res >>>>>>>>>>', res.data[0].subscription)
+						// console.log('res >>>>>>>>>>', res.data[0].subscription)
 						let datares = res.data.map(async (item) => {
 							// console.log('item subscription', item.subscription)
 							item.subscription.started_at = moment.unix(item.subscription.started_at).format('DD MMM YYYY')
@@ -961,26 +963,29 @@ export default {
 						})
 					}).catch(err => {
 						// console.log('err', err)
-						if (err.message == 'Network Error') {
-							self.currentMsgInst = self.$Notice.error({
-								duration: 5,
-								title: 'Fetching subscription data',
-								desc: 'API service unavailable.'
-							})
-						} else {
-							self.$Notice.error({
-								duration: 5,
-								title: 'Fetching subscription data',
-								desc: err.message
-							})
+						if (self.currentMsgInst && !self.currentMsgInst.closed) {
+							if (err.message == 'Network Error') {
+								self.currentMsgInst = self.$Notice.error({
+									duration: 5,
+									title: 'Fetching subscription data',
+									desc: 'API service unavailable.'
+								})
+							} else {
+								self.$Notice.error({
+									duration: 5,
+									title: 'Fetching subscription data',
+									desc: err.message
+								})
+							}
 						}
 						self.filterLoading = false
 						console.log('ERROR', err)
 					})
 				} else if (this.model2value === 'customer_id') {
 					/* ========  subscription customer_id wise filter ======== */
+
 					cbSubscription.getOwn(filtervalue).then(async res => {
-						console.log('res >>>>>>>>>>', res.data[0].subscription)
+						// console.log('res >>>>>>>>>>', res.data[0].subscription)
 						let datares = res.data.map(async (item) => {
 							// console.log('item subscription', item.subscription)
 							item.subscription.started_at = moment.unix(item.subscription.started_at).format('DD MMM YYYY')
@@ -1000,24 +1005,27 @@ export default {
 						})
 					}).catch(err => {
 						// console.log('err', err)
-						if (err.message == 'Network Error') {
-							self.currentMsgInst = self.$Notice.error({
-								duration: 5,
-								title: 'Fetching subscription data',
-								desc: 'API service unavailable.'
-							})
-						} else {
-							self.$Notice.error({
-								duration: 5,
-								title: 'Fetching subscription data',
-								desc: err.message
-							})
+						if (self.currentMsgInst && !self.currentMsgInst.closed) {
+							if (err.message == 'Network Error') {
+								self.currentMsgInst = self.$Notice.error({
+									duration: 5,
+									title: 'Fetching subscription data',
+									desc: 'API service unavailable.'
+								})
+							} else {
+								self.$Notice.error({
+									duration: 5,
+									title: 'Fetching subscription data',
+									desc: err.message
+								})
+							}
 						}
 						self.filterLoading = false
 						console.log('ERROR', err)
 					})
 				} else if (this.model2value === 'id') {
 					/* ========  subscription id wise filter ======== */
+
 					cbSubscription.get(filtervalue).then(async res => {
 						// console.log('res >>>>>>>>>>', res.data.subscription)
 						res.data.subscription.started_at = moment.unix(res.data.subscription.started_at).format('DD MMM YYYY')
@@ -1029,28 +1037,31 @@ export default {
 						self.filterLoading = false
 					}).catch(err => {
 						// console.log('err', err)
-						if (err.message == 'Network Error') {
-							self.currentMsgInst = self.$Notice.error({
-								duration: 5,
-								title: 'Fetching subscription data',
-								desc: 'API service unavailable.'
-							})
-						} else {
-							self.$Notice.error({
-								duration: 5,
-								title: 'Fetching subscription data',
-								desc: err.message
-							})
+						if (self.currentMsgInst && !self.currentMsgInst.closed) {
+							if (err.message == 'Network Error') {
+								self.currentMsgInst = self.$Notice.error({
+									duration: 5,
+									title: 'Fetching subscription data',
+									desc: 'API service unavailable.'
+								})
+							} else {
+								self.$Notice.error({
+									duration: 5,
+									title: 'Fetching subscription data',
+									desc: err.message
+								})
+							}
 						}
 						self.filterLoading = false
 						console.log('ERROR', err)
 					})
 				} else if (this.model2value === 'status') {
 					/* ========  subscription status wise filter ======== */
+
 					let statusfilter = this.model2value + '=' + this.model3value
 
 					cbSubscription.filter(statusfilter).then(res => {
-						console.log('res >>>>>>>>>>', res.data)
+						// console.log('res >>>>>>>>>>', res.data)
 						let datares = res.data.map(async (item) => {
 							// console.log('item subscription', item.subscription)
 							item.subscription.started_at = moment.unix(item.subscription.started_at).format('DD MMM YYYY')
@@ -1070,18 +1081,20 @@ export default {
 						})
 					}).catch(err => {
 						// console.log('err', err)
-						if (err.message == 'Network Error') {
-							self.currentMsgInst = self.$Notice.error({
-								duration: 5,
-								title: 'Fetching subscription data',
-								desc: 'API service unavailable.'
-							})
-						} else {
-							self.$Notice.error({
-								duration: 5,
-								title: 'Fetching subscription data',
-								desc: err.message
-							})
+						if (self.currentMsgInst && !self.currentMsgInst.closed) {
+							if (err.message == 'Network Error') {
+								self.currentMsgInst = self.$Notice.error({
+									duration: 5,
+									title: 'Fetching subscription data',
+									desc: 'API service unavailable.'
+								})
+							} else {
+								self.$Notice.error({
+									duration: 5,
+									title: 'Fetching subscription data',
+									desc: err.message
+								})
+							}
 						}
 						self.filterLoading = false
 						console.log('ERROR', err)
@@ -1110,18 +1123,20 @@ export default {
 						})
 					}).catch(err => {
 						// console.log('err', err)
-						if (err.message == 'Network Error') {
-							self.currentMsgInst = self.$Notice.error({
-								duration: 5,
-								title: 'Fetching subscription data',
-								desc: 'API service unavailable.'
-							})
-						} else {
-							self.$Notice.error({
-								duration: 5,
-								title: 'Fetching subscription data',
-								desc: err.message
-							})
+						if (self.currentMsgInst && !self.currentMsgInst.closed) {
+							if (err.message == 'Network Error') {
+								self.currentMsgInst = self.$Notice.error({
+									duration: 5,
+									title: 'Fetching subscription data',
+									desc: 'API service unavailable.'
+								})
+							} else {
+								self.$Notice.error({
+									duration: 5,
+									title: 'Fetching subscription data',
+									desc: err.message
+								})
+							}
 						}
 						self.filterLoading = false
 						console.log('ERROR', err)
@@ -1159,6 +1174,7 @@ export default {
 .header-title {
 	font-size: 16px;
 }
+
 .subscriber-title {
 	font-size: 28px;
 }
@@ -1180,6 +1196,9 @@ td {
 	height: 50px;
 	width: 50px;
 }
+
+
+
 
 
 
@@ -1281,5 +1300,4 @@ td:first-child {
 	font-size: 18px;
 	font-weight: bold;
 }
-
 </style>

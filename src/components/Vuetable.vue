@@ -295,7 +295,7 @@ Vue.use(VueWidgets)
     }
     </script>
 
-    <style>
+    <style scoped>
 
     .ui.table {
         font-size: 1em;
