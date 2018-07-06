@@ -25,6 +25,7 @@ export default {
 						return h(userAddon, {
 							props: {
 								userDetail: true,
+								table: true,
 								row: params.row.subscription
 							}
 						})

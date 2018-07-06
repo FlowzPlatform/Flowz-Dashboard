@@ -40,7 +40,7 @@
 			<TabPane label="Home" name="1" icon="ios-home">
 				<div>
 					<div class='table-wrapper' style="margin-top:30px;">
-						<Table :loading="planLoding" border :columns="planList" :data="planData"></Table>
+						<Table :loading="planLoading" border :columns="planList" :data="planData"></Table>
 						<Page placement="top" class="pull-right" style="margin-top:10px;" :page-size="pageSize" :current="currentPage" :total="planDetailData.length" @on-change="changePage" @on-page-size-change="changePageSize" show-sizer></Page>
 					</div>
 				</div>
@@ -48,17 +48,17 @@
 			<TabPane label="Advanced Search" name="2" icon="android-search">
 				<Row type="flex" justify="space-around">
 					<Col offset="6" span="3">
-					<Select v-model="model1" @on-change="getfilterlist">
+					<Select v-model="model1" placeholder="Filter" @on-change="getfilterlist">
 						<Option v-for="item in filterlist" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					</Select>
 					</Col>
 					<Col span="3">
-					<Select v-model="model2" @on-change="getfilteritem">
+					<Select v-model="model2" placeholder="Attribute" @on-change="getfilteritem">
 						<Option v-for="item in dataInFilter" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					</Select>
 					</Col>
 					<Col span="5">
-					<Input v-model="model3value" :disabled="disabled" placeholder="enter something..."></Input>
+					<Input v-model="model3value" :disabled="disabled" placeholder="Enter attribute value"></Input>
 					</Col>
 					<Col span="5">
 					<Button type="primary" icon="ios-search" @click="searchfilter()">Search</Button>
@@ -66,7 +66,7 @@
 				</Row>
 				<Row type="flex" justify="end">
 					<Col span="22">
-					<Table style="margin-top:30px;" :loading="planLoding" border :columns="setColumns" :data="setData"></Table>
+					<Table style="margin-top:30px;" :loading="filterLoading" border :columns="setColumns" :data="setData"></Table>
 					<Page class="pull-right" placement="top" style="margin-top:10px;" :page-size="pageSize" :current="currentPage" :total="setTotal" @on-change="changePage" @on-page-size-change="changePageSize" show-sizer></Page>
 					</Col>
 				</Row>
@@ -97,7 +97,8 @@ export default {
 		return {
 			loading: true,
 			showOverlay: false,
-			planLoding: false,
+			planLoading: false,
+			filterLoading: false,
 			totalUser: null,
 			totalUserAddon: null,
 			totalCustomer: null,
@@ -110,6 +111,7 @@ export default {
 			model2value: '',
 			model3value: '',
 			disabled: false,
+			alert: '',
 			planList: [
 				{
 					type: 'expand',
@@ -297,12 +299,12 @@ export default {
 					align: 'center'
 				},
 				{
-					title: 'subscription id',
+					title: 'Subscription Id',
 					align: 'center',
 					key: 'id'
 				},
 				{
-					title: 'plan_id',
+					title: 'Plan Id',
 					align: 'center',
 					key: 'plan_id'
 				},
@@ -312,12 +314,12 @@ export default {
 					align: 'center'
 				},
 				{
-					title: 'customer_id',
+					title: 'Customer Id',
 					align: 'center',
 					key: 'customer_id'
 				},
 				{
-					title: 'name',
+					title: 'Name',
 					align: 'center',
 					key: 'name'
 				},
@@ -358,15 +360,15 @@ export default {
 			filterlist: [
 				{
 					value: 'planfilter',
-					label: 'plan'
+					label: 'Plan'
 				},
 				{
 					value: 'customerfilter',
-					label: 'customer'
+					label: 'Customer'
 				},
 				{
 					value: 'subscriptionfilter',
-					label: 'subscription'
+					label: 'Subscription'
 				}
 			],
 			types: {
@@ -376,15 +378,15 @@ export default {
 					placeholder: 'enter plan id'
 				}, {
 					value: 'id',
-					label: 'plan id',
+					label: 'Plan id',
 					placeholder: 'enter plan id'
 				}, {
 					value: 'name',
-					label: 'plan name',
+					label: 'Plan name',
 					placeholder: 'enter plan name'
 				}, {
 					value: 'status',
-					label: 'plan status',
+					label: 'Plan status',
 					placeholder: 'enter plan status'
 				}],
 				customerfilter: [{
@@ -394,22 +396,22 @@ export default {
 				},
 				{
 					value: 'id',
-					label: 'customer id',
+					label: 'Customer id',
 					placeholder: 'enter customer id'
 				},
 				{
 					value: 'email',
-					label: 'customer email',
+					label: 'Customer email',
 					placeholder: 'enter customer email'
 				},
 				{
 					value: 'first_name',
-					label: 'first name',
+					label: 'First name',
 					placeholder: 'enter customer first name'
 				},
 				{
 					value: 'last_name',
-					label: 'last name',
+					label: 'Last name',
 					placeholder: 'enter customer last name'
 				}
 				],
@@ -425,17 +427,17 @@ export default {
 				{
 					value: 'plan_id',
 					align: 'center',
-					label: 'plan id'
+					label: 'Plan id'
 				},
 				{
 					value: 'customer_id',
 					align: 'center',
-					label: 'customer id'
+					label: 'Customer id'
 				},
 				{
 					value: 'status',
 					align: 'center',
-					label: 'status'
+					label: 'Status'
 				}
 				]
 			}
@@ -507,7 +509,7 @@ export default {
 				self.init()
 				return response.data.data
 			}).catch(function (error) {
-				self.planLoding = false
+				self.planLoading = false
 				if (error.response.status == 500) {
 					let msg = error.response.data.message.substr(error.response.data.message.indexOf(':') + 1)
 					if (msg === ' Permission not available for action') {
@@ -526,7 +528,7 @@ export default {
 		},
 		init: async function () {
 			let self = this
-			self.planLoding = true
+			self.planLoading = true
 			cbPlan.get().then(res => {
 				let obj = res.data.map(async (itm) => {
 					itm.plan.price /= 100
@@ -543,7 +545,7 @@ export default {
 					self.planData = res
 					this.planDetailData = res
 					this.planData = await this.makeChunk(this.currentPage, this.pageSize)
-					self.planLoding = false
+					self.planLoading = false
 				})
 			}).catch(err => {
 				if (err.message == 'Network Error') {
@@ -665,22 +667,20 @@ export default {
 		getPlanName (item) {
 			console.log('getPlanName ITEM', item)
 			return cbPlan.get(item.subscription.plan_id).then(res => {
-				console.log('getPlanName res', res)
+				// console.log('getPlanName res', res)
 				return res.data.name
 			})
 		},
 		getCustomerName (item) {
 			console.log('item.subscription', item.subscription)
 			return cbCustomer.get(item.subscription.customer_id).then(res => {
-				console.log('getCustomerName', res)
+				// console.log('getCustomerName', res)
 				return res.data.customer.first_name + ' ' + res.data.customer.last_name
 			})
 		},
 		getfilterlist: function (val) {
 			console.log('val', val)
 			this.model1value = val
-
-			console.log('>>>>>>>>>>>', this.types[val])
 			this.dataInFilter = this.types[val]
 		},
 		getfilteritem: function (val) {
@@ -695,23 +695,23 @@ export default {
 		},
 		searchfilter: async function (data) {
 			let self = this
-			self.planLoding = true
-			console.log('data', this.model1value, this.model2value, this.model3value)
+			self.filterLoading = true
+			// console.log('data', this.model1value, this.model2value, this.model3value)
 			let filtervalue = this.model3value
 
 			/* ---------------- planfilter ------------------ */
 
 			if (this.model1value == 'planfilter') {
-				console.log(this.model2value === 'id')
+				// console.log(this.model2value === 'id')
 				/* ======== plan id wise filter ======== */
 				if (this.model2value === 'id') {
 					cbPlan.get(filtervalue).then(res => {
 						console.log('res', res.data)
 						res.data.price /= 100
 						this.resultplanfilter = [res.data]
-						self.planLoding = false
+						self.filterLoading = false
 					}).catch(err => {
-						console.log('err', err)
+						// console.log('err', err)
 						if (err.message == 'Network Error') {
 							self.currentMsgInst = self.$Notice.error({
 								duration: 5,
@@ -726,28 +726,28 @@ export default {
 							})
 						}
 						console.log('ERROR', err)
-						self.planLoding = false
+						self.filterLoading = false
 					})
 				} else if (this.model2value === 'status') {
 					/* ========  plan status wise filter ======== */
 
 					let data1 = this.model2value + '=' + this.model3value
 					cbPlan.filter(data1).then(res => {
-						console.log('res................', res.data)
+						// console.log('res................', res.data)
 						let datares = res.data.map((item) => {
-							console.log('item', item.plan)
+							// console.log('item', item.plan)
 							item.plan.price /= 100
 							return item.plan
 						})
 						Promise.all(datares).then(async res => {
-							console.log('res---------', res)
+							// console.log('res---------', res)
 							self.resultplanfilter = res
 							this.planFilterDetailData = res
 							this.resultplanfilter = await this.makeChunk(this.currentPage, this.pageSize)
-							self.planLoding = false
+							self.filterLoading = false
 						})
 					}).catch(err => {
-						console.log('err', err)
+						// console.log('err', err)
 						if (err.message == 'Network Error') {
 							self.currentMsgInst = self.$Notice.error({
 								duration: 5,
@@ -761,7 +761,7 @@ export default {
 								desc: err.message
 							})
 						}
-						self.planLoding = false
+						self.filterLoading = false
 						console.log('ERROR', err)
 					})
 				} else if (this.model2value === 'name') {
@@ -771,9 +771,9 @@ export default {
 						console.log('res................', [res.data[0].plan])
 						res.data[0].plan.price /= 100
 						this.resultplanfilter = [res.data[0].plan]
-						self.planLoding = false
+						self.filterLoading = false
 					}).catch(err => {
-						console.log('err', err)
+						// console.log('err', err)
 						if (err.message == 'Network Error') {
 							self.currentMsgInst = self.$Notice.error({
 								duration: 5,
@@ -787,10 +787,10 @@ export default {
 								desc: err.message
 							})
 						}
-						self.planLoding = false
+						self.filterLoading = false
 						console.log('ERROR', err)
 					})
-				} else {
+				} else if (this.model2value === 'All plan') {
 					/* ======== All plan wise filter ======== */
 					cbPlan.get().then(async res => {
 						console.log('res', res.data)
@@ -804,10 +804,10 @@ export default {
 							self.resultplanfilter = res
 							this.planFilterDetailData = res
 							this.resultplanfilter = await this.makeChunk(this.currentPage, this.pageSize)
-							self.planLoding = false
+							self.filterLoading = false
 						})
 					}).catch(err => {
-						console.log('err', err)
+						// console.log('err', err)
 						if (err.message == 'Network Error') {
 							self.currentMsgInst = self.$Notice.error({
 								duration: 5,
@@ -822,8 +822,14 @@ export default {
 							})
 						}
 						console.log('ERROR', err)
-						self.planLoding = false
+						self.filterLoading = false
 					})
+				} else {
+					self.$Notice.error({
+						duration: 5,
+						title: 'Please select any attribute'
+					})
+					self.filterLoading = false
 				}
 			} else if (this.model1value == 'customerfilter') {
 				/* ---------------- customerfilter ------------------ */
@@ -832,9 +838,10 @@ export default {
 					cbCustomer.get(filtervalue).then(res => {
 						console.log('RES CUSTOMER ::', res.data)
 						this.resultcustomerfilter = [res.data.customer]
-						self.planLoding = false
+						self.filterLoading = false
 						console.log('resultcustomerfilter', this.resultcustomerfilter)
 					}).catch(err => {
+						// console.log('err', err)
 						if (self.currentMsgInst && !self.currentMsgInst.closed) {
 							if (err.message == 'Network Error') {
 								self.currentMsgInst = self.$Notice.error({
@@ -850,27 +857,27 @@ export default {
 								})
 							}
 						}
-						self.planLoding = false
+						self.filterLoading = false
 						console.log('ERR CUSTOMER ::', err)
 					})
 				} else if (this.model2value === 'All customer') {
 					/* ========  All Customer wise filter ======== */
 
 					cbCustomer.get().then(async res => {
-						console.log('res', res.data)
+						// console.log('res', res.data)
 						let datares = res.data.map(async (item) => {
-							console.log('item', item.customer)
+							// console.log('item', item.customer)
 							return item.customer
 						})
 						Promise.all(datares).then(async res => {
-							console.log('res---------', res)
+							// console.log('res---------', res)
 							self.resultcustomerfilter = res
 							this.customerfilterdetailvalue = res
 							this.resultcustomerfilter = await this.makeChunk(this.currentPage, this.pageSize)
-							self.planLoding = false
+							self.filterLoading = false
 						})
 					}).catch(err => {
-						console.log('err', err)
+						// console.log('err', err)
 						if (err.message == 'Network Error') {
 							self.currentMsgInst = self.$Notice.error({
 								duration: 5,
@@ -884,27 +891,27 @@ export default {
 								desc: err.message
 							})
 						}
-						self.planLoding = false
+						self.filterLoading = false
 						console.log('ERROR', err)
 					})
 				} else if (this.model2value === 'email' || this.model2value === 'first_name' || this.model2value === 'last_name') {
 					/* ========  Customer email , first_name, last_name wise filter ======== */
-					console.log('=== filter called ===')
 					let data2 = this.model2value + '=' + this.model3value
 					cbCustomer.filter(data2).then(res => {
-						console.log('RES CUSTOMER ::', res.data)
+						// console.log('RES CUSTOMER ::', res.data)
 						let datares = res.data.map((item) => {
-							console.log('item', item.customer)
+							// console.log('item', item.customer)
 							return item.customer
 						})
 						Promise.all(datares).then(async res => {
-							console.log('res---------', res)
+							// console.log('res---------', res)
 							self.resultcustomerfilter = res
 							this.customerfilterdetailvalue = res
 							this.resultcustomerfilter = await this.makeChunk(this.currentPage, this.pageSize)
-							self.planLoding = false
+							self.filterLoading = false
 						})
 					}).catch(err => {
+						// console.log('err', err)
 						if (self.currentMsgInst && !self.currentMsgInst.closed) {
 							if (err.message == 'Network Error') {
 								self.currentMsgInst = self.$Notice.error({
@@ -920,9 +927,15 @@ export default {
 								})
 							}
 						}
+						self.filterLoading = false
 						console.log('ERR CUSTOMER ::', err)
-						self.planLoding = false
 					})
+				} else {
+					this.$Notice.error({
+						duration: 5,
+						title: 'Please select any attribute'
+					})
+					self.filterLoading = false
 				}
 			} else if (this.model1value == 'subscriptionfilter') {
 				if (this.model2value === 'plan_id') {
@@ -930,7 +943,7 @@ export default {
 					cbSubscription.getSubscribed(filtervalue).then(async res => {
 						console.log('res >>>>>>>>>>', res.data[0].subscription)
 						let datares = res.data.map(async (item) => {
-							console.log('item subscription', item.subscription)
+							// console.log('item subscription', item.subscription)
 							item.subscription.started_at = moment.unix(item.subscription.started_at).format('DD MMM YYYY')
 							item.subscription.next_billing_at = moment.unix(item.subscription.next_billing_at).format('DD MMM YYYY')
 							item.subscription.mrr /= 100
@@ -940,14 +953,14 @@ export default {
 							return item.subscription
 						})
 						Promise.all(datares).then(async res => {
-							console.log('res---------', res)
+							// console.log('res---------', res)
 							self.resultsubscriptionfilter = res
 							this.subscriptionFilterDetailData = res
 							this.resultsubscriptionfilter = await this.makeChunk(this.currentPage, this.pageSize)
-							self.planLoding = false
+							self.filterLoading = false
 						})
 					}).catch(err => {
-						console.log('err', err)
+						// console.log('err', err)
 						if (err.message == 'Network Error') {
 							self.currentMsgInst = self.$Notice.error({
 								duration: 5,
@@ -961,7 +974,7 @@ export default {
 								desc: err.message
 							})
 						}
-						self.planLoding = false
+						self.filterLoading = false
 						console.log('ERROR', err)
 					})
 				} else if (this.model2value === 'customer_id') {
@@ -969,7 +982,7 @@ export default {
 					cbSubscription.getOwn(filtervalue).then(async res => {
 						console.log('res >>>>>>>>>>', res.data[0].subscription)
 						let datares = res.data.map(async (item) => {
-							console.log('item subscription', item.subscription)
+							// console.log('item subscription', item.subscription)
 							item.subscription.started_at = moment.unix(item.subscription.started_at).format('DD MMM YYYY')
 							item.subscription.next_billing_at = moment.unix(item.subscription.next_billing_at).format('DD MMM YYYY')
 							item.subscription.mrr /= 100
@@ -979,14 +992,14 @@ export default {
 							return item.subscription
 						})
 						Promise.all(datares).then(async res => {
-							console.log('res---------', res)
+							// console.log('res---------', res)
 							self.resultsubscriptionfilter = res
 							this.subscriptionFilterDetailData = res
 							this.resultsubscriptionfilter = await this.makeChunk(this.currentPage, this.pageSize)
-							self.planLoding = false
+							self.filterLoading = false
 						})
 					}).catch(err => {
-						console.log('err', err)
+						// console.log('err', err)
 						if (err.message == 'Network Error') {
 							self.currentMsgInst = self.$Notice.error({
 								duration: 5,
@@ -1000,22 +1013,22 @@ export default {
 								desc: err.message
 							})
 						}
-						self.planLoding = false
+						self.filterLoading = false
 						console.log('ERROR', err)
 					})
 				} else if (this.model2value === 'id') {
 					/* ========  subscription id wise filter ======== */
 					cbSubscription.get(filtervalue).then(async res => {
-						console.log('res >>>>>>>>>>', res.data.subscription)
+						// console.log('res >>>>>>>>>>', res.data.subscription)
 						res.data.subscription.started_at = moment.unix(res.data.subscription.started_at).format('DD MMM YYYY')
 						res.data.subscription.next_billing_at = moment.unix(res.data.subscription.next_billing_at).format('DD MMM YYYY')
 						res.data.subscription.mrr /= 100
 						res.data.subscription.plan_name = await self.getPlanName(res.data)
 						res.data.subscription.name = await self.getCustomerName(res.data)
 						this.resultsubscriptionfilter = [res.data.subscription]
-						self.planLoding = false
+						self.filterLoading = false
 					}).catch(err => {
-						console.log('err', err)
+						// console.log('err', err)
 						if (err.message == 'Network Error') {
 							self.currentMsgInst = self.$Notice.error({
 								duration: 5,
@@ -1029,7 +1042,7 @@ export default {
 								desc: err.message
 							})
 						}
-						self.planLoding = false
+						self.filterLoading = false
 						console.log('ERROR', err)
 					})
 				} else if (this.model2value === 'status') {
@@ -1039,7 +1052,7 @@ export default {
 					cbSubscription.filter(statusfilter).then(res => {
 						console.log('res >>>>>>>>>>', res.data)
 						let datares = res.data.map(async (item) => {
-							console.log('item subscription', item.subscription)
+							// console.log('item subscription', item.subscription)
 							item.subscription.started_at = moment.unix(item.subscription.started_at).format('DD MMM YYYY')
 							item.subscription.next_billing_at = moment.unix(item.subscription.next_billing_at).format('DD MMM YYYY')
 							item.subscription.mrr /= 100
@@ -1049,14 +1062,14 @@ export default {
 							return item.subscription
 						})
 						Promise.all(datares).then(async res => {
-							console.log('res---------', res)
+							// console.log('res---------', res)
 							self.resultsubscriptionfilter = res
 							this.subscriptionFilterDetailData = res
 							this.resultsubscriptionfilter = await this.makeChunk(this.currentPage, this.pageSize)
-							self.planLoding = false
+							self.filterLoading = false
 						})
 					}).catch(err => {
-						console.log('err', err)
+						// console.log('err', err)
 						if (err.message == 'Network Error') {
 							self.currentMsgInst = self.$Notice.error({
 								duration: 5,
@@ -1070,50 +1083,62 @@ export default {
 								desc: err.message
 							})
 						}
-						self.planLoding = false
+						self.filterLoading = false
+						console.log('ERROR', err)
+					})
+				} else if (this.model2value === 'All subscription') {
+					/* ========  All subscription wise filter ======== */
+					cbSubscription.get().then(async res => {
+						// console.log('res >>>>>>>>>>', res.data)
+						let datares = res.data.map(async (item) => {
+							// console.log('item subscription', item.subscription)
+							item.subscription.started_at = moment.unix(item.subscription.started_at).format('DD MMM YYYY')
+							item.subscription.next_billing_at = moment.unix(item.subscription.next_billing_at).format('DD MMM YYYY')
+							item.subscription.mrr /= 100
+							item.subscription.plan_name = await self.getPlanName(item)
+							item.subscription.name = await self.getCustomerName(item)
+							Promise.resolve(item.subscription.plan_name)
+							return item.subscription
+						})
+						// console.log('datares', datares)
+						Promise.all(datares).then(async res => {
+							// console.log('res---------', res)
+							self.resultsubscriptionfilter = res
+							this.subscriptionFilterDetailData = res
+							this.resultsubscriptionfilter = await this.makeChunk(this.currentPage, this.pageSize)
+							self.filterLoading = false
+						})
+					}).catch(err => {
+						// console.log('err', err)
+						if (err.message == 'Network Error') {
+							self.currentMsgInst = self.$Notice.error({
+								duration: 5,
+								title: 'Fetching subscription data',
+								desc: 'API service unavailable.'
+							})
+						} else {
+							self.$Notice.error({
+								duration: 5,
+								title: 'Fetching subscription data',
+								desc: err.message
+							})
+						}
+						self.filterLoading = false
 						console.log('ERROR', err)
 					})
 				} else {
-					/* ========  All subscription wise filter ======== */
-					cbSubscription.get().then(async res => {
-						console.log('res >>>>>>>>>>', res.data)
-						let datares = res.data.map(async (item) => {
-							console.log('item subscription', item.subscription)
-							item.subscription.started_at = moment.unix(item.subscription.started_at).format('DD MMM YYYY')
-							item.subscription.next_billing_at = moment.unix(item.subscription.next_billing_at).format('DD MMM YYYY')
-							item.subscription.mrr /= 100
-							item.subscription.plan_name = await self.getPlanName(item)
-							item.subscription.name = await self.getCustomerName(item)
-							Promise.resolve(item.subscription.plan_name)
-							return item.subscription
-						})
-						console.log('datares', datares)
-						Promise.all(datares).then(async res => {
-							console.log('res---------', res)
-							self.resultsubscriptionfilter = res
-							this.subscriptionFilterDetailData = res
-							this.resultsubscriptionfilter = await this.makeChunk(this.currentPage, this.pageSize)
-							self.planLoding = false
-						})
-					}).catch(err => {
-						console.log('err', err)
-						if (err.message == 'Network Error') {
-							self.currentMsgInst = self.$Notice.error({
-								duration: 5,
-								title: 'Fetching subscription data',
-								desc: 'API service unavailable.'
-							})
-						} else {
-							self.$Notice.error({
-								duration: 5,
-								title: 'Fetching subscription data',
-								desc: err.message
-							})
-						}
-						self.planLoding = false
-						console.log('ERROR', err)
+					this.$Notice.error({
+						duration: 5,
+						title: 'Please select any attribute'
 					})
+					self.filterLoading = false
 				}
+			} else {
+				this.$Notice.error({
+					duration: 5,
+					title: 'Please select any filter'
+				})
+				self.filterLoading = false
 			}
 		}
 	},
