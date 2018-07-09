@@ -3,13 +3,13 @@
     <Col span="18">
       <Card>
         <Row slot="title">
-          <Col span="4">
+          <Col span="6">
             <Tabs v-model="activeTab" @on-click="changeActiveTab">
               <TabPane label="Plan" name="plan"></TabPane>
               <TabPane :disabled="planLoding" label="Addon" name="addon"></TabPane>
             </Tabs>
           </Col>
-          <Col span="3" offset="17" class-name="action-button">
+          <Col span="3" offset="15" class-name="action-button">
             <!-- <Col span="3" style="margin-bottom:5px;"> -->
               <Button type="primary" @click="createPlan(activeTab)" icon="android-add-circle" :loading="addPlanLoading"><span v-if="activeTab === 'plan'">Create Plan</span><span v-else>Create Addon</span></Button>
            <!--  </Col> -->

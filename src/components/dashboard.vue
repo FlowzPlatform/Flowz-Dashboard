@@ -82,10 +82,7 @@
 								<div class="dascutx">
 									<div class="dascufo">
 										<span class="tit">Uploader</span>
-										<span class="tex">The Compatibility of
-						your databases
-						are automatically
-						created</span>
+										<span class="tex">Manage site product data using <strong>replace append upsert update</strong> methods.</span>
 									</div>
 								</div>
 							   <div class="dascuico"><div class="dasvubot"><img src="../assets/images/icon-6.png"> </div></div>
@@ -116,10 +113,8 @@
                   <div class="dascutx">
                     <div class="dascufo">
                       <span class="tit">Virtual Shop Data</span>
-                      <span class="tex">The Compatibility of
-              your databases
-              are automatically
-              created</span>
+                      <span class="tex">Create VShop by<br> selecting specific
+						   <br>products of all the<br> suppliers product.</span>
                     </div>
                   </div>
                    <div class="dascuico"><div class="dasvubot"><img src="../assets/images/virtualshop.png"> </div></div>
@@ -234,12 +229,13 @@ export default {
 				desc: 'Flowz Accounting system is a complete suite of managing invoices, listing all transactions, customer relationship, managing contacts and many more in one place. Its ability to make payments for due invoices and notifying clients through email makes it more effective in terms of your business.'
 			},
 			{
-				img: '/assets/images/databases.jpg',
+				img: '/assets/images/uploader-screen.png',
 				index: '6',
 				class: 'card11 crmpart',
 				position: 'left',
 				title: 'Uploader',
-				desc: 'The Compatibility of your databases (both local and remote) are automatically created, configured and updated through the DBETL client. Creating, repairing, deleting and renaming and maintaining multiple databases is much simpler.'
+				// desc: 'The Compatibility of your databases (both local and remote) are automatically created, configured and updated through the DBETL client. Creating, repairing, deleting and renaming and maintaining multiple databases is much simpler.'
+				desc: 'Flowz uploader is very simple and easy way to manage your web site products data, there is different methods to upload data like REPLACE, APPEND, UPSERT and UPDATE to manage web site product data.'
 			},
 			{
 				img: '/assets/images/web-builder-img.png',
@@ -258,12 +254,13 @@ export default {
 				// desc : "Successful CRM is about competing in the relationship dimension. Not as an alternative to having a competitive product or reasonable price- but as a differentiator.Track all your user anytime from anywhere across the globe very easily."
 			},
 			{
-				img: '/assets/images/databases.jpg',
+				img: '/assets/images/virtual-shop.png',
 				index: '9',
 				class: 'card11 crmpart',
 				position: 'left',
 				title: 'Virtual Shop Data',
-				desc: 'The Compatibility of your databases (both local and remote) are automatically created, configured and updated through the DBETL client. Creating, repairing, deleting and renaming and maintaining multiple databases is much simpler.'
+				// desc: 'The Compatibility of your databases (both local and remote) are automatically created, configured and updated through the DBETL client. Creating, repairing, deleting and renaming and maintaining multiple databases is much simpler.'
+				desc: 'flowz virtual shop is useful to create VShop, Select products from available product data of suppliers and save it with different name and use in web site.'
 			}
 
 		]
@@ -522,5 +519,5 @@ body {color: #d1d1d1;}
 
 </style>
 <style>
-  .vjs-control-bar {display:none;}
-  </style>
+		.vjs-control-bar {display:none;}
+</style>

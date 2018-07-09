@@ -54,8 +54,14 @@
   <Modal title="My Plan" v-model="showPlanSelection" :mask-closable="false" @on-ok="makeAddon()" width="60%" :loading="validateModal">
     <p style="margin-bottom:0px">Select basic plan which you wants to extend.</p>
     <!-- component owners-plan.vue imported -->
-    <my-plan style="padding:35px" v-on:selectedSubscription="setSelectedSubscription"></my-plan>
-    <p v-if="assuredSum != null">Your monthly payment will be {{ planPrice }} + {{ addonPrice }} = {{ assuredSum }}</p>
+    <my-plan ref="myPlans" style="padding:35px" v-on:selectedSubscription="setSelectedSubscription"></my-plan>
+		<p v-if="assuredSum != null">
+			Now, your <strong>monthly payment</strong> will be 
+				<Tooltip placement="top" content="Basic Plan Price"><strong style="cursor:pointer">{{ planPrice }}</strong></Tooltip>
+				<Tooltip v-if="totalAddonPrice != null" placement="top" content="Total Price of Purchased Addons"> + <strong style="cursor:pointer">{{ totalAddonPrice }}</strong></Tooltip>
+				+ <Tooltip placement="top" content="Current Selected Addon Price"><strong style="cursor:pointer">{{ addonPrice }}</strong></Tooltip>
+				= {{ assuredSum }}
+		</p>
   </Modal>
 </div>
 </template>
@@ -74,7 +80,6 @@ export default {
 	name: 'subscriptionList',
 	data () {
 		return {
-			showDetails: '0',
 			mainData: [],
 			basicPlans: [],
 			addOns: [],
@@ -83,6 +88,7 @@ export default {
 			selectedBasicPlan: '',
 			selectedBasicSubId: '',
 			validateModal: true,
+			totalAddonPrice: null,
 			details: [{
 				'key': 'key',
 				'width': 230,
@@ -91,6 +97,7 @@ export default {
 				'key': 'value'
 			}],
 			assuredSum: null,
+			// allAddonPrice: null,
 			planPrice: null,
 			addonPrice: null,
 			remainDays: null,
@@ -143,8 +150,10 @@ export default {
 
 			// getting addon details from the chargeBee api
 			cbAddon.get().then(async (res) => {
+				console.log('res.data', res.data)
 				res.data = await self.createPlanList(res.data, 'addon')
 				self.addOns = res.data.map(itm => {
+					console.log('itm.addon', itm.addon)
 					return itm.addon
 				})
 			}).catch(err => {
@@ -237,8 +246,11 @@ export default {
 		},
 		// when select addon then popup modal for basic plan selection
 		checkoutAddonFunction (addonId) {
+			this.assuredSum = null
+			this.addonPrice = null
 			this.selectedAddon = addonId
 			this.showPlanSelection = true
+			this.$refs.myPlans.destroyElement()
 		},
 		// select a basic plan from open modal and validate it
 		makeAddon () {
@@ -261,16 +273,22 @@ export default {
 				})
 			}
 		},
-		setSelectedSubscription (id) {
-			this.selectedBasicPlan = id[0]
-			this.selectedBasicSubId = id[1]
-			let details = this.addOns.filter(itm => {
-				return itm.id == this.selectedAddon
-			})
-			this.planPrice = id[2]
-			this.addonPrice = details[0].price
-			this.assuredSum = id[2] + details[0].price
-			this.remainDays = moment.unix(id[3]).diff(moment(), 'days')
+		setSelectedSubscription (currentRow) {
+			if (currentRow != null) {
+				let purchasedAddonPrice = currentRow.totalAddonPrice | 0
+				this.selectedBasicPlan = currentRow.id
+				this.selectedBasicSubId = currentRow.plan_id
+				let details = this.addOns.filter(itm => {
+					return itm.id == this.selectedAddon
+				})
+				this.planPrice = currentRow.plan_unit_price
+				this.addonPrice = details[0].price
+				this.assuredSum = currentRow.plan_unit_price + details[0].price + purchasedAddonPrice
+				// this.allAddonPrice = currentRow.addons
+				this.totalAddonPrice = currentRow.totalAddonPrice
+				// this.totalAddonPrice -= currentRow.plan_unit_price
+				this.remainDays = moment.unix(currentRow.next_billing_at).diff(moment(), 'days')
+			}
 		}
 	},
 	mounted () {
