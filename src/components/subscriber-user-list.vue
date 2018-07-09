@@ -48,12 +48,12 @@
 			<TabPane label="Advanced Search" name="2" icon="android-search">
 				<Row type="flex" justify="space-around">
 					<Col offset="6" span="3">
-					<Select v-model="model1" placeholder="Filter" @on-change="getfilterlist">
+					<Select v-model="model1" clearable placeholder="Filter" @on-change="getfilterlist">
 						<Option v-for="item in filterlist" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					</Select>
 					</Col>
 					<Col span="3">
-					<Select v-model="model2" placeholder="Attribute" @on-change="getfilteritem">
+					<Select v-model="model2" clearable placeholder="Attribute" @on-change="getfilteritem">
 						<Option v-for="item in dataInFilter" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					</Select>
 					</Col>
@@ -680,11 +680,19 @@ export default {
 		},
 		getfilterlist: function (val) {
 			// console.log('val', val)
+			this.resultplanfilter = []
+			this.resultcustomerfilter = []
+			this.resultsubscriptionfilter = []
+
 			this.model1value = val
 			this.dataInFilter = this.types[val]
 		},
 		getfilteritem: function (val) {
 			// console.log('getfilteritem val', val)
+
+			this.resultplanfilter = []
+			this.resultcustomerfilter = []
+			this.resultsubscriptionfilter = []
 
 			if (val === 'All plan' || val === 'All customer' || val === 'All subscription') {
 				this.disabled = true
@@ -1281,5 +1289,9 @@ td:first-child {
 .sb-title {
 	font-size: 18px;
 	font-weight: bold;
+}
+
+.ivu-table-tip {
+    overflow-x: hidden !important;
 }
 </style>
