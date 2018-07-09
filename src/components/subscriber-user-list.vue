@@ -704,13 +704,7 @@ export default {
 			if (this.model1value == 'planfilter') {
 				// console.log(this.model2value === 'id')
 				/* ======== plan id wise filter ======== */
-				if (filtervalue == '') {
-					self.$Notice.error({
-						duration: 5,
-						title: 'Please enter attribute value'
-					})
-					self.filterLoading = false
-				} else if (this.model2value === 'id') {
+				if (this.model2value === 'id') {
 					cbPlan.get(filtervalue).then(res => {
 						// console.log('res', res.data)
 						res.data.price /= 100
@@ -819,13 +813,7 @@ export default {
 				}
 			} else if (this.model1value == 'customerfilter') {
 				/* ---------------- customerfilter ------------------ */
-				if (filtervalue == '') {
-					self.$Notice.error({
-						duration: 5,
-						title: 'Please enter attribute value'
-					})
-					self.filterLoading = false
-				} else if (this.model2value === 'id') {
+				if (this.model2value === 'id') {
 					/* ========  customer id wise filter ======== */
 
 					cbCustomer.get(filtervalue).then(res => {
@@ -933,13 +921,7 @@ export default {
 					self.filterLoading = false
 				}
 			} else if (this.model1value == 'subscriptionfilter') {
-				if (filtervalue == '') {
-					self.$Notice.error({
-						duration: 5,
-						title: 'Please enter attribute value'
-					})
-					self.filterLoading = false
-				} else if (this.model2value === 'plan_id') {
+				if (this.model2value === 'plan_id') {
 					/* ========  subscription plan_id wise filter ======== */
 
 					cbSubscription.getSubscribed(filtervalue).then(async res => {

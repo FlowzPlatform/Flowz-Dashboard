@@ -6,7 +6,7 @@
 <style scoped>
 .f-layout-copy1 {
   background-color: #2d8bf0;
-  position: absolute;
+  position: relative;
   text-align: center;
   vertical-align: middle;
   font-size: 1.3em;
