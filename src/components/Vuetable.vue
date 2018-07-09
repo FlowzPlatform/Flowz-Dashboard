@@ -88,7 +88,8 @@ Vue.use(VueWidgets)
     			fields: [],
     			permissionsAll: [],
     			count: 0,
-    			showOverlay: false
+			showOverlay: false,
+			currentMsgInst: this.$store.state.currentMsgInst
     		}
     	},
     	methods: {
@@ -294,7 +295,7 @@ Vue.use(VueWidgets)
     }
     </script>
 
-    <style>
+    <style scoped>
 
     .ui.table {
         font-size: 1em;

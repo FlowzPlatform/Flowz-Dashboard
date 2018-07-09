@@ -141,6 +141,7 @@ export default {
 					render: (h, params) => {
 						return h(addOn, {
 							props: {
+								userDetail: false,
 								row: params.row,
 								table: true
 							}

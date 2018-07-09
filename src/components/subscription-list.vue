@@ -150,8 +150,10 @@ export default {
 
 			// getting addon details from the chargeBee api
 			cbAddon.get().then(async (res) => {
+				console.log('res.data', res.data)
 				res.data = await self.createPlanList(res.data, 'addon')
 				self.addOns = res.data.map(itm => {
+					console.log('itm.addon', itm.addon)
 					return itm.addon
 				})
 			}).catch(err => {

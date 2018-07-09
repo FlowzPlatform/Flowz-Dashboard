@@ -1,6 +1,6 @@
 <template>
   <div id="addOnDetails">
-	<Table v-show="table" :loading="loading" :columns="addOnDetails" :data="addOnList" no-data-text="Add-on plan not found"></Table>
+	<Table v-show="table" :loading="loading" :columns="addonColumn" :data="addOnList" no-data-text="Add-on plan not found"></Table>
 	<p v-if="!table" style="cursor:pointer">
 		<Poptip v-if="totalAddonPrice != 0" trigger="hover" title="Addon Details" placement="right" width="400">
 			<strong>{{ totalAddonPrice }}</strong>
@@ -41,24 +41,79 @@ export default {
 	name: 'addOnDetails',
 	props: {
 		row: Object,
+		userdetail: Boolean,
 		table: Boolean
 	},
 	data () {
 		return {
 			totalAddonPrice: 0,
-			addOnDetails: [
+			addOnAdminDetails: [
+				{
+					type: 'index',
+					width: 40
+				},
 				{
 					title: 'Add-on',
 					key: 'name'
 				},
 				{
-					title: 'Purchased Quantity',
-					key: 'quantity',
+					title: 'Price',
+					key: 'price',
+					align: 'center',
+					sortable: true
+				},
+				{
+					title: 'Quantity',
+					key: 'period',
+					align: 'center',
+					sortable: true
+				},
+				{
+					title: 'Description',
+					key: 'description',
 					align: 'center'
+				},
+				{
+					title: 'Status',
+					key: 'status',
+					align: 'center',
+					filters: [
+						{
+							label: 'Active',
+							value: 1
+						},
+						{
+							label: 'Archived',
+							value: 2
+						}
+					],
+					filterMultiple: false,
+					filterMethod (value, row) {
+						if (value === 1) {
+							if (row.status == 'active') {
+								return row.status
+							}
+						} else if (value === 2) {
+							if (row.status == 'archived') {
+								return row.status
+							}
+						}
+					}
+				}
+			],
+			addOnClientDetails: [
+				{
+					title: 'Add-on',
+					key: 'name'
 				},
 				{
 					title: 'Price',
 					key: 'price',
+					align: 'center'
+				},
+				{
+					title: 'Purchased Quantity',
+					key: 'quantity',
 					align: 'center'
 				},
 				{
@@ -74,6 +129,7 @@ export default {
 					}
 				}
 			],
+			addonColumn: [],
 			loading: true,
 			addOnListData: [],
 			addOnList: [],
@@ -96,6 +152,7 @@ export default {
 		},
 		getAddonDetails (id) {
 			return cbAddon.get(id).then(res => {
+				console.log('res >>>>>>>>>>>>>', res)
 				return res.data
 			})
 		}
@@ -115,6 +172,11 @@ export default {
 				self.addOnList = await self.makeChunk(self.currentPage, self.pageSize)
 				self.loading = false
 			})
+			if (this.userDetail == true) {
+				this.addonColumn = this.addOnAdminDetails
+			} else {
+				this.addonColumn = this.addOnClientDetails
+			}
 		} else {
 			self.loading = false
 		}
