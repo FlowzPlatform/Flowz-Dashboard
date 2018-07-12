@@ -129,7 +129,6 @@ export default {
 			loading: true,
 			addOnListData: [],
 			addOnList: [],
-			counter: 0,
 			currentPage: 1,
 			pageSize: 10
 		}
