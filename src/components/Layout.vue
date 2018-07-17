@@ -14,10 +14,10 @@
 import Header from './Header'
 import Footer from './Footer'
 export default {
-  name: 'app',
-  components: {
-    'f-header': Header,
-    'f-footer': Footer
-  }
+	name: 'app',
+	components: {
+		'f-header': Header,
+		'f-footer': Footer
+	}
 }
 </script>

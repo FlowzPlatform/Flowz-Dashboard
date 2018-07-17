@@ -70,7 +70,6 @@
     </div>
 </template>
 <script>
-/*eslint-disable*/
 var moment = require('moment');
 moment().format();
     export default {

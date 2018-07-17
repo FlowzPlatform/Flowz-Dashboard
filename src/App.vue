@@ -11,18 +11,17 @@ import VueSession from 'vue-session'
 
 Vue.use(VueSession)
 export default {
-  name: 'app',
-  created (){
-    // if(this.$session.get('auth_token')){
-    //   this.$router.push('/');
-    // }
+	name: 'app',
+	created () {
+		// if(this.$session.get('auth_token')){
+		//   this.$router.push('/');
+		// }
 
-      if(this.$cookie.get('auth_token')){
-       //this.$router.push('/');
-     }
-  }
+		if (this.$cookie.get('auth_token')) {
+			// this.$router.push('/');
+		}
+	}
 }
-
 </script>
 
 <style>

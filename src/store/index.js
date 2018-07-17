@@ -9,9 +9,9 @@ import createPersistedState from 'vuex-persistedstate'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  state,
-  actions,
-  mutations,
-  getters,
-  plugins: [createPersistedState()]
+	state,
+	actions,
+	mutations,
+	getters,
+	plugins: [createPersistedState()]
 })
