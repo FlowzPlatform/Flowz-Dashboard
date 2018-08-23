@@ -78,7 +78,8 @@
             <Form v-else :model="payDetail">
               <Row>
                 <Col>
-                  <FormItem label="CARD NUMBER">
+									<label class="ivu-form-item-label">CARD NUMBER</label>
+                  <FormItem>
                     <span class="sv-card">{{payDetail.cardNumber}}</span>
                   </FormItem>
                 </Col>
@@ -326,6 +327,7 @@ export default {
 
 		cbCustomer.get(self.userDetails._id).then(res => {
 			if (!res.data.api_error_code) {
+				self.$refs['payDetail'].resetFields()
 				self.savedCard = true
 				self.payDetail.cardNumber = res.data.card.iin + '******' + res.data.card.last4
 				self.payDetail.expiryMM = res.data.card.expiry_month
