@@ -593,7 +593,7 @@ export default {
 			let self = this
 			self.addPlanLoading = true
 			let data5 = []
-			let modules = ['crm', 'uploader', 'webbuilder', 'subscription', 'vshopdata']
+			let modules = ['crm', 'uploader', 'webbuilder', 'subscription', 'vshopdata', 'workflow']
 
 			self.plans.filter(function (o) {
 				o.class = 'ivu-table-row'

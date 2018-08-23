@@ -120,11 +120,7 @@ export default {
 					title: 'Total',
 					align: 'center',
 					render: (h, params) => {
-						let val
-						val = (params.row.price * params.row.quantity)
-						total += val
-						this.totalAddonPrice = total
-						this.$emit('totalAddon', total)
+						this.emitTotalPrice(params)
 						return h('span', params.row.price * params.row.quantity)
 					}
 				}
@@ -138,6 +134,16 @@ export default {
 		}
 	},
 	methods: {
+		emitTotalPrice (params) {
+			let val
+			val = (params.row.price * params.row.quantity)
+			total += val
+			this.totalAddonPrice = total
+			if (params.index >= this.addOnList.length - 1) {
+				this.$emit('totalAddon', total)
+				total = 0
+			}
+		},
 		async changePage (pageNo) {
 			this.addOnList = await this.makeChunk(pageNo, this.pageSize)
 		},
@@ -152,7 +158,6 @@ export default {
 		},
 		getAddonDetails (id) {
 			return cbAddon.get(id).then(res => {
-				console.log('res >>>>>>>>>>>>>', res)
 				return res.data
 			})
 		}
