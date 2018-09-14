@@ -109,10 +109,6 @@
                   </Poptip> --></p>
                 </Col>
                 <Col span="6">
-                    <!-- set attribute to Col span="16" offset="4" 
-                    <Button title="PayPal" type="success" :loading="payloading" @click="payFunction('payDetail')"><i class="fa fa-paypal" aria-hidden="true"></i></Button>
-                    <Button title="Stripe" type="success" :loading="payloading" @click="payFunction('payDetail')"><i class="fa fa-cc-stripe" aria-hidden="true"></i></Button>
-                    <Button style="font-weight: bold; font-size: 15px;" title="Authorize.Net" type="success" :loading="payloading" @click="payFunction('payDetail')">Authorize.Net /* <img style="width:80px;" src="../../static/authnet.png"></img> */</Button> -->
                     <Button class="pull-right" type="success" :loading="payloading" @click="payFunction('payDetail')">PAY</Button>
                 </Col>
                 <Col span="11">
@@ -131,7 +127,6 @@
   </Row>
 </template>
 <script>
-// import checkout from '@/api/checkout'
 import cbSubscription from '@/api/cb-subscription'
 import cbPlan from '@/api/cb-plan'
 import cbAddon from '@/api/cb-addon'
@@ -139,9 +134,6 @@ import cbCustomer from '@/api/cb-customer'
 import Cookies from 'js-cookie'
 import psl from 'psl'
 import _ from 'lodash'
-// import subscriptionPlans from '@/api/subscription-plans'
-// import { setTimeout } from 'timers'
-// import transactions from '@/api/transactions'
 import userDetails from '@/api/userdetails'
 import config from '../config'
 
@@ -351,34 +343,6 @@ export default {
 			}
 		})
 		this.mapData(data)
-		/* cbSubscription.get(self.userDetails._id).then(res => {
-      console.log('>>>RES', res);
-    }).catch(err => {
-      console.log('Error While geting customer from ', err)
-    }); */
-		/* subscriptionPlans.getThis( this.sub_id).then(res => {
-      self.mainData.push(res.data)
-      self.mainData.sort(function(a, b) {
-        return a.price-b.price
-      })
-      for(let i = 0; i < self.mainData.length; i++) {
-        self.mainData[i].description = self.mainData[i].description.split('\n')
-        self.mainData[i].details = _.chain(self.mainData[i].details).filter(function(o) {
-            o.value = parseInt(o.value)
-            return o.value > 0
-        }).map(function(d) {
-            let str = d.module.charAt(0).toUpperCase() + d.module.slice(1)
-            let str2 = d.service.charAt(0).toUpperCase() + d.service.slice(1)
-            return {'key':'<i class="ivu-icon ivu-icon-android-checkmark-circle"></i> <b>'+str+'</b> '+str2, 'value': d.value}
-        }).value()
-      }
-    }).catch(err => {
-      self.$Notice.error({
-          duration: 5,
-          title: 'Fetching subscription plan',
-          desc: err.response.data.message
-      });
-    }); */
 
 		for (let j = 0; j <= 20; j++) {
 			let yy = new Date().getFullYear() + j
@@ -490,12 +454,7 @@ export default {
 					if (valid) {
 						self.payloading = true
 						self.updatePayMessage('alert alert-warning', 'Processing Payment..!', 'Please do not refresh page or do not go back.')
-						// OLD CODE FOR SUBSCRIPTION
-						/* var sObj = {
-              sub_id: this.sub_id,
-              login_token: this.login_token,
-              payDetail: this.payDetail
-            }; */
+
 						let subDetails = {
 							'plan_id': self.sub_id,
 							'auto_collection': 'on',
@@ -512,67 +471,6 @@ export default {
 						}
 
 						let result = await self.subscribeCbPlan(subDetails) // eslint-disable-line no-unused-vars
-
-						// OLD CODE FOR SUBSCRIPTION
-						/* checkout.post(sObj).then(async res => {
-              await transactions.get(res.data.transaction_id).then(res => {
-                transactionStatus = res.data.transaction_status
-                paymentStatus = res.data.payment_status
-              }).catch(err => {
-                console.log('ERR', err)
-              })
-              if (res.data.hasOwnProperty('error')) {
-                this.payInfo.class = 'alert alert-danger'
-                this.payInfo.msgType = 'Error..! '
-                if(res.data.error === 'NotAuthenticated') {
-                  self.payInfo.msg = res.data.message + ' You will automatically logout in 5 sec.'
-                  setTimeout(function() {
-                    Cookies.remove('auth_token');
-                    Cookies.remove('user');
-                    self.$router.push({
-                      name: 'login'
-                    })
-                  }, 5000)
-                } else if (res.data.error === 'ReqlDriverError') {
-                  self.payInfo.msg = 'Transaction failed, RethinkDB service unavailable.'
-                  self.payloading = false
-                } else {
-                  if(paymentStatus == true) {
-                    this.$Modal.warning({
-                      title: 'Warning',
-                      content: '<p>Your <b>PAYMENT</b> has been done, but subscription process not completed.</p><br><p> So, Please contact support team with transaction id<br><b> ' + res.data.transaction_id + '</b></p>'
-                    });
-                  }
-                  this.payInfo.msg = res.data.message
-                  self.payloading = false
-                }
-              } else if (res.data != undefined && res.data.transaction_id != undefined) {
-                this.payInfo.class = 'alert alert-success'
-                this.payInfo.msgType = 'Success..! '
-                this.$Notice.success({
-                  title: 'Your Last Transaction id',
-                  desc: 'Please note down for your further reference <b>' + res.data.transaction_id + '</b>',
-                  duration: 0
-                })
-                this.payInfo.msg = res.data.outcome.seller_message
-                Cookies.set('welcomeMsg', 'Thank You For Subscribing...!')
-                this.$router.push({
-                  name: 'planDetails'
-                })
-              }
-              // self.paying = false
-            }).catch(err => {
-              self.$Notice.error({
-                duration: 5,
-                title: 'Payment Fail..!',
-                desc: err + ' Please Try Again After Sometime.'
-              })
-              self.payInfo.class = 'alert alert-danger'
-              self.payInfo.msgType = 'Error..! '
-              self.payInfo.msg = 'Server connection lost, try after some time.'
-              self.paying = false
-              self.payloading = false
-            }); */
 					}
 				})
 			} else {
@@ -696,7 +594,6 @@ export default {
 			return userDetails.get().then(res => {
 				return res.data.data
 			}).catch(err => {
-				console.log('Error while getUserDetails() ', err)
 				return err
 			})
 		},
@@ -733,17 +630,6 @@ export default {
 }
 </script>
 <style scoped>
-/* .fa {
-  font-size: 20px;
-}
-.ivu-btn-success {
-    background-color: #081944;
-    border-color: #081944;
-}
-.ivu-btn-success:hover {
-  background-color: #081944b5;
-    border-color: #081944b5;
-} */
 .plus{
   color: #fff;
   display: inline-block;

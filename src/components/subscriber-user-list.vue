@@ -491,7 +491,6 @@ export default {
 					'Content-Type': 'application/x-www-form-urlencoded;'
 				}
 			}).then(function (response) {
-				// console.log('all roles:', response)
 				if (response.data.data.length > 0) {
 					var arrRoles = _.groupBy(response.data.data, 'module')
 					for (var tblData in arrRoles) {
@@ -501,7 +500,6 @@ export default {
 							sortField: 'name'
 						}
 						arrRoles[tblData].splice(0, 0, obj)
-						// console.log('arraData', arrRoles)
 					}
 				}
 				self.showOverlay = false
@@ -561,7 +559,6 @@ export default {
 						desc: err.message
 					})
 				}
-				console.log('ERROR', err)
 			})
 			cbAddon.get().then(res => {
 				// console.log('RES ADDON ::', res)
@@ -585,7 +582,6 @@ export default {
 						})
 					}
 				}
-				console.log('ERR Addon :: ', err)
 			})
 			cbCustomer.get().then(res => {
 				this.totalCustomer = res.data.length
@@ -606,7 +602,6 @@ export default {
 						})
 					}
 				}
-				console.log('ERR CUSTOMER ::', err)
 			})
 		},
 		getSubscribedUser (planId) {
@@ -736,7 +731,6 @@ export default {
 							}
 						}
 						self.filterLoading = false
-						console.log('ERROR', err)
 					})
 				} else if (this.model2value === 'status' || this.model2value === 'name') {
 					/* ========  plan status wise filter ======== */
@@ -757,7 +751,6 @@ export default {
 							self.filterLoading = false
 						})
 					}).catch(err => {
-						// console.log('err', err)
 						if (self.currentMsgInst && !self.currentMsgInst.closed) {
 							if (err.message == 'Network Error') {
 								self.currentMsgInst = self.$Notice.error({
@@ -774,26 +767,21 @@ export default {
 							}
 						}
 						self.filterLoading = false
-						console.log('ERROR', err)
 					})
 				} else if (this.model2value === 'All plan') {
 					/* ======== All plan wise filter ======== */
 					cbPlan.get().then(async res => {
-						// console.log('res', res.data)
 						let datares = res.data.map((item) => {
-							// console.log('item', item.plan)
 							item.plan.price /= 100
 							return item.plan
 						})
 						Promise.all(datares).then(async res => {
-							// console.log('res---------', res)
 							self.resultplanfilter = res
 							this.planFilterDetailData = res
 							this.resultplanfilter = await this.makeChunk(this.currentPage, this.pageSize)
 							self.filterLoading = false
 						})
 					}).catch(err => {
-						// console.log('err', err)
 						if (self.currentMsgInst && !self.currentMsgInst.closed) {
 							if (err.message == 'Network Error') {
 								self.currentMsgInst = self.$Notice.error({
@@ -810,7 +798,6 @@ export default {
 							}
 						}
 						self.filterLoading = false
-						console.log('ERROR', err)
 					})
 				} else {
 					self.$Notice.error({
@@ -847,7 +834,6 @@ export default {
 							}
 						}
 						self.filterLoading = false
-						console.log('ERR CUSTOMER ::', err)
 					})
 				} else if (this.model2value === 'All customer') {
 					/* ========  All Customer wise filter ======== */
@@ -883,7 +869,6 @@ export default {
 							}
 						}
 						self.filterLoading = false
-						console.log('ERROR', err)
 					})
 				} else if (this.model2value === 'email' || this.model2value === 'first_name' || this.model2value === 'last_name') {
 					/* ========  Customer email , first_name, last_name wise filter ======== */
@@ -919,7 +904,6 @@ export default {
 							}
 						}
 						self.filterLoading = false
-						console.log('ERR CUSTOMER ::', err)
 					})
 				} else {
 					this.$Notice.error({
@@ -969,7 +953,6 @@ export default {
 							}
 						}
 						self.filterLoading = false
-						console.log('ERROR', err)
 					})
 				} else if (this.model2value === 'customer_id') {
 					/* ========  subscription customer_id wise filter ======== */
@@ -1011,7 +994,6 @@ export default {
 							}
 						}
 						self.filterLoading = false
-						console.log('ERROR', err)
 					})
 				} else if (this.model2value === 'id') {
 					/* ========  subscription id wise filter ======== */
@@ -1043,7 +1025,6 @@ export default {
 							}
 						}
 						self.filterLoading = false
-						console.log('ERROR', err)
 					})
 				} else if (this.model2value === 'status') {
 					/* ========  subscription status wise filter ======== */
@@ -1087,7 +1068,6 @@ export default {
 							}
 						}
 						self.filterLoading = false
-						console.log('ERROR', err)
 					})
 				} else if (this.model2value === 'All subscription') {
 					/* ========  All subscription wise filter ======== */
@@ -1129,7 +1109,6 @@ export default {
 							}
 						}
 						self.filterLoading = false
-						console.log('ERROR', err)
 					})
 				} else {
 					this.$Notice.error({
