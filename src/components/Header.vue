@@ -1,11 +1,6 @@
 <template>
     <Menu mode="horizontal" theme="primary" style="background:#c5cee74b;">
         <Row type="flex">
-            <!-- <Col :span="1">
-            <Row type="flex" justify="end" align="middle">
-
-            </Row>
-        </Col> -->
             <i-col :span="5">
                 <div class="f-logo">
                     <a @click="mainPage()">
@@ -20,12 +15,6 @@
                                 <Icon type="person" :size="16"></Icon>
                                 {{email}}
                             </template>
-                            <!-- MenuItem name="1-1">
-                                <a @click="settings()">
-                                    <Icon type="ios-locked-settings" :size="16"></Icon>
-                                    ACL
-                                </a>
-                                </MenuItem -->
                             <MenuItem name="1-2">
                                 <a @click="subscriptionList()">
                                     <Icon type="ios-list-outline" :size="16"></Icon>
@@ -43,7 +32,6 @@
                                 <Icon type="ios-locked-outline" :size="16"></Icon>
                                 Logout
                             </a>
-                              <!-- <p>csdcsscd</p> -->
                             </MenuItem>
                         </Submenu>
                     </div>
@@ -68,11 +56,6 @@ let location = psl.parse(window.location.hostname)
 
     	},
     	methods: {
-    		//   logout () {
-    		//         this.$session.destroy('auth_token');
-    		//         this.$router.push('/login');
-    		//    }
-
     		logout: function () {
 			this.$store.commit('FB_SIGN_IN', false)
 			this.$store.commit('GOOGLE_SIGN_IN', false)

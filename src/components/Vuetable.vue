@@ -103,7 +103,7 @@ Vue.use(VueWidgets)
     			}).then(function (response) {
     				if (response.data.data.length > 0) {
     					self.count++
-    					console.log('Count:', self.count, totalApps)
+    					// console.log('Count:', self.count, totalApps)
     					self.permissionsAll = _.union(self.permissionsAll, response.data.data)
     					self.permissionsAll = _.map(self.permissionsAll, o => _.extend({app: appName}, o))
 
@@ -115,7 +115,7 @@ Vue.use(VueWidgets)
     				return response.data.data
     			})
     				.catch(function (error) {
-    					console.log('Get all permission error:', error)
+    					// console.log('Get all permission error:', error)
     					console.log(error)
     				})
     		},
@@ -127,7 +127,7 @@ Vue.use(VueWidgets)
     				}
     			}).then(function (response) {
     				// console.log("Get all roles:",_.groupBy(response.data.data, 'module'));
-    				console.log('all roles:', response)
+    				// console.log('all roles:', response)
     				if (response.data.data.length > 0) {
     					var arrRoles = _.groupBy(response.data.data, 'module')
     					for (var tblData in arrRoles) {
@@ -137,7 +137,7 @@ Vue.use(VueWidgets)
     							sortField: 'name'
     						}
 						arrRoles[tblData].splice(0, 0, obj)
-    						console.log('arraData', arrRoles)
+    						// console.log('arraData', arrRoles)
     					}
     					self.fields = arrRoles
     					self.callTaskList()
@@ -175,7 +175,7 @@ Vue.use(VueWidgets)
     					let arrResources = _.groupBy(response.data.data, 'module')
     					self.tableData = _.extend(self.tableData, arrResources)
     				}).catch(function (error) {
-    					console.log('Get role permissions error:', error)
+    					// console.log('Get role permissions error:', error)
     					console.log(error)
     				})
     			}
@@ -183,28 +183,6 @@ Vue.use(VueWidgets)
     			for (var tblData in self.tableData) {
     				await self.getAllPermissions(tblData, Object.keys(self.tableData).length)
     			}
-
-    			// axios.get(config.subscriptionUrl+'register-resource', {
-    			// headers: {
-    			// 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-    			// },
-    			//  }).then(function (response) {
-    			//     console.log("Get resources:",response.data.data);
-    			//     if(response.data.data.length > 0){
-    			//         let arrResources = _.groupBy(response.data.data, 'module');
-    			//         self.tableData = arrResources;
-    			//         //console.log("Table rows:",Object.keys(self.tableData));
-    			//         for (var tblData in arrResources){
-    			//             console.log("arrResources:",tblData)
-    			//             self.getAllPermissions(tblData, Object.keys(self.tableData).length)
-    			//         }
-    			// }
-    			// return response.data.data
-    			// })
-    			//     .catch(function (error) {
-    			//     console.log("Get role permissions error:",error);
-    			//     console.log(error);
-    			// })
     		},
     		getCheckboxValue: function (role, resources, action, appName) {
     			let resID = resources.id + '_' + action
@@ -223,7 +201,7 @@ Vue.use(VueWidgets)
     			if (event.target.checked) {
     				accessVal = 1
     			}
-    			console.log('Set permission params 1:', event.target.checked)
+    			// console.log('Set permission params 1:', event.target.checked)
     
     			let updateValue = {
     				resourceId: item.id + '_' + action, // resourceid_action
@@ -233,18 +211,18 @@ Vue.use(VueWidgets)
     				app: moduleName
     			}
 
-			console.log('Set permission params: 2', item)
+			// console.log('Set permission params: 2', item)
     			axios.post(config.setPermissionUrl, updateValue, {
     				headers: {
     					'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
     				}
     			})
     				.then(function (response) {
-    					console.log('Set permission response:', response)
+    					// console.log('Set permission response:', response)
 
     					let resID = item.id + '_' + action
     					let index = _.findIndex(self.permissionsAll, function (d) { return (d.roleId === roleField.id) && (d.resourceId === resID) })
-    					console.log('Set permission response index:', index)
+    					// console.log('Set permission response index:', index)
     					if (index > -1) {
     						if (self.permissionsAll[index].access_value === '1') { self.permissionsAll.splice(index, 1) } else {
     							self.permissionsAll[index].access_value = '1'
@@ -267,7 +245,7 @@ Vue.use(VueWidgets)
     				})
     				.catch(function (error) {
     					self.showOverlay = false
-    					console.log('Set permission error:', error)
+    					// console.log('Set permission error:', error)
     					console.log(error)
     				})
 		},

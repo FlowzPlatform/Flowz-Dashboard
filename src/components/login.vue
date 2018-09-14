@@ -189,29 +189,6 @@
                   </form>
                   <el-button type="success" size="medium" class="signupButton"  @click="signupUser()" :loading="saveFileLoadingLogin" >Sign Up</el-button>
                </div>
-
-               <!-- <div class="lconun">
-                  <div class="lrinp">
-                     <label>First Name</label>
-                     <input type="text" class="" v-model="register.fname" placeholder="Enter Your First Name ">
-                  </div>
-               </div>
-               <div class="lconun">
-                  <div class="lrinp">
-                     <label>Last Name</label>
-                     <input type="text" class="" v-model="register.lname" placeholder="Enter Your Last Name ">
-                  </div>
-               </div>
-               <div class="lconun">
-                  <div class="lrinp">
-                     <label>Email Id</label>
-                     <input type="text" class="" v-model="register.email" placeholder="Enter Your Email Id ">
-                  </div>
-               </div>
-               <div class="lconun">
-
-                  <el-button type="success" size="small" class="signupButton" @click="registerUser()" :loading="saveFileLoading" >Sign Up</el-button>
-               </div> -->
             </div>
          </div>
       </div>

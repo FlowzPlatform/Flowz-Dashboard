@@ -144,10 +144,6 @@ import Vue from 'vue'
 import VueSession from 'vue-session'
 import $ from 'jquery'
 
-// var jg = new jsGraphics("myNav");
-// var img1 = document.getElementById('check')
-// var img2 = document.getElementById('demoCardLeft')
-// let location = psl.parse(window.location.hostname)
 Vue.use(VueSession)
 
 export default {
@@ -267,14 +263,9 @@ export default {
 	},
 
 	mounted () {
-		// console.log('Mounted called...')
 		$('#big-video-wrap').css('width', '100%')
 
 		let token = this.$cookie.get('auth_token')
-		// console.log('Token::::::', token)
-		// console.log('this.$store.state.isGooleLogin::::::', this.$store.state.isGooleLogin)
-		// console.log('this.$store.state.isFacebookLogin::::::', this.$store.state.isFacebookLogin)
-		// console.log('Gmail and FB login', (this.$store.state.isGooleLogin || this.$store.state.isFacebookLogin))
 		if (token == null || token == undefined || token == '') {
 			if (!(this.$store.state.isGooleLogin || this.$store.state.isFacebookLogin)) {
 				this.$router.push('/login')
@@ -313,52 +304,11 @@ export default {
 				$('#radial-nav').removeClass('expanded')
 			}
 		},
-
-		// clearCard: function() {
-		//   this.card1 = ''
-		//   this.position1 = ''
-		//   this.leftup = 0
-		//   this.topup = 0
-		// },
-		// trigger: function(){
-		//     $(".menu").toggleClass("active");
-		// },
-		//  trigger2: function(){
-		//     $(".menu2").toggleClass("active");
-		// },
 		goTosubscriptionplan: function (data) {
 			// this.$router.push('subscriptionplan/');
 			// window.location =data
 			window.open(data, '_blank')
 		}
-		// goToMoM : function(data){
-		//   console.log('Redirect to MOM')
-		//   window.location='http://localhost:3000';
-		//   // window.location='http://162.242.223.167';
-		// },
-
-		// closeNav : function(){
-		//   document.getElementById("myNav").style.display = "none";
-		//   document.getElementById("icon1").style.display = "block";
-		//   this.clearCard()
-		// },
-		// closeNav2 : function(){
-		//   document.getElementById("myNav").style.display = "none";
-		//   document.getElementById("icon2").style.display = "block";
-		//   this.clearCard()
-		// },
-
-		// hello:function(){
-		//     var items = document.querySelectorAll('.circle a');
-
-		//       for(var i = 0, l = items.length; i < l; i++) {
-		//       items[i].style.left = (50 - 35*Math.cos(-0.5 * Math.PI - 2*(1/l)*i*Math.PI)).toFixed(4) + "%";
-
-		//       items[i].style.top = (50 + 35*Math.sin(-0.5 * Math.PI - 2*(1/l)*i*Math.PI)).toFixed(4) + "%";
-		//       }
-		//      document.querySelector('.circle').classList.toggle('open');
-		// }
-
 	}
 }
 </script>
@@ -514,8 +464,6 @@ body {color: #d1d1d1;}
 .overlay .card11.crmpart .tit {width: 100%;display: inline-block;padding-bottom: 10px; text-align:center; color:#fff;}
 .overlay .card11.crmpart .img {width: 100%;display: inline-block;}
 .overlay .card11.crmpart .img img {max-width: 100%;}
-
-
 
 </style>
 <style>
