@@ -187,7 +187,7 @@
                      </div>
                      <button type="submit" style="display:none"></button>
                   </form>
-                  <el-button type="success" size="medium" class="signupButton"  @click="signupUser()" :loading="saveFileLoadingLogin" >Sign Up</el-button>
+                  <el-button type="success" size="medium" class="signupButton"  @click="signupUser()" :loading="saveFileLoading" >Sign Up</el-button>
                </div>
             </div>
          </div>
@@ -492,11 +492,7 @@ export default {
 						}
 					})
 					.catch(function (error) {
-						// this.login.password = ''
-						console.log(error.response)
-						// self.saveFileLoading = false;
-						// alert(error);
-
+						self.saveFileLoading = false
 						if (error.response.status == 409) {
 							self.$message.error(error.response.data)
 						} else {
