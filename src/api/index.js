@@ -22,7 +22,6 @@ export default {
 		}
 
 		var url = config.serverURI + uri
-		// console.log('Fired url : ', method, url, 'headers',nHeaders, JSON.stringify(nHeaders))
 		return axios({ method, url, data, nHeaders })
 	}
 }

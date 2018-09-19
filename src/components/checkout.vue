@@ -675,9 +675,9 @@ export default {
     background-color: #000044;
     border-color: #000044;
   }
-	#big-video-wrap {
+	/* #big-video-wrap {
 		display:none
-	}
+	} */
   h4 {
     margin-bottom: 12px;
     font-size: 1.50em;

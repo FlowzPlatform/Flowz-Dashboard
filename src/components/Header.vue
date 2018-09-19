@@ -67,20 +67,16 @@ let location = psl.parse(window.location.hostname)
 			this.$Message.success({content: 'You have Succesfully Logged Out', duration: 3})
     		},
     		settings: function () {
-    			// this.$session.destroy('auth_token');
-    			// his.$router.push('/acl');
     			let routeData = this.$router.resolve({name: 'acl'})
-    			window.open(routeData.href, '_blank')
+    			window.open(routeData.href, '_self')
     		},
     		subscriptionList: function () {
-    			// this.$router.push('/subscription-list');
     			let routeData = this.$router.resolve({name: 'subscriptionList'})
-    			window.open(routeData.href, '_blank')
+    			window.open(routeData.href, '_self')
     		},
     		planList: function () {
-    			// this.$router.push('/plan-details');
     			let routeData = this.$router.resolve({name: 'planDetails'})
-    			window.open(routeData.href, '_blank')
+    			window.open(routeData.href, '_self')
     		},
     		mainPage: function () {
     			this.$router.push('/')

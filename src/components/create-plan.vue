@@ -10,9 +10,7 @@
             </Tabs>
           </Col>
           <Col span="3" offset="15" class-name="action-button">
-            <!-- <Col span="3" style="margin-bottom:5px;"> -->
               <Button type="primary" @click="createPlan(activeTab)" icon="android-add-circle" :loading="addPlanLoading"><span v-if="activeTab === 'plan'">Create Plan</span><span v-else>Create Addon</span></Button>
-           <!--  </Col> -->
           </Col>
         </Row>
         <div v-if="!planLoding && plans.length != 0">
@@ -23,9 +21,7 @@
                      <colgroup>
                           <col width="22">
                             <col width="8">
-                              <!-- <col width="22"> -->
                                   <col width="22">
-                                      <!-- <col width="15"> -->
                                           <col width="20">
                       </colgroup>
                       <thead>
@@ -41,19 +37,10 @@
                                     <span>Active User</span>
                                   </div>
                               </th>
-                              <!-- <th class="ivu-table-column-center">
-                                  <div class="ivu-table-cell">
-                                      <span>Validity <span style="color:gray;font-size:10px">(Month)</span></span>
-                                  </div>
-                              </th> -->
                               <th class="ivu-table-column-center">
                                   <div class="ivu-table-cell"><span>Price <span style="color:gray;font-size:10px">(USD)</span></span>
                                   </div>
                               </th>
-                              <!-- <th class="ivu-table-column">
-                                  <div class="ivu-table-cell"><span>Type</span>
-                                  </div>
-                              </th> -->
                               <th class="ivu-table-column-center">
                                   <div class="ivu-table-cell"><span>Action</span>
                                   </div>
@@ -76,13 +63,6 @@
                                   </Tooltip>
                                 </div>
                               </td>
-                              <!-- <td class="ivu-table-column-center">
-                                <div class="ivu-table-cell">
-                                  <Tooltip content="Validity" placement="bottom">
-                                    <input  type="text" class="description form-control" v-model="plan.period" min=1 v-on:keyup="validateValidity(plan.period, pIndex)" placeholder="*Validity"></input>
-                                  </Tooltip>
-                                </div>
-                              </td> -->
                               <td class="ivu-table-column-center">
                                   <div class="ivu-table-cell">
                                     <Tooltip content="Price" placement="bottom">
@@ -90,17 +70,6 @@
                                     </Tooltip>
                                   </div>
                               </td>
-                              <!-- <td class="">
-                                <div class="ivu-table-cell">
-                                    <Tooltip content="Type" placement="bottom">
-                                      <select class="form-control" v-model="plan.object">
-                                        <option value="plan">Basic</option>
-                                        <option value="addon">Add-on</option>
-                                      </select>
-                                      <input type="text" class="description form-control" v-model="plan.price" v-on:keyup="validatePrice(plan.price, pIndex)" placeholder="*Price"></input>
-                                    </Tooltip>
-                                  </div>
-                              </td> -->
                               <td class="ivu-table-column-center">
                                   <Row type="flex" justify="center" align="middle">
                                     <Col span="3"> 
@@ -127,7 +96,6 @@
                                           </p>
                                           <div style="text-align:center">
                                               <p><b>{{ currentPlanName }}</b> will be delete permanently only if it is not subscribed by any user otherwise it will disabled.</p>
-                                              <!-- <p v-if="activeTab === 'plan'" v-else>Confirm action to permanently delete <b>{{ plan.name }}.<br></b> After deleting this addon will not accessible.</p> -->
                                           </div>
                                           <div slot="footer">
                                               <Button type="error" size="large" long :loading="loading" @click="deletePlan(deleteIndex)">Delete</Button>
@@ -295,7 +263,6 @@
 </template>
 
 <script>
-// import subscriptionPlans from '@/api/subscription-plans'
 import cbPlan from '@/api/cb-plan'
 import cbAddon from '@/api/cb-addon'
 import cbSubscription from '@/api/cb-subscription'
@@ -396,14 +363,12 @@ export default {
 						title: 'Loading created plans',
 						desc: err.message
 					})
-					// self.$Message.error(err.response.data.message)
 				}
 			})
 
 			cbAddon.get().then(res => {
 				let obj = res.data.map(async (itm) => {
 					itm.addon.price /= 100
-					// if (itm.addon.status == 'active')
 					itm.addon.users = await self.getAddonUser(itm.addon.id)
 					Promise.resolve(itm.addon.users)
 					return itm.addon
@@ -488,36 +453,20 @@ export default {
 		},
 		getDefaultPlan (idx, pIndex) {
 			return this.plans[pIndex].object == 'plan' ? this.defaultPlan[idx] : 0
-			// return this.defaultPlan[idx]
 		},
 		validateValidity (validity, pIndex) {
 			validity = validity.toString()
 			var num = validity.match(/^[0-9]+$/)
 			if (num === null) {
 				this.plans[pIndex].period = ''
-				/* if(validity < this.defaultPlan.validity) {
-          this.$Notice.error({
-            duration: 5,
-            title: 'Validity Validation Error',
-            desc: 'Validity should be greater than '+ this.defaultPlan.validity + ' ' + this.defaultPlan.time_unit
-          })
-        } */
 			}
 		},
 		validatePrice (price, pIndex) {
 			if (isNaN(price)) {
 				this.plans[pIndex].price = ''
-				/* if(price < this.defaultPlan.price) {
-          this.$Notice.error({
-            duration: 5,
-            title: 'Price Validation Error',
-            desc: 'Price should be greater than ' + this.defaultPlan.price + '$'
-          })
-        } */
 			}
 		},
 		checkOpen (index) {
-			// if (_.intersection(this.currentOpen,[index]).length > 0)) return true
 			return true
 		},
 		checkAnyMethodAvailable (methods) {
@@ -615,31 +564,6 @@ export default {
 			} else if (method == 'addon') {
 				this.createCbAddon(planDefinition, 'create')
 			}
-			// OLD CODE FOR SUBSCRIPTION
-			/* subscriptionPlans.post(self.defaultPlan).then(res => {
-        self.$Notice.success({
-          title: '<b>New Plan</b>',
-          desc: '<b>New Subscription Plan</b> has been created..!'
-        })
-        res.data.class = 'ivu-table-row-highlight'
-        self.plans.splice(0, 0, res.data);
-        // self.plans.push(res.data)
-        self.addPlanLoading = false
-      }).catch(err => {
-        if( err.response.status == 403) {
-          self.$Notice.error({
-            duration: 5,
-            title: 'Permission not available for action',
-            desc: err.message
-          })
-        } else {
-          self.$Notice.error({
-            duration: 5,
-            title: 'Trying to create subscription plan',
-            desc: 'Please try again ' + err
-          })
-        }
-      }) */
 		},
 		deletePlan (plan) {
 			let self = this
@@ -1182,19 +1106,11 @@ export default {
 			let msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':') + 1)
 			let ttl = res.data.api_error_code.replace(/_/gi, ' ')
 			ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1)
-			// if (res.data.api_error_code == 'duplicate_entry') {
-			//   self.$Notice.error({
-			//     title: 'Plan Already Exist.',
-			//     duration: 5,
-			//     desc: msg
-			//   });
-			// } else {
 			self.$Notice.error({
 				title: ttl,
 				duration: 5,
 				desc: msg
 			})
-			// }
 		}
 	}
 }

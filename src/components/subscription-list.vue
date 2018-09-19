@@ -97,7 +97,6 @@ export default {
 				'key': 'value'
 			}],
 			assuredSum: null,
-			// allAddonPrice: null,
 			planPrice: null,
 			addonPrice: null,
 			remainDays: null,
@@ -232,9 +231,7 @@ export default {
 				this.planPrice = currentRow.plan_unit_price
 				this.addonPrice = details[0].price
 				this.assuredSum = currentRow.plan_unit_price + details[0].price + purchasedAddonPrice
-				// this.allAddonPrice = currentRow.addons
 				this.totalAddonPrice = currentRow.totalAddonPrice
-				// this.totalAddonPrice -= currentRow.plan_unit_price
 				this.remainDays = moment.unix(currentRow.next_billing_at).diff(moment(), 'days')
 			}
 		}
