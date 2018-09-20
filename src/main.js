@@ -9,7 +9,7 @@ import { sync } from 'vuex-router-sync'
 // import config from '@/config'
 import 'vue-awesome/icons/flag'
 import 'vue-awesome/icons'
-import config1 from '../config/customConfig'
+// import config1 from '../config/customConfig'
 import AsyncComputed from 'vue-async-computed'
 
 // Tell Vue to use the plugin
@@ -23,7 +23,7 @@ import 'iview/dist/styles/iview.css'
 
 import axios from 'axios'
 import psl from 'psl'
-import Cookies from 'js-cookie'
+// import Cookies from 'js-cookie'
 
 // Include and set up feathers client
 const Feathers = require('feathers/client')
@@ -63,35 +63,6 @@ router.beforeEach((to, from, next) => {
 	// set token in axios
 	if (token) {
 		axios.defaults.headers.common['authorization'] = token
-		axios({
-			method: 'get',
-			url: config1.userDetail
-			// headers: {'Authorization': response.data.logintoken}
-		})
-			.then(function (result) {
-				let location = psl.parse(window.location.hostname)
-				location = location.domain === null ? location.input : location.domain
-				Cookies.set('user', result.data.data.email, {domain: location})
-
-				if (result.data.data.package !== undefined) {
-					next()
-				} else {
-					if (to.name !== 'checkout') {
-						next({
-							path: '/subscription-list'
-						})
-					}
-				}
-			})
-			.catch(function (error) {
-				if (error.response.status == 401) {
-					let location = psl.parse(window.location.hostname)
-					location = location.domain === null ? location.input : location.domain
-
-					Cookies.remove('auth_token', {domain: location})
-					Cookies.remove('subscriptionId', {domain: location})
-				} else if (error.response.status == 403) {}
-			})
 	} else {
 		delete axios.defaults.headers.common['authorization']
 	}

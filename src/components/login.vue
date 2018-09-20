@@ -448,7 +448,6 @@ export default {
 		signupUser: async function () {
 			let self = this
 			let emailValidator = await this.validateEmail(self.signup.email)
-			console.log(emailValidator)
 			if (self.signup.fname == '') {
 				self.$message.warning('First name is required')
 			} else if (self.signup.lname == '') {
@@ -468,7 +467,6 @@ export default {
 					lastname: self.signup.lname.trim()
 				})
 					.then(function (response) {
-						console.log(response)
 						if (response.data.code == 200) {
 							self.saveFileLoading = false
 							// alert(response.data.message+", please check your email for password")
