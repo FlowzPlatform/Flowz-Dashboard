@@ -8,8 +8,8 @@ export default {
 	},
 	authenticate ({ commit }, authToken) {
 		return axios({
-			method: 'get',
-			url: config.userDetailsAPI + 'userdetails',
+			method: 'post',
+			url: config.userDetailsAPI + 'validatetoken',
 			headers: {
 				'authorization': authToken
 			}
