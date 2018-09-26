@@ -3,6 +3,7 @@ const merge = require('webpack-merge')
 const prodEnv = require('./prod.env')
 
 module.exports = merge(prodEnv, {
-  NODE_ENV: '"development"',
-  domainkey: JSON.stringify(process.env.domainkey),
+	NODE_ENV: '"development"',
+	domainkey: JSON.stringify(process.env.domainkey),
+	gatewayAccountId: JSON.stringify(process.env.gatewayid)
 })

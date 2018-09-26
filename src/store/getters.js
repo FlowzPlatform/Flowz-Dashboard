@@ -1,5 +1,5 @@
 export default {
-    // getSampleData (state) {
-    //     return state.data
-    // }
+	// getSampleData (state) {
+	//     return state.data
+	// }
 }

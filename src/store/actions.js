@@ -1,6 +1,26 @@
+// import api from '../api'
+import axios from 'axios'
+import config from '@/config'
 export default {
-    // sampleMethod ({ commit }, object) {
-    //     //do API call or logical task here
-    //     // call mutation from here  commit('SAMPLE_METHOD', object)
-    // }
+	setUser ({ commit }, authToken) {
+		// console.log("setUser called")
+		commit('SET_USER', authToken)
+	},
+	authenticate ({ commit }, authToken) {
+		return axios({
+			method: 'get',
+			url: config.userDetailsAPI + 'userdetails',
+			headers: {
+				'authorization': authToken
+			}
+		})
+			.then(response => {
+				// console.log("response...",response)
+				if (response) {
+					return response.data.data
+				} else {
+
+				}
+			})
+	}
 }
