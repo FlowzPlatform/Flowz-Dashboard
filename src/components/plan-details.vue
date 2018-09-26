@@ -2,7 +2,6 @@
 <Row style="margin-top:30px;">
     <Col span="14" push="5">
         <Card>
-            <!-- <h3>Thank You for Subscribing...!</h3> -->
             <div style="font-size: x-large;">
 				My Plan
 				<div class="pull-right">
@@ -157,11 +156,6 @@ export default {
 					key: 'plan_unit_price',
 					align: 'center'
 				},
-				/* {
-					title: 'Validity (Months)',
-					key: 'billing_period',
-					align: 'center'
-				}, */
 				{
 					title: 'Subscribed',
 					key: 'started_at',
@@ -403,7 +397,6 @@ export default {
 			let msg = res.data.error_msg.substr(res.data.error_msg.indexOf(':') + 1)
 			let ttl = res.data.api_error_code.replace(/_/gi, ' ')
 			ttl = ttl.charAt(0).toUpperCase() + ttl.slice(1)
-			// self.updatePayMessage('alert alert-danger', 'Error..! ', msg)
 			self.$Notice.error({
 				title: ttl,
 				duration: 5,

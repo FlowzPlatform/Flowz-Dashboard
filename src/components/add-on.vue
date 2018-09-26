@@ -31,9 +31,7 @@
 </template>
 
 <script>
-// import userAddon from '@/api/user-addon';
 import cbAddon from '@/api/cb-addon'
-// import _ from 'lodash'
 let total = 0 // eslint-disable-line
 var moment = require('moment')
 moment().format()
@@ -167,7 +165,6 @@ export default {
 		if (this.row.addons) {
 			let obj = this.row.addons.map(async (itm) => {
 				let addonDetails = await self.getAddonDetails(itm.id)
-				// console.log('addon details::', addonDetails)
 				addonDetails.price /= 100
 				addonDetails.quantity = itm.quantity
 				return addonDetails
@@ -185,32 +182,6 @@ export default {
 		} else {
 			self.loading = false
 		}
-		// OLD CODE FOR SUBSCRIPTION
-		// userAddon.get(this.row.id).then(async res => {
-		//     res.data = await _.orderBy(res.data, 'createdAt', 'desc')
-		//     await res.data.filter(function(o) {
-		//         o.expiredOn = moment(o.expiredOn).format("DD-MMM-YYYY")
-		//         o.createdAt = moment(o.createdAt).fromNow()
-		//     })
-		//     self.addOnListData = res.data
-		//     self.addOnList = await self.makeChunk(self.currentPage, self.pageSize)
-		//     self.loading = false
-		// }).catch(err => {
-		//     if(err.message == 'Network Error'){
-		//         self.$Notice.error({
-		//             duration: 5,
-		//             title: 'Getting your plans',
-		//             desc: 'API service unavailable.'
-		//         });
-		//     } else {
-		//         self.$Notice.error({
-		//             duration: 5,
-		//             title: 'Getting your plans',
-		//             desc: err.response.data.message
-		//         });
-		//     }
-		//     self.loading = false
-		// })
 	},
 	destroyed () {
 		this.totalAddonPrice = 0

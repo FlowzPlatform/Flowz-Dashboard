@@ -86,7 +86,6 @@ moment().format();
       methods:{
      },
      mounted(){
-        // this.row.package_history = this.row.package_history.reverse()
      }
     };
 </script>
@@ -119,22 +118,5 @@ moment().format();
       text-align:center;
       margin-top: 15px;
   }
-  /*th .ivu-table-cell {
-      display: inline-block;
-      word-wrap: normal;
-      vertical-align: middle;
-      font-size: 16px ;
-  }
-  .ivu-table-cell {
-      padding-left: 18px;
-      padding-right: 18px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: normal;
-      word-break: break-all;
-      -webkit-box-sizing: border-box;
-      box-sizing: border-box;
-      font-size: 16px;
-  }*/
 
 </style>

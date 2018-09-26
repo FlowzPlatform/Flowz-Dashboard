@@ -532,14 +532,12 @@ export default {
 					itm.plan.price /= 100
 					let userDetails = await self.getSubscribedUser(itm.plan.id)
 					Promise.resolve(userDetails)
-					// console.log('userAddon >>>', userDetails)
 					itm.plan.users = userDetails.userCount
 					itm.plan.userDetails = userDetails.userData
 					self.totalUser += userDetails.userCount
 					return itm.plan
 				})
 				Promise.all(obj).then(async res => {
-					// console.log('cbPlan res >>>>>', res)
 					self.planData = res
 					this.planDetailData = res
 					this.planData = await this.makeChunk(this.currentPage, this.pageSize)
@@ -561,7 +559,6 @@ export default {
 				}
 			})
 			cbAddon.get().then(res => {
-				// console.log('RES ADDON ::', res)
 				let addonData = _.filter(res.data, function (itm) {
 					return itm.addon.status === 'active'
 				})
@@ -585,7 +582,6 @@ export default {
 			})
 			cbCustomer.get().then(res => {
 				this.totalCustomer = res.data.length
-				// console.log('RES CUSTOMER ::', res.customer)
 			}).catch(err => {
 				if (self.currentMsgInst && !self.currentMsgInst.closed) {
 					if (err.message == 'Network Error') {
@@ -660,31 +656,23 @@ export default {
 			this.changePage(1)
 		},
 		getPlanName (item) {
-			// console.log('getPlanName ITEM', item)
 			return cbPlan.get(item.subscription.plan_id).then(res => {
-				// console.log('getPlanName res', res)
 				return res.data.name
 			})
 		},
 		getCustomerName (item) {
-			// console.log('item.subscription', item.subscription)
 			return cbCustomer.get(item.subscription.customer_id).then(res => {
-				// console.log('getCustomerName', res)
 				return res.data.customer.first_name + ' ' + res.data.customer.last_name
 			})
 		},
 		getfilterlist: function (val) {
-			// console.log('val', val)
 			this.resultplanfilter = []
 			this.resultcustomerfilter = []
 			this.resultsubscriptionfilter = []
-
 			this.model1value = val
 			this.dataInFilter = this.types[val]
 		},
 		getfilteritem: function (val) {
-			// console.log('getfilteritem val', val)
-
 			this.resultplanfilter = []
 			this.resultcustomerfilter = []
 			this.resultsubscriptionfilter = []
@@ -699,22 +687,18 @@ export default {
 		searchfilter: async function (data) {
 			let self = this
 			self.filterLoading = true
-			// console.log('data', this.model1value, this.model2value, this.model3value)
 			let filtervalue = this.model3value
 
 			/* ---------------- planfilter ------------------ */
 
 			if (this.model1value == 'planfilter') {
-				// console.log(this.model2value === 'id')
 				/* ======== plan id wise filter ======== */
 				if (this.model2value === 'id') {
 					cbPlan.get(filtervalue).then(res => {
-						// console.log('res', res.data)
 						res.data.price /= 100
 						this.resultplanfilter = [res.data]
 						self.filterLoading = false
 					}).catch(err => {
-						// console.log('err', err)
 						if (self.currentMsgInst && !self.currentMsgInst.closed) {
 							if (err.message == 'Network Error') {
 								self.currentMsgInst = self.$Notice.error({
@@ -737,14 +721,11 @@ export default {
 
 					let data1 = this.model2value + '=' + this.model3value
 					cbPlan.filter(data1).then(res => {
-						// console.log('res................', res.data)
 						let datares = res.data.map((item) => {
-							// console.log('item', item.plan)
 							item.plan.price /= 100
 							return item.plan
 						})
 						Promise.all(datares).then(async res => {
-							// console.log('res---------', res)
 							self.resultplanfilter = res
 							this.planFilterDetailData = res
 							this.resultplanfilter = await this.makeChunk(this.currentPage, this.pageSize)
@@ -812,12 +793,9 @@ export default {
 					/* ========  customer id wise filter ======== */
 
 					cbCustomer.get(filtervalue).then(res => {
-						// console.log('RES CUSTOMER ::', res.data)
 						this.resultcustomerfilter = [res.data.customer]
 						self.filterLoading = false
-						// console.log('resultcustomerfilter', this.resultcustomerfilter)
 					}).catch(err => {
-						// console.log('err', err)
 						if (self.currentMsgInst && !self.currentMsgInst.closed) {
 							if (err.message == 'Network Error') {
 								self.currentMsgInst = self.$Notice.error({
@@ -839,20 +817,16 @@ export default {
 					/* ========  All Customer wise filter ======== */
 
 					cbCustomer.get().then(async res => {
-						// console.log('res', res.data)
 						let datares = res.data.map(async (item) => {
-							// console.log('item', item.customer)
 							return item.customer
 						})
 						Promise.all(datares).then(async res => {
-							// console.log('res---------', res)
 							self.resultcustomerfilter = res
 							this.customerfilterdetailvalue = res
 							this.resultcustomerfilter = await this.makeChunk(this.currentPage, this.pageSize)
 							self.filterLoading = false
 						})
 					}).catch(err => {
-						// console.log('err', err)
 						if (self.currentMsgInst && !self.currentMsgInst.closed) {
 							if (err.message == 'Network Error') {
 								self.currentMsgInst = self.$Notice.error({
@@ -874,20 +848,16 @@ export default {
 					/* ========  Customer email , first_name, last_name wise filter ======== */
 					let data2 = this.model2value + '=' + this.model3value
 					cbCustomer.filter(data2).then(res => {
-						// console.log('RES CUSTOMER ::', res.data)
 						let datares = res.data.map((item) => {
-							// console.log('item', item.customer)
 							return item.customer
 						})
 						Promise.all(datares).then(async res => {
-							// console.log('res---------', res)
 							self.resultcustomerfilter = res
 							this.customerfilterdetailvalue = res
 							this.resultcustomerfilter = await this.makeChunk(this.currentPage, this.pageSize)
 							self.filterLoading = false
 						})
 					}).catch(err => {
-						// console.log('err', err)
 						if (self.currentMsgInst && !self.currentMsgInst.closed) {
 							if (err.message == 'Network Error') {
 								self.currentMsgInst = self.$Notice.error({
@@ -917,9 +887,7 @@ export default {
 					/* ========  subscription plan_id wise filter ======== */
 
 					cbSubscription.getSubscribed(filtervalue).then(async res => {
-						// console.log('res >>>>>>>>>>', res.data[0].subscription)
 						let datares = res.data.map(async (item) => {
-							// console.log('item subscription', item.subscription)
 							item.subscription.started_at = moment.unix(item.subscription.started_at).format('DD MMM YYYY')
 							item.subscription.next_billing_at = moment.unix(item.subscription.next_billing_at).format('DD MMM YYYY')
 							item.subscription.mrr /= 100
@@ -929,14 +897,12 @@ export default {
 							return item.subscription
 						})
 						Promise.all(datares).then(async res => {
-							// console.log('res---------', res)
 							self.resultsubscriptionfilter = res
 							this.subscriptionFilterDetailData = res
 							this.resultsubscriptionfilter = await this.makeChunk(this.currentPage, this.pageSize)
 							self.filterLoading = false
 						})
 					}).catch(err => {
-						// console.log('err', err)
 						if (self.currentMsgInst && !self.currentMsgInst.closed) {
 							if (err.message == 'Network Error') {
 								self.currentMsgInst = self.$Notice.error({
@@ -958,9 +924,7 @@ export default {
 					/* ========  subscription customer_id wise filter ======== */
 
 					cbSubscription.getOwn(filtervalue).then(async res => {
-						// console.log('res >>>>>>>>>>', res.data[0].subscription)
 						let datares = res.data.map(async (item) => {
-							// console.log('item subscription', item.subscription)
 							item.subscription.started_at = moment.unix(item.subscription.started_at).format('DD MMM YYYY')
 							item.subscription.next_billing_at = moment.unix(item.subscription.next_billing_at).format('DD MMM YYYY')
 							item.subscription.mrr /= 100
@@ -970,14 +934,12 @@ export default {
 							return item.subscription
 						})
 						Promise.all(datares).then(async res => {
-							// console.log('res---------', res)
 							self.resultsubscriptionfilter = res
 							this.subscriptionFilterDetailData = res
 							this.resultsubscriptionfilter = await this.makeChunk(this.currentPage, this.pageSize)
 							self.filterLoading = false
 						})
 					}).catch(err => {
-						// console.log('err', err)
 						if (self.currentMsgInst && !self.currentMsgInst.closed) {
 							if (err.message == 'Network Error') {
 								self.currentMsgInst = self.$Notice.error({
@@ -999,7 +961,6 @@ export default {
 					/* ========  subscription id wise filter ======== */
 
 					cbSubscription.get(filtervalue).then(async res => {
-						// console.log('res >>>>>>>>>>', res.data.subscription)
 						res.data.subscription.started_at = moment.unix(res.data.subscription.started_at).format('DD MMM YYYY')
 						res.data.subscription.next_billing_at = moment.unix(res.data.subscription.next_billing_at).format('DD MMM YYYY')
 						res.data.subscription.mrr /= 100
@@ -1008,7 +969,6 @@ export default {
 						this.resultsubscriptionfilter = [res.data.subscription]
 						self.filterLoading = false
 					}).catch(err => {
-						// console.log('err', err)
 						if (self.currentMsgInst && !self.currentMsgInst.closed) {
 							if (err.message == 'Network Error') {
 								self.currentMsgInst = self.$Notice.error({
@@ -1032,9 +992,7 @@ export default {
 					let statusfilter = this.model2value + '=' + this.model3value
 
 					cbSubscription.filter(statusfilter).then(res => {
-						// console.log('res >>>>>>>>>>', res.data)
 						let datares = res.data.map(async (item) => {
-							// console.log('item subscription', item.subscription)
 							item.subscription.started_at = moment.unix(item.subscription.started_at).format('DD MMM YYYY')
 							item.subscription.next_billing_at = moment.unix(item.subscription.next_billing_at).format('DD MMM YYYY')
 							item.subscription.mrr /= 100
@@ -1044,14 +1002,12 @@ export default {
 							return item.subscription
 						})
 						Promise.all(datares).then(async res => {
-							// console.log('res---------', res)
 							self.resultsubscriptionfilter = res
 							this.subscriptionFilterDetailData = res
 							this.resultsubscriptionfilter = await this.makeChunk(this.currentPage, this.pageSize)
 							self.filterLoading = false
 						})
 					}).catch(err => {
-						// console.log('err', err)
 						if (self.currentMsgInst && !self.currentMsgInst.closed) {
 							if (err.message == 'Network Error') {
 								self.currentMsgInst = self.$Notice.error({
@@ -1072,9 +1028,7 @@ export default {
 				} else if (this.model2value === 'All subscription') {
 					/* ========  All subscription wise filter ======== */
 					cbSubscription.get().then(async res => {
-						// console.log('res >>>>>>>>>>', res.data)
 						let datares = res.data.map(async (item) => {
-							// console.log('item subscription', item.subscription)
 							item.subscription.started_at = moment.unix(item.subscription.started_at).format('DD MMM YYYY')
 							item.subscription.next_billing_at = moment.unix(item.subscription.next_billing_at).format('DD MMM YYYY')
 							item.subscription.mrr /= 100
@@ -1083,16 +1037,13 @@ export default {
 							Promise.resolve(item.subscription.plan_name)
 							return item.subscription
 						})
-						// console.log('datares', datares)
 						Promise.all(datares).then(async res => {
-							// console.log('res---------', res)
 							self.resultsubscriptionfilter = res
 							this.subscriptionFilterDetailData = res
 							this.resultsubscriptionfilter = await this.makeChunk(this.currentPage, this.pageSize)
 							self.filterLoading = false
 						})
 					}).catch(err => {
-						// console.log('err', err)
 						if (self.currentMsgInst && !self.currentMsgInst.closed) {
 							if (err.message == 'Network Error') {
 								self.currentMsgInst = self.$Notice.error({
@@ -1149,9 +1100,6 @@ export default {
 }
 
 .table-wrapper {
-	/* overflow-x: auto; */
-	/* overflow-y: auto; */
-	/* height: auto; */
 	margin-left: 15px;
 	margin-top: 0px;
 	margin-right: 15px;

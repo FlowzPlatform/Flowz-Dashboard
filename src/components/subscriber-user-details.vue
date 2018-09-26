@@ -33,10 +33,8 @@ export default {
 				},
 				{
 					type: 'index',
-					// title: 'index',
 					width: 55,
 					align: 'center'
-					// ,sortable: true
 				}, {
 					title: 'ChargeBee Customer Id',
 					render: (h, params) => {

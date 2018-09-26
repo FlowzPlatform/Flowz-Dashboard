@@ -81,11 +81,9 @@ router.beforeEach((to, from, next) => {
 	} else {
 		if (to.matched.some(record => record.meta.requiresAuth)) {
 			store.dispatch('authenticate', token).then(response => {
-				// console.log("Set User called from mainjs")
 				// store.commit('SET_USER', response)
 				next()
 			}).catch(error => {
-				// console.log(error.message)
 				if (error.response.data === 'invalid token') {
 					router.app.$cookie.delete('auth_token')
 				}
