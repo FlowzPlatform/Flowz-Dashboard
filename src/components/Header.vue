@@ -70,17 +70,17 @@ let location = psl.parse(window.location.hostname)
     			// this.$session.destroy('auth_token');
     			// his.$router.push('/acl');
     			let routeData = this.$router.resolve({name: 'acl'})
-    			window.open(routeData.href, '_blank')
+    			window.open(routeData.href, '_self')
     		},
     		subscriptionList: function () {
     			// this.$router.push('/subscription-list');
     			let routeData = this.$router.resolve({name: 'subscriptionList'})
-    			window.open(routeData.href, '_blank')
+    			window.open(routeData.href, '_self')
     		},
     		planList: function () {
     			// this.$router.push('/plan-details');
     			let routeData = this.$router.resolve({name: 'planDetails'})
-    			window.open(routeData.href, '_blank')
+    			window.open(routeData.href, '_self')
     		},
     		mainPage: function () {
     			this.$router.push('/')
@@ -107,4 +107,11 @@ let location = psl.parse(window.location.hostname)
     .ivu-menu-item-selected {
         background: transparent !important;
     }
+    .ivu-menu-primary {
+        background: #2BC0E4 !important;
+    }
+        /* .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-item-active, .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-item:hover, .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-submenu-active, .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-submenu:hover {
+        background: #00d2ff !important;
+    } */
+    .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-submenu:hover{background: #00d2ff !important;}
 </style>

@@ -180,7 +180,7 @@ export default {
 
 		this.cards = [
 			{
-				img: '/assets/images/todo.png',
+				// img: '/assets/images/todo.png',
 				color: '#FFFFFF',
 				index: '1',
 				class: 'card11 webpart',
@@ -190,7 +190,7 @@ export default {
 
 			},
 			{
-				img: '/assets/images/web_builder-ss.png',
+				// img: '/assets/images/web_builder-ss.png',
 				color: 'red',
 				index: '2',
 				class: 'card11 webpart',
@@ -199,7 +199,7 @@ export default {
 				desc: 'Build the website you desire without any knowledge of coding. Flowz web builder provides all the needed tool to create a stunning website. Just drag and drop the components to your page and publish the website. It is configured with very rich components and partial you can reuse through the process.'
 			},
 			{
-				img: '/assets/images/vmail.png',
+				// img: '/assets/images/vmail.png',
 				color: 'yellow',
 				index: '3',
 				class: 'card11 webpart',
@@ -208,7 +208,7 @@ export default {
 				desc: ' This is a user friendly (vue based) email client. It can receive the email, list it and show the content. It can also send mail in plain or html format to multiple users in an effective and efficient way.'
 			},
 			{
-				img: '/assets/images/todo.png',
+				// img: '/assets/images/todo.png',
 				color: 'gray',
 				index: '4',
 				class: 'card11 webpart',
@@ -217,7 +217,7 @@ export default {
 				// desc : "It is an user friendly way of listing the tasks, assigning them, to track them, maintain comments or action taken and its status updates of minutes.The user can create subtasks upto any level in real time."
 			},
 			{
-				img: '/assets/images/account.png',
+				// img: '/assets/images/account.png',
 				index: '5',
 				class: 'card11 crmpart',
 				position: 'left',
@@ -225,7 +225,7 @@ export default {
 				desc: 'Flowz Accounting system is a complete suite of managing invoices, listing all transactions, customer relationship, managing contacts and many more in one place. Its ability to make payments for due invoices and notifying clients through email makes it more effective in terms of your business.'
 			},
 			{
-				img: '/assets/images/uploader-screen.png',
+				// img: '/assets/images/uploader-screen.png',
 				index: '6',
 				class: 'card11 crmpart',
 				position: 'left',
@@ -234,7 +234,7 @@ export default {
 				desc: 'Flowz uploader is very simple and easy way to manage your web site products data, there is different methods to upload data like REPLACE, APPEND, UPSERT and UPDATE to manage web site product data.'
 			},
 			{
-				img: '/assets/images/web-builder-img.png',
+				// img: '/assets/images/web-builder-img.png',
 				index: '7',
 				class: 'card11 crmpart',
 				position: 'right',
@@ -242,7 +242,7 @@ export default {
 				// desc : "It is an user friendly way of listing the tasks, assigning them, to track them, maintain comments or action taken and its status updates of minutes.The user can create subtasks upto any level in real time."
 			},
 			{
-				img: '/assets/images/web-builder.jpg',
+				// img: '/assets/images/web-builder.jpg',
 				index: '8',
 				class: 'card11 crmpart',
 				position: 'right',
@@ -250,7 +250,7 @@ export default {
 				// desc : "Successful CRM is about competing in the relationship dimension. Not as an alternative to having a competitive product or reasonable price- but as a differentiator.Track all your user anytime from anywhere across the globe very easily."
 			},
 			{
-				img: '/assets/images/virtual-shop.png',
+				// img: '/assets/images/virtual-shop.png',
 				index: '9',
 				class: 'card11 crmpart',
 				position: 'left',

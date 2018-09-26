@@ -329,9 +329,9 @@ strong {
   font-weight: 600;
 }
 
-.plans {
+/* .plans {
   background: #e7f2f0;
-}
+} */
 
 .layer {
   clear: both;
