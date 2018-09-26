@@ -1,5 +1,6 @@
 [Settings]
-ID = "QA-I"
+  ID = "QA-I"
+
 [build]
   # This will be your default build command
   command = "npm run build"
@@ -22,3 +23,7 @@ ID = "QA-I"
   to = "/index.html"
   status = 200
   force = true
+  
+[build.environment]
+  domainkey = "flowzcluster.tk"
+  gatewayid = "gw_2smoc98yQqJksAPR6T"

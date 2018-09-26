@@ -480,34 +480,6 @@ export default {
 			let yy = new Date().getFullYear() + j
 			self.expiryYear.push({label: yy.toString(), value: yy.toString()})
 		}
-		// OLD CODE FOR SUBSCRIPTION
-		/* userSubscription.getOwn().then(async res => {
-            res.data.data = await _.orderBy(res.data.data, 'createdAt', 'desc')
-            await res.data.data.filter(function(o) {
-                o.expiredOn = moment(o.expiredOn).format("DD-MMM-YYYY")
-                o.createdAt = moment(o.createdAt).fromNow()
-            })
-            self.planListData = res.data.data
-            self.planList = await self.makeChunk(self.currentPage, self.pageSize)
-            // if(self.planList.length > 0) {
-            self.loading = false
-            // }
-        }).catch(err => {
-            if(err.message == 'Network Error'){
-                self.$Notice.error({
-                    duration: 5,
-                    title: 'Getting your plans',
-                    desc: 'API service unavailable.'
-                });
-            } else {
-                self.$Notice.error({
-                    duration: 5,
-                    title: 'Getting your plans',
-                    desc: err.response.data.message
-                });
-            }
-            self.loading = false
-        }) */
 	}
 }
 </script>
