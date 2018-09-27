@@ -448,27 +448,6 @@ export default {
 			}
 			this.showOverlay = false
 		})
-
-		// OLD CODE FOR SUBSCRIPTION
-		/* subscriptionPlans.get().then(res => {
-      self.plans = res.data.data
-      self.planLoding = false
-    }).catch(err => {
-      if(err.message == 'Network Error'){
-        self.$Notice.error({
-          duration: 5,
-              title: 'Loading created plans',
-              desc: 'API service unavailable.'
-          });
-        } else {
-          self.$Notice.error({
-            duration: 5,
-              title: 'Loading created plans',
-              desc: err.response.data.message
-          });
-        }
-      self.planLoding = false
-    }); */
 	},
 	methods: {
 		copyPlan (index, method) {
@@ -679,19 +658,6 @@ export default {
 					self.deleteCbAddon(self.plans[plan].id, plan)
 				}
 			}
-			/* if (self.activeTab == 'plan') {
-        if (self.plans[plan].status == 'archived') {
-          self.$Notice.error({
-            title: 'Action Denied',
-            desc: 'You can\'t delete Disabled/Archived plan because it may subscribed by users.',
-            duration: 5
-          });
-        } else {
-          self.deleteCbPlan(self.plans[plan].id, plan);
-        }
-      } else {
-        self.deleteCbAddon(self.plans[plan].id, plan);
-      } */
 			self.loading = false
 			self.confirmDelete = false
 		},
@@ -741,27 +707,6 @@ export default {
 				} else {
 					self.updateCbAddon(self.plans[index].id, dataObj)
 				}
-				// OLD CODE FOR UPDATE PLAN DETAILS
-				/* subscriptionPlans.put(this.plans[index].id, dataObj).then(res => {
-          self.$Notice.success({
-            title: '<b>' + self.plans[index].name + '</b> saved.',
-            desc: 'Subscription Plan <b>' + self.plans[index].name + '</b> has been saved..!'
-          })
-        }).catch(err => {
-          if( err.response.status == 403) {
-            self.$Notice.error({
-              duration: 5,
-              title: 'Permission not available for action',
-              desc: err.message
-            })
-          } else {
-            self.$Notice.error({
-              duration: 5,
-              title: 'Trying to update subscription plan',
-              desc: 'Please try again ' + err
-            })
-          }
-        }) */
 			}
 		},
 		createCbPlan (planDefinition, action) {

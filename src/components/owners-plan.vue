@@ -23,22 +23,6 @@ export default {
 			loading: true,
 			totalAddonPrice: {},
 			planDetails: [
-				// {
-				// 	type: 'expand',
-				// 	width: 50,
-				// 	render: (h, params) => {
-				// 		return h(expandRow, {
-				// 			props: {
-				// 				row: params.row
-				// 			},
-				// 			on: {
-				// 				totalAddon: (item) => {
-				// 					console.log('ITEM>>>', item)
-				// 				}
-				// 			}
-				// 		})
-				// 	}
-				// },
 				{
 					title: 'Plan',
 					render: (h, params) => {
@@ -112,9 +96,7 @@ export default {
 			this.$refs.planDetails.clearCurrentRow()
 		},
 		addTotalAddonPrice (index, value) {
-			console.log('>>>', index, value)
 			this.planList[index].totalAddonPrice = value
-			console.log('after adding totalAddonPrice:: ', this.planList)
 		}
 	},
 	async mounted () {
@@ -143,8 +125,6 @@ export default {
 			}
 		})
 		cbSubscription.getOwn(self.userDetails._id).then(async res => {
-			// console.log('Res of cb-subscription:: ', res)
-
 			let obj = res.data.map(async (itm) => {
 				itm.subscription.plan_unit_price /= 100
 				itm.subscription.started_at = moment.unix(itm.subscription.started_at).format('DD MMM YYYY')
@@ -168,35 +148,6 @@ export default {
 			}
 			self.loading = false
 		})
-
-		/*  userSubscription.getOwn().then(async res => {
-            res.data = await _.orderBy(res.data, 'createdAt', 'desc')
-            await res.data.filter(function(o) {
-                o.expiredOn = moment(o.expiredOn).format("DD-MMM-YYYY")
-                o.createdAt = moment(o.createdAt).fromNow()
-            })
-            self.planListData = res.data
-            self.planList = await self.makeChunk(self.currentPage, self.pageSize)
-            // if(self.planList.length > 0) {
-            self.loading = false
-            // }
-        }).catch(err => {
-            console.log(err)
-            if(err.message == 'Network Error'){
-                self.$Notice.error({
-                    duration: 5,
-                    title: 'Getting your plans',
-                    desc: 'API service unavailable.'
-                });
-            } else {
-                self.$Notice.error({
-                    duration: 5,
-                    title: 'Getting your plans',
-                    desc: err.response.data.message
-                });
-            }
-            self.loading = false
-        }) */
 	}
 }
 </script>
