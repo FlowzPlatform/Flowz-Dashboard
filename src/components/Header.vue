@@ -1,11 +1,6 @@
 <template>
     <Menu mode="horizontal" theme="primary" style="background:#c5cee74b;">
         <Row type="flex">
-            <!-- <Col :span="1">
-            <Row type="flex" justify="end" align="middle">
-
-            </Row>
-        </Col> -->
             <i-col :span="5">
                 <div class="f-logo">
                     <a @click="mainPage()">
@@ -20,12 +15,6 @@
                                 <Icon type="person" :size="16"></Icon>
                                 {{email}}
                             </template>
-                            <!-- MenuItem name="1-1">
-                                <a @click="settings()">
-                                    <Icon type="ios-locked-settings" :size="16"></Icon>
-                                    ACL
-                                </a>
-                                </MenuItem -->
                             <MenuItem name="1-2">
                                 <a @click="subscriptionList()">
                                     <Icon type="ios-list-outline" :size="16"></Icon>
@@ -43,7 +32,6 @@
                                 <Icon type="ios-locked-outline" :size="16"></Icon>
                                 Logout
                             </a>
-                              <!-- <p>csdcsscd</p> -->
                             </MenuItem>
                         </Submenu>
                     </div>
@@ -68,11 +56,6 @@ let location = psl.parse(window.location.hostname)
 
     	},
     	methods: {
-    		//   logout () {
-    		//         this.$session.destroy('auth_token');
-    		//         this.$router.push('/login');
-    		//    }
-
     		logout: function () {
 			this.$store.commit('FB_SIGN_IN', false)
 			this.$store.commit('GOOGLE_SIGN_IN', false)
@@ -87,17 +70,17 @@ let location = psl.parse(window.location.hostname)
     			// this.$session.destroy('auth_token');
     			// his.$router.push('/acl');
     			let routeData = this.$router.resolve({name: 'acl'})
-    			window.open(routeData.href, '_blank')
+    			window.open(routeData.href, '_self')
     		},
     		subscriptionList: function () {
     			// this.$router.push('/subscription-list');
     			let routeData = this.$router.resolve({name: 'subscriptionList'})
-    			window.open(routeData.href, '_blank')
+    			window.open(routeData.href, '_self')
     		},
     		planList: function () {
     			// this.$router.push('/plan-details');
     			let routeData = this.$router.resolve({name: 'planDetails'})
-    			window.open(routeData.href, '_blank')
+    			window.open(routeData.href, '_self')
     		},
     		mainPage: function () {
     			this.$router.push('/')
@@ -124,4 +107,12 @@ let location = psl.parse(window.location.hostname)
     .ivu-menu-item-selected {
         background: transparent !important;
     }
+    .ivu-menu-primary {
+        /* background: #2BC0E4 !important;  */
+        background: rgb(18, 180, 219) !important;
+    }
+        /* .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-item-active, .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-item:hover, .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-submenu-active, .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-submenu:hover {
+        background: #00d2ff !important;
+    } */
+    .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-submenu:hover{background: rgb(31, 174, 209)!important;}
 </style>
