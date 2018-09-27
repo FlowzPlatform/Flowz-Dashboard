@@ -108,10 +108,11 @@ let location = psl.parse(window.location.hostname)
         background: transparent !important;
     }
     .ivu-menu-primary {
-        background: #2BC0E4 !important;
+        /* background: #2BC0E4 !important;  */
+        background: rgb(18, 180, 219) !important;
     }
         /* .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-item-active, .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-item:hover, .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-submenu-active, .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-submenu:hover {
         background: #00d2ff !important;
     } */
-    .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-submenu:hover{background: #00d2ff !important;}
+    .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-submenu:hover{background: rgb(31, 174, 209)!important;}
 </style>
