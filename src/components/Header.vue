@@ -114,5 +114,5 @@ let location = psl.parse(window.location.hostname)
         /* .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-item-active, .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-item:hover, .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-submenu-active, .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-submenu:hover {
         background: #00d2ff !important;
     } */
-    .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-submenu:hover{background: #00d2ff !important;}
+    .ivu-menu-primary.ivu-menu-horizontal .ivu-menu-submenu:hover{background: rgb(31, 174, 209)!important;}
 </style>
