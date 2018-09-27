@@ -1,5 +1,6 @@
 [Settings]
-ID = "Staging-I"
+  ID = "Staging-I"
+
 [build]
   # This will be your default build command
   command = "npm run build"
@@ -22,8 +23,3 @@ ID = "Staging-I"
   to = "/index.html"
   status = 200
   force = true
-  
-  
-[build.environment]
-  domainkey = "flowzdigital.com"
-  gatewayid = "gw_2smoc98yQqJksAPR6T"

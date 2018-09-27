@@ -90,7 +90,6 @@ export default {
 					],
 					filterMultiple: false,
 					filterMethod (value, row) {
-						console.log('row >>>', row)
 						if (value === 1) {
 							if (row.subscription.status == 'active') {
 								return row.subscription.status
@@ -131,8 +130,6 @@ export default {
 		this.userDetailData = this.row
 		this.userList = await this.makeChunk(this.currentPage, this.pageSize)
 		this.detailsLoading = false
-		console.log('>>ROW DATA', this.row)
-		// this.$emit('interface', this.row)
 	}
 }
 </script>
