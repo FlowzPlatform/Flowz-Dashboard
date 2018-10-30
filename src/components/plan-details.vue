@@ -185,7 +185,8 @@ export default {
 									size: 'small',
 									'true-value': 'active',
 									'false-value': 'paused',
-									'value': this.planList[params.index].status
+									value: this.planList[params.index].status,
+									disabled: this.planList[params.index].status == 'in_trial' || this.planList[params.index].status == 'cancelled'
 								},
 								on: {
 									'on-change': (status) => {
@@ -450,7 +451,7 @@ export default {
 			let obj = res.data.map(async (itm) => {
 				itm.subscription.plan_unit_price /= 100
 				itm.subscription.started_at = moment.unix(itm.subscription.started_at).format('DD MMM YYYY')
-				itm.subscription.current_term_end = moment.unix(itm.subscription.current_term_end).format('DD MMM YYYY')
+				itm.subscription.current_term_end = itm.subscription.current_term_end ? moment.unix(itm.subscription.current_term_end).format('DD MMM YYYY') : moment.unix(itm.subscription.trial_end).format('DD MMM YYYY')
 				itm.subscription.plan_name = await self.getPlanName(itm)
 				Promise.resolve(itm.subscription.plan_name)
 				return itm.subscription
